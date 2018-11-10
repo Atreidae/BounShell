@@ -43,7 +43,7 @@ param(
 #region config
 [Net.ServicePointManager]::SecurityProtocol = 'tls12, tls11, tls'
 $StartTime                  =  Get-Date
-$VerbosePreference          =  "Continue" #TODO
+$VerbosePreference          =  "SilentlyContinue" #TODO
 [float]$ScriptVersion       =  '0.2'
 [string]$GithubRepo         =  'BounShell' ##todo
 [string]$GithubBranch       =  'devel' #todo
@@ -552,8 +552,9 @@ Function Invoke-BsNewTenantTab {
     )    
   
   $Function= 'Invoke-BsNewTenantTab'
-  Write-Log -component $function -Message "Called Invoke-BsNewTenantTab to connect to Tenant $tenant with a Tabname of $tabname" -severity 1  
-  Try { 
+  Write-Log -component $function -Message "Called Invoke-BsNewTenantTab to connect to Tenant $tenant with a Tabname of $tabname" -severity 1 
+  if($tabname -ne 'Undefined') {
+    Try { 
 
     #kick off a new tab and call it tabname
     Write-Log -component $function -Message "Opening new ISE tab..." -severity 1 
@@ -572,9 +573,14 @@ Function Invoke-BsNewTenantTab {
     $TabNameTab.Invoke("Connect-BsO365Tenant -Tenant $Tenant")
     
   } 
-  Catch {
+    Catch {
     Write-Log -component $function -Message "Failed to open new tab" -severity 3
   } 
+  }
+  Else {
+  Write-Log -component $function -Message "Sorry, I cant find a config for Tenant $tenant" -severity 3
+  }
+
 }
 
 Function Connect-BsO365Tenant {
@@ -608,24 +614,48 @@ Function Connect-BsO365Tenant {
   PARAM(
     $Tenant
   )
-  $Function= 'Connect-BsO365Tenant'
-  Write-Log -component "Startup" -Message "Called to connect to Tenant $tenant" -severity 3
+  [string]$Function = 'Connect-BsO365Tenant'
+  [bool]$ModernAuth = $false
+  [bool]$ConnectToTeams = $false
+  [bool]$ConnectToSkype = $false
+  [bool]$ConnectToExchange = $false
+  [bool]$ConnectToSharepoint = $false
+  [bool]$ConnectToAAD = $false
+  [bool]$ConnectToCompliance = $false
+  $ModernAuthPassword = ConvertTo-SecureString "Foo" -asplaintext -force
+  [string]$ModernAuthUsername
+
+  Write-Log -component $Function -Message "Called to connect to Tenant $tenant" -severity 1
+
+  #load the relevant stuff in the new enviroment
   Import-BsGuiElements
   Read-BsConfigFile
 
+  #Clean up any stale sessions (we shouldnt have any, but whatever)
+  Get-PSSession | Remove-PSSession
+
+  #change config based on tenant
   switch ($Tenant)
       {
         1 
         {
-            Write-Log -component $function -Message "Connecting to $($global:Config.Tenant1.DisplayName)" -severity 3
+            #Set Connection flags
+            [bool]$ConnectToTeams = $global:Config.Tenant1.ConnectToTeams
+            [bool]$ConnectToSkype = $global:Config.Tenant1.ConnectToSkype
+            [bool]$ConnectToExchange = $global:Config.Tenant1.ConnectToExchange
+            [bool]$ConnectToSharepoint = $false
+
+            Write-Log -component $function -Message "Loading $($global:Config.Tenant1.DisplayName) Settings" -severity 2
             If (!$global:Config.Tenant1.ModernAuth) {
                 $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant1.SignInAddress,$global:Config.Tenant1.Credential)
                 }
             Else{
-                Write-Log -component $function -Message "Modern Auth Not available in Beta" -severity 3 
-                Pause
-                Exit
+                $ModernAuth = $True
+                #Convert the config into something we can work with later
+                $ModernAuthPassword = $global:Config.Tenant1.Credential
+                $ModernAuthUsername = $global:Config.Tenant1.SignInAddress
                 }   
+
         }
         2 
         {
@@ -643,47 +673,109 @@ Function Connect-BsO365Tenant {
 
 
 
-  #See if we got passed creds
-  Write-Log -Message 'Checking for Office365 Credentials' -Severity 1 -Component $Function
-  If ($pscred -eq $null) {
-    Write-Log -Message 'No Office365 credentials Found, Prompting user for creds' -Severity 3 -Component $Function
-  $psCred = Get-Credential}
-  Else{
-    Write-Log -Message "Found Office365 Creds for Username: $($pscred.username)" -Severity 2 -Component $Function
-      
-  }
-  $Function= 'Connect-BsO365Tenant-block'
-  Get-PSSession | Remove-PSSession
-  #Write-Log -Message "Connecting to $tenant Tenant" -Severity 2 -Component $Function
-    
-    
-    
-  #`$PSCred = `"$($PScred)` 
-  #Exchange section
-  If ($O365Session -eq $null) {
-    Try {
-      $O365Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $pscred -Authentication Basic -AllowRedirection
-      (Import-Module -Name (Import-PSSession -Session $O365Session -AllowClobber -DisableNameChecking) -Global)
-    } 
-    Catch {
-      Write-output -Message 'Error connecting to Exchange in Office 365'
-    }
-  }
-   
+  If ($ModernAuth) {
+      #If we are dealing with modern auth we need to convert the password back to an insecure string do that here
+      $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($ModernAuthPassword)
+      $UnsecurePassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+      Write-host "Password is $UnsecurePassword"
+      }
 
-  #Now we check to see if there is an existing Skype Online Session running already
-  If ($S4BOSession -eq $null) {
-    Try {
-      $S4BOSession = New-CsOnlineSession -Credential $pscred 
-      (Import-Module -Name (Import-PSSession -Session $S4BOSession) -Global)
-    } 
-    Catch {
-      #Write-host -Message 'Error connecting to Skype for Business Online' 
+#region NoModern
+  If (!$ModernAuth) { 
+      #See if we got passed creds
+      Write-Log -Message 'Checking for Office365 Credentials' -Severity 1 -Component $Function
+      If ($pscred -eq $null) {
+        Write-Log -Message 'No Office365 credentials Found, Prompting user for creds' -Severity 3 -Component $Function
+      $psCred = Get-Credential}
+      Else{
+        Write-Log -Message "Found Office365 Creds for Username: $($pscred.username)" -Severity 1 -Component $Function
       
-    }
+      }
+
+          If ($ConnectToExchange) {
+            Try {
+              Write-Log -Message "Connecting to Exchange Online" -Severity 2 -Component $Function
+              $O365Session = (New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $pscred -Authentication Basic -AllowRedirection )
+              Write-Log -Message "Importing Session" -Severity 1 -Component $Function
+              $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+              Import-Module (Import-PSSession -Session $O365Session -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
+              $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+            } 
+            Catch {
+              Write-log -Message 'Error connecting to Exchange Online' -Severity 3 -Component $Function
+            }
+          }
+   
+   If ($ConnectToSkype) {
+            Try {
+              Write-Log -Message "Connecting to Skype4B Online" -Severity 2 -Component $Function
+              $S4BOSession = (New-CsOnlineSession -Credential $pscred)
+              $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+              Import-Module (Import-PSSession -Session $S4BOSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
+              $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+
+            } 
+            Catch {
+              Write-log -Message 'Error connecting to Skype4B Online' -Severity 3 -Component $Function
+            }
+          }
+    If ($ConnectToTeams) { #todo Everything
+            Try {
+              Write-Log -Message "Connecting to Microsoft Teams" -Severity 2 -Component $Function
+              $TeamsSession = (Connect-MicrosoftTeams -Credential $pscred)
+              $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+              Import-Module (Import-PSSession -Session $TeamsSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
+              $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+
+            } 
+            Catch {
+              Write-log -Message 'Error connecting to Microsoft Teams' -Severity 3 -Component $Function
+            }
+          }
+    If ($ConnectToSharepoint) {
+            Try {
+              Write-Log -Message "Connecting to Sharepoint Online" -Severity 2 -Component $Function
+              $SharepointSession = (Connect-SPOService -Credential $pscred)
+              $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+              Import-Module (Import-PSSession -Session $SharepointSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
+              $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+
+            } 
+            Catch {
+              Write-log -Message 'Error connecting to Sharepoint Online' -Severity 3 -Component $Function
+            }
+          }
+
+     If ($ConnectToAAD) {
+            Try {
+              Write-Log -Message "Connecting to Azure AD" -Severity 2 -Component $Function
+              $AADSession = (Connect-AzureAD -Credential $pscred)
+              $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+              Import-Module (Import-PSSession -Session $AADSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
+              $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+
+            } 
+            Catch {
+              Write-log -Message 'Error connecting to Azure AD' -Severity 3 -Component $Function
+            }
+          }
+     If ($ConnectToCompliane) {
+            Try {
+              Write-Log -Message "Connecting to Office 365 Compliance Centre" -Severity 2 -Component $Function
+              $ComplianceSession = (New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.compliance.protection.outlook.com/powershell-liveid/ -Credential $Credential -Authentication Basic -AllowRedirection)
+              $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+              Import-Module (Import-PSSession -Session $ComplianceSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
+              $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+
+            } 
+            Catch {
+              Write-log -Message 'Error connecting to Office 365 Compliance Centre' -Severity 3 -Component $Function
+            }
+          }
   }
-       
-  
+
+#endregion NoModern 
+
 }
 
 Function Update-BsAddonMenu {
@@ -707,15 +799,15 @@ Function Update-BsAddonMenu {
 
   #For each code in here that adds Tenant 1 through 10
   [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant1.DisplayName)",{Invoke-BsNewTenantTab -tabname $global:Config.Tenant1.DisplayName -Tenant 1}, 'Ctrl+Alt+1'))
-  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant2.DisplayName)",{Connect-BsO365Tenant -Tenant "2"}, 'Ctrl+Alt+2'))
-  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant3.DisplayName)",{Connect-BsO365Tenant -Tenant "3"}, 'Ctrl+Alt+3'))
-  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant4.DisplayName)",{Connect-BsO365Tenant -Tenant "4"}, 'Ctrl+Alt+4'))
-  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant5.DisplayName)",{Connect-BsO365Tenant -Tenant "5"}, 'Ctrl+Alt+5'))
-  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant6.DisplayName)",{Connect-BsO365Tenant -Tenant "6"}, 'Ctrl+Alt+6'))
-  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant7.DisplayName)",{Connect-BsO365Tenant -Tenant "7"}, 'Ctrl+Alt+7'))
-  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant8.DisplayName)",{Connect-BsO365Tenant -Tenant "8"}, 'Ctrl+Alt+8'))
-  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant9.DisplayName)",{Connect-BsO365Tenant -Tenant "9"}, 'Ctrl+Alt+9'))
-  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant10.DisplayName)",{Connect-BsO365Tenant -Tenant "10"}, 'Ctrl+Alt+0'))             
+  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant2.DisplayName)",{Invoke-BsNewTenantTab -tabname $global:Config.Tenant2.DisplayName -Tenant 2}, 'Ctrl+Alt+2'))
+  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant3.DisplayName)",{Invoke-BsNewTenantTab -tabname $global:Config.Tenant3.DisplayName -Tenant 3}, 'Ctrl+Alt+3'))
+  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant4.DisplayName)",{Invoke-BsNewTenantTab -tabname $global:Config.Tenant4.DisplayName -Tenant 4}, 'Ctrl+Alt+4'))
+  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant5.DisplayName)",{Invoke-BsNewTenantTab -tabname $global:Config.Tenant5.DisplayName -Tenant 5}, 'Ctrl+Alt+5'))
+  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant6.DisplayName)",{Invoke-BsNewTenantTab -tabname $global:Config.Tenant6.DisplayName -Tenant 6}, 'Ctrl+Alt+6'))
+  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant7.DisplayName)",{Invoke-BsNewTenantTab -tabname $global:Config.Tenant7.DisplayName -Tenant 7}, 'Ctrl+Alt+7'))
+  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant8.DisplayName)",{Invoke-BsNewTenantTab -tabname $global:Config.Tenant8.DisplayName -Tenant 8}, 'Ctrl+Alt+8'))
+  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant9.DisplayName)",{Invoke-BsNewTenantTab -tabname $global:Config.Tenant9.DisplayName -Tenant 9}, 'Ctrl+Alt+9'))
+  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant10.DisplayName)",{Invoke-BsNewTenantTab -tabname $global:Config.Tenant10.DisplayName -Tenant 10}, 'Ctrl+Alt+0'))             
 
 
 }
