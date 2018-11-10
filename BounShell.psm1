@@ -174,26 +174,28 @@ Function Get-IEProxy {
 }
 
 Function Get-ScriptUpdate {
-  Write-Log -component "Self Update" -Message "Checking for Script Update" -severity 1
-  Write-Log -component "Self Update" -Message "Checking for Proxy" -severity 1
+
+  $Function= 'Get-ScriptUpdate'
+  Write-Log -component $function -Message "Checking for Script Update" -severity 1
+  Write-Log -component $function -Message "Checking for Proxy" -severity 1
   $ProxyURL = Get-IEProxy
   If ( $ProxyURL) {
-    Write-Log -component "Self Update" -Message "Using proxy address $ProxyURL" -severity 1
+    Write-Log -component $function -Message "Using proxy address $ProxyURL" -severity 1
   }
   Else {
-    Write-Log -component "Self Update" -Message "No proxy setting detected, using direct connection" -severity 1
+    Write-Log -component $function -Message "No proxy setting detected, using direct connection" -severity 1
   }
 	
   $GitHubScriptVersion = Invoke-WebRequest https://raw.githubusercontent.com/atreidae/BounShell/devel/version -TimeoutSec 10 -Proxy $ProxyURL #todo change back to master!
   If ($GitHubScriptVersion.Content.length -eq 0) {
-    Write-Log -component "Self Update" -Message "Error checking for new version. You can check manualy here" -severity 3
-    Write-Log -component "Self Update" -Message "http://www.skype4badmin.com/find-and-test-user-ip-addresses-in-the-skype-location-database" -severity 1 #Todo Update URL
-    Write-Log -component "Self Update" -Message "Pausing for 5 seconds" -severity 1
+    Write-Log -component $function -Message "Error checking for new version. You can check manualy here" -severity 3
+    Write-Log -component $function -Message "http://www.skype4badmin.com/find-and-test-user-ip-addresses-in-the-skype-location-database" -severity 1 #Todo Update URL
+    Write-Log -component $function -Message "Pausing for 5 seconds" -severity 1
     start-sleep 5
   }
   else { 
     if ([single]$GitHubScriptVersion.Content -gt [single]$ScriptVersion) {
-      Write-Log -component "Self Update" -Message "New Version Available" -severity 3
+      Write-Log -component $function -Message "New Version Available" -severity 3
       #New Version available
 
       #Prompt user to download
@@ -213,19 +215,19 @@ Function Get-ScriptUpdate {
       switch ($result)
       {
         0 {
-          Write-Log -component "Self Update" -Message "User opted to download update" -severity 1
-          start "http://www.skype4badmin.com/australian-holiday-rulesets-for-response-group-service/" #Todo Update URL
-          Write-Log -component "Self Update" -Message "Exiting Script" -severity 3
+          Write-Log -component $function -Message "User opted to download update" -severity 1
+          Start $BlogPost
+          Write-Log -component $function -Message "Exiting Script" -severity 3
           Exit
         }
-        1 {Write-Log -component "Self Update" -Message "User opted to skip update" -severity 1
+        1 {Write-Log -component $function -Message "User opted to skip update" -severity 1
 									
         }
 							
       }
     }   
     Else{
-      Write-Log -component "Self Update" -Message "Script is upto date" -severity 1
+      Write-Log -component $function -Message "Script is upto date" -severity 1
     }
         
   }
@@ -234,23 +236,25 @@ Function Get-ScriptUpdate {
 }
 
 Function Read-BsConfigFile {
-  Write-Log -component "Read-BsConfigFile" -Message "Reading Config file $($global:ConfigFilePath)" -severity 2
+  $Function= 'Read-BsConfigFile'
+  Write-Log -component $function
+  Write-Log -component $function -Message "Reading Config file $($global:ConfigFilePath)" -severity 2
   If(!(Test-Path $global:ConfigFilePath)) {
-    Write-Log -component "Read-BsConfigFile" -Message "Could not locate config file!" -severity 3
-    Write-Log -component "Read-BsConfigFile" -Message "Error reading Config, Loading Defaults" -severity 3
+    Write-Log -component $function -Message "Could not locate config file!" -severity 3
+    Write-Log -component $function -Message "Error reading Config, Loading Defaults" -severity 3
     Import-BsDefaultConfig
   }
   Else {
-    Write-Log -component "Read-BsConfigFile" -Message "Found Config file in the specified folder" -severity 1
+    Write-Log -component $function -Message "Found Config file in the specified folder" -severity 1
   }
 
-  Write-Log -component "Read-BsConfigFile" -Message "Pulling XML File" -severity 1
+  Write-Log -component $function -Message "Pulling XML File" -severity 1
   [Void](Remove-Variable -Name Config -Scope Script -ErrorAction SilentlyContinue )
   Try{
     #Load the Config
     $global:Config=@{}
     $global:Config = (Import-CliXml -Path $global:ConfigFilePath)
-    Write-Log -component "Read-BsConfigFile" -Message "Config File Read OK" -severity 2
+    Write-Log -component $function -Message "Config File Read OK" -severity 2
     Update-BsAddonMenu
 
     #Update the Gui options
@@ -269,14 +273,15 @@ Function Read-BsConfigFile {
     [void] $Global:grid_Tenants.Rows.Add("10",$global:Config.Tenant10.DisplayName,$global:Config.Tenant10.SignInAddress,"****",$global:Config.Tenant10.ModernAuth,$global:Config.Tenant10.ConnectToTeams,$global:Config.Tenant10.ConnectToSkype,$global:Config.Tenant10.ConnectToExchange)
     }
   Catch {
-    Write-Log -component "Read-BsConfigFile" -Message "Error reading Config or updating GUI, Loading Defaults" -severity 3
+    Write-Log -component $function -Message "Error reading Config or updating GUI, Loading Defaults" -severity 3
     Import-BsDefaultConfig
   }
 
 }
 
 Function Write-BsConfigFile {
-  Write-Log -component "Write-BsConfigFile" -Message "Writing Config file" -severity 2
+  $function = 'Write-BsConfigFile'
+  Write-Log -component $function -Message "Writing Config file" -severity 2
   
   #Grab items from the GUI and stuff them into something useful
 
@@ -387,10 +392,10 @@ Function Write-BsConfigFile {
   #Write the XML File
   Try{
     $global:Config| Export-CliXml -Path "$ENV:UserProfile\BounShell.xml"
-    Write-Log -component "Write-BsConfigFile" -Message "Config File Saved" -severity 2
+    Write-Log -component $function -Message "Config File Saved" -severity 2
   }
   Catch {
-    Write-Log -component "Write-BsConfigFile" -Message "Error writing Config file" -severity 3
+    Write-Log -component $function -Message "Error writing Config file" -severity 3
   }
 
 
@@ -515,29 +520,19 @@ Function Import-BsDefaultConfig {
 Function Invoke-BsNewTenantTab {
   <#
       .SYNOPSIS
-      Function to Open new tab in ISE. Connect to a PSsession and import it
+      Function to Open new tab in ISE and call Connect-BsO365Tenant to connect to relevant services
 
       .DESCRIPTION
         
-
       .PARAMETER Tenant
-      The message to write
+      The tenant number to pass to Connect-BsO365Tenant
 
-      .PARAMETER Username
-      The location of the logfile.
-
-      .PARAMETER Severity
-      Sets the severity of the log message, Higher severities will call Write-Warning or Write-Error
-
-      .PARAMETER Component
-      Used to track the module or function that called "Write-Log" 
-
-      .PARAMETER LogOnly
-      Forces Write-Log to not display anything to the user
+      .PARAMETER Tabname
+      The name for the new tab
 
       .EXAMPLE
-      Write-Log -Message 'This is a log message' -Severity 3 -component 'Example Component'
-      Writes a log file message and displays a warning to the user
+      Invoke-BsNewTenantTab -Tenant 1 -Tabname "Skype4badmin"
+      Opens a new tab and connects to the Tenant stored in slot 1
 
       .NOTES
       N/A
@@ -554,23 +549,60 @@ Function Invoke-BsNewTenantTab {
   param(
     [Parameter(Mandatory=$true)] [string]$Tabname,
     [Parameter(Mandatory=$true)] [float]$Tenant
-
     )    
-  #kick off a new tab and call it tabname
-  $TabNameTab=$psISE.PowerShellTabs.Add()
-  $TabNameTab.DisplayName = $Tabname
+  
+  $Function= 'Invoke-BsNewTenantTab'
+  Write-Log -component $function -Message "Called Invoke-BsNewTenantTab to connect to Tenant $tenant with a Tabname of $tabname" -severity 1  
+  Try { 
+
+    #kick off a new tab and call it tabname
+    Write-Log -component $function -Message "Opening new ISE tab..." -severity 1 
+    $TabNameTab=$psISE.PowerShellTabs.Add()
+    $TabNameTab.DisplayName = $Tabname
+  
+    #Wait for the tab to wake up
+    Write-Log -component $function -Message "Waiting for tab to become invokable" -severity 1 
+      Do 
+      {sleep -m 100}
+      While (!$TabNameTab.CanInvoke)
     
-  #Wait for the tab to wake up
-  Do 
-  {sleep -m 100}
-  While (!$TabNameTab.CanInvoke)
+
+    #Kick off the connection
+    Write-Log -component $function -Message "Invoking Command: Connect-BsO365Tenant -Tenant $Tenant" -severity 1
+    $TabNameTab.Invoke("Connect-BsO365Tenant -Tenant $Tenant")
     
-  #Kick off the connection
-  $TabNameTab.Invoke("Connect-BsO365Tenant -Tenant $Tenant")
-  #$TabNameTab.invoke($scriptblock -argumentlist $Pscred)
+  } 
+  Catch {
+    Write-Log -component $function -Message "Failed to open new tab" -severity 3
+  } 
 }
 
 Function Connect-BsO365Tenant {
+<#
+      .SYNOPSIS
+      Connects to relevant Office365 services based on the configuration of the tenant we are passed
+
+      .DESCRIPTION
+        
+      .PARAMETER Tenant
+      The tenant number to connect to
+
+      .EXAMPLE
+      Connect-BsO365Tenant -Tenant 1
+      Connects to the Tenant stored in slot 1 based on the current context
+
+      .NOTES
+      N/A
+
+      .LINK
+      http://www.skype4badmin.com
+
+      .INPUTS
+      This function does not accept pipelined input
+
+      .OUTPUTS
+      This function does not create pipelined output
+  #>
 
   [CmdletBinding()]
   PARAM(
