@@ -668,16 +668,185 @@ Function Connect-BsO365Tenant {
         }
         2 
         {
-            Write-Log -component $function -Message "Connecting to $($global:Config.Tenant2.DisplayName)" -severity 3
+            #Set Connection flags
+            [bool]$ConnectToTeams = $global:Config.Tenant2.ConnectToTeams
+            [bool]$ConnectToSkype = $global:Config.Tenant2.ConnectToSkype
+            [bool]$ConnectToExchange = $global:Config.Tenant2.ConnectToExchange
+            [bool]$ConnectToSharepoint = $false
+
+            Write-Log -component $function -Message "Loading $($global:Config.Tenant2.DisplayName) Settings" -severity 2
             If (!$global:Config.Tenant2.ModernAuth) {
                 $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant2.SignInAddress,$global:Config.Tenant2.Credential)
                 }
             Else{
-                Write-Log -component $function -Message "Modern Auth Not available in Beta" -severity 3 
-                Pause
-                Exit
+                $ModernAuth = $True
+                #Convert the config into something we can work with later
+                $ModernAuthPassword = $global:Config.Tenant2.Credential
+                $ModernAuthUsername = $global:Config.Tenant2.SignInAddress
                 }   
+
         }
+        3 
+        {
+            #Set Connection flags
+            [bool]$ConnectToTeams = $global:Config.Tenant3.ConnectToTeams
+            [bool]$ConnectToSkype = $global:Config.Tenant3.ConnectToSkype
+            [bool]$ConnectToExchange = $global:Config.Tenant3.ConnectToExchange
+            [bool]$ConnectToSharepoint = $false
+
+            Write-Log -component $function -Message "Loading $($global:Config.Tenant3.DisplayName) Settings" -severity 2
+            If (!$global:Config.Tenant3.ModernAuth) {
+                $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant3.SignInAddress,$global:Config.Tenant3.Credential)
+                }
+            Else{
+                $ModernAuth = $True
+                #Convert the config into something we can work with later
+                $ModernAuthPassword = $global:Config.Tenant3.Credential
+                $ModernAuthUsername = $global:Config.Tenant3.SignInAddress
+                }   
+
+        }
+        4 
+        {
+            #Set Connection flags
+            [bool]$ConnectToTeams = $global:Config.Tenant4.ConnectToTeams
+            [bool]$ConnectToSkype = $global:Config.Tenant4.ConnectToSkype
+            [bool]$ConnectToExchange = $global:Config.Tenant4.ConnectToExchange
+            [bool]$ConnectToSharepoint = $false
+
+            Write-Log -component $function -Message "Loading $($global:Config.Tenant4.DisplayName) Settings" -severity 2
+            If (!$global:Config.Tenant4.ModernAuth) {
+                $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant4.SignInAddress,$global:Config.Tenant4.Credential)
+                }
+            Else{
+                $ModernAuth = $True
+                #Convert the config into something we can work with later
+                $ModernAuthPassword = $global:Config.Tenant4.Credential
+                $ModernAuthUsername = $global:Config.Tenant4.SignInAddress
+                }   
+
+        }
+        5 
+        {
+            #Set Connection flags
+            [bool]$ConnectToTeams = $global:Config.Tenant5.ConnectToTeams
+            [bool]$ConnectToSkype = $global:Config.Tenant5.ConnectToSkype
+            [bool]$ConnectToExchange = $global:Config.Tenant5.ConnectToExchange
+            [bool]$ConnectToSharepoint = $false
+
+            Write-Log -component $function -Message "Loading $($global:Config.Tenant5.DisplayName) Settings" -severity 2
+            If (!$global:Config.Tenant5.ModernAuth) {
+                $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant5.SignInAddress,$global:Config.Tenant5.Credential)
+                }
+            Else{
+                $ModernAuth = $True
+                #Convert the config into something we can work with later
+                $ModernAuthPassword = $global:Config.Tenant5.Credential
+                $ModernAuthUsername = $global:Config.Tenant5.SignInAddress
+                }   
+
+        }
+        6 
+        {
+            #Set Connection flags
+            [bool]$ConnectToTeams = $global:Config.Tenant6.ConnectToTeams
+            [bool]$ConnectToSkype = $global:Config.Tenant6.ConnectToSkype
+            [bool]$ConnectToExchange = $global:Config.Tenant6.ConnectToExchange
+            [bool]$ConnectToSharepoint = $false
+
+            Write-Log -component $function -Message "Loading $($global:Config.Tenant6.DisplayName) Settings" -severity 2
+            If (!$global:Config.Tenant6.ModernAuth) {
+                $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant6.SignInAddress,$global:Config.Tenant6.Credential)
+                }
+            Else{
+                $ModernAuth = $True
+                #Convert the config into something we can work with later
+                $ModernAuthPassword = $global:Config.Tenant6.Credential
+                $ModernAuthUsername = $global:Config.Tenant6.SignInAddress
+                }   
+
+        }
+        7 
+        {
+            #Set Connection flags
+            [bool]$ConnectToTeams = $global:Config.Tenant7.ConnectToTeams
+            [bool]$ConnectToSkype = $global:Config.Tenant7.ConnectToSkype
+            [bool]$ConnectToExchange = $global:Config.Tenant7.ConnectToExchange
+            [bool]$ConnectToSharepoint = $false
+
+            Write-Log -component $function -Message "Loading $($global:Config.Tenant7.DisplayName) Settings" -severity 2
+            If (!$global:Config.Tenant7.ModernAuth) {
+                $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant7.SignInAddress,$global:Config.Tenant7.Credential)
+                }
+            Else{
+                $ModernAuth = $True
+                #Convert the config into something we can work with later
+                $ModernAuthPassword = $global:Config.Tenant7.Credential
+                $ModernAuthUsername = $global:Config.Tenant7.SignInAddress
+                }   
+
+        }
+        8 
+        {
+            #Set Connection flags
+            [bool]$ConnectToTeams = $global:Config.Tenant8.ConnectToTeams
+            [bool]$ConnectToSkype = $global:Config.Tenant8.ConnectToSkype
+            [bool]$ConnectToExchange = $global:Config.Tenant8.ConnectToExchange
+            [bool]$ConnectToSharepoint = $false
+
+            Write-Log -component $function -Message "Loading $($global:Config.Tenant8.DisplayName) Settings" -severity 2
+            If (!$global:Config.Tenant8.ModernAuth) {
+                $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant8.SignInAddress,$global:Config.Tenant8.Credential)
+                }
+            Else{
+                $ModernAuth = $True
+                #Convert the config into something we can work with later
+                $ModernAuthPassword = $global:Config.Tenant8.Credential
+                $ModernAuthUsername = $global:Config.Tenant8.SignInAddress
+                }   
+
+        }
+        9 
+        {
+            #Set Connection flags
+            [bool]$ConnectToTeams = $global:Config.Tenant9.ConnectToTeams
+            [bool]$ConnectToSkype = $global:Config.Tenant9.ConnectToSkype
+            [bool]$ConnectToExchange = $global:Config.Tenant9.ConnectToExchange
+            [bool]$ConnectToSharepoint = $false
+
+            Write-Log -component $function -Message "Loading $($global:Config.Tenant9.DisplayName) Settings" -severity 2
+            If (!$global:Config.Tenant9.ModernAuth) {
+                $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant9.SignInAddress,$global:Config.Tenant9.Credential)
+                }
+            Else{
+                $ModernAuth = $True
+                #Convert the config into something we can work with later
+                $ModernAuthPassword = $global:Config.Tenant9.Credential
+                $ModernAuthUsername = $global:Config.Tenant9.SignInAddress
+                }   
+
+        }
+        10 
+        {
+            #Set Connection flags
+            [bool]$ConnectToTeams = $global:Config.Tenant10.ConnectToTeams
+            [bool]$ConnectToSkype = $global:Config.Tenant10.ConnectToSkype
+            [bool]$ConnectToExchange = $global:Config.Tenant10.ConnectToExchange
+            [bool]$ConnectToSharepoint = $false
+
+            Write-Log -component $function -Message "Loading $($global:Config.Tenant10.DisplayName) Settings" -severity 2
+            If (!$global:Config.Tenant10.ModernAuth) {
+                $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant10.SignInAddress,$global:Config.Tenant10.Credential)
+                }
+            Else{
+                $ModernAuth = $True
+                #Convert the config into something we can work with later
+                $ModernAuthPassword = $global:Config.Tenant10.Credential
+                $ModernAuthUsername = $global:Config.Tenant10.SignInAddress
+                }   
+
+        }
+        
     }
 
 
@@ -686,7 +855,7 @@ Function Connect-BsO365Tenant {
       #If we are dealing with modern auth we need to convert the password back to an insecure string do that here
       $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($ModernAuthPassword)
       $UnsecurePassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
-      Write-host "Password is $UnsecurePassword"
+      Write-host "Password is $UnsecurePassword" #Todo. Proof of concept only!
       }
 
 #region NoModern
