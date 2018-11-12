@@ -33,10 +33,10 @@
 
 [CmdletBinding(DefaultParametersetName="Common")]
 param(
-  [Parameter(Mandatory=$false)] [switch]$DisableScriptUpdate,
-  [Parameter(Mandatory=$false, Position = 1)] [String]$ConfigFilePath = $null,
-  [Parameter(Mandatory=$false, Position = 2)] [String]$LogFileLocation = $null,
-  [Parameter(Mandatory=$false, Position = 3)] [float]$Tenant = $null
+  [Parameter(Mandatory=$false)] [switch]$SkipUpdateCheck,
+  [Parameter(Mandatory=$false)] [String]$ConfigFilePath = $null,
+  [Parameter(Mandatory=$false)] [String]$LogFileLocation = $null,
+  [Parameter(Mandatory=$false)] [float]$Tenant = $null
 
 )
 
@@ -1135,7 +1135,7 @@ Function Start-BounShell {
   Import-BsGuiElements
   
   #check for script update
-  #if ($DisableScriptUpdate -eq $false) {Get-ScriptUpdate} #todo enable update checking
+  #if ($SkipUpdateCheck -eq $false) {Get-ScriptUpdate} #todo enable update checking
 
   #check for config file then load the default
 
