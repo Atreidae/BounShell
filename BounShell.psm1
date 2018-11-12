@@ -44,7 +44,7 @@ param(
 [Net.ServicePointManager]::SecurityProtocol = 'tls12, tls11, tls'
 $StartTime                  =  Get-Date
 $VerbosePreference          =  "SilentlyContinue" #TODO
-[float]$ScriptVersion       =  '0.2'
+[float]$ScriptVersion       =  '0.3'
 [string]$GithubRepo         =  'BounShell' ##todo
 [string]$GithubBranch       =  'devel' #todo
 [string]$BlogPost           =  'http://www.skype4badmin.com/BounShell/' #todo
@@ -255,22 +255,28 @@ Function Read-BsConfigFile {
     $global:Config=@{}
     $global:Config = (Import-CliXml -Path $global:ConfigFilePath)
     Write-Log -component $function -Message "Config File Read OK" -severity 2
-    Update-BsAddonMenu
+    
 
-    #Update the Gui options
-  
-    #Populate with Values
-    [void] $Global:grid_Tenants.Rows.Clear()
-    [void] $Global:grid_Tenants.Rows.Add("1",$global:Config.Tenant1.DisplayName,$global:Config.Tenant1.SignInAddress,"****",$global:Config.Tenant1.ModernAuth,$global:Config.Tenant1.ConnectToTeams,$global:Config.Tenant1.ConnectToSkype,$global:Config.Tenant1.ConnectToExchange)
-    [void] $Global:grid_Tenants.Rows.Add("2",$global:Config.Tenant2.DisplayName,$global:Config.Tenant2.SignInAddress,"****",$global:Config.Tenant2.ModernAuth,$global:Config.Tenant2.ConnectToTeams,$global:Config.Tenant2.ConnectToSkype,$global:Config.Tenant2.ConnectToExchange)
-    [void] $Global:grid_Tenants.Rows.Add("3",$global:Config.Tenant3.DisplayName,$global:Config.Tenant3.SignInAddress,"****",$global:Config.Tenant3.ModernAuth,$global:Config.Tenant3.ConnectToTeams,$global:Config.Tenant3.ConnectToSkype,$global:Config.Tenant3.ConnectToExchange)
-    [void] $Global:grid_Tenants.Rows.Add("4",$global:Config.Tenant4.DisplayName,$global:Config.Tenant4.SignInAddress,"****",$global:Config.Tenant4.ModernAuth,$global:Config.Tenant4.ConnectToTeams,$global:Config.Tenant4.ConnectToSkype,$global:Config.Tenant4.ConnectToExchange)
-    [void] $Global:grid_Tenants.Rows.Add("5",$global:Config.Tenant5.DisplayName,$global:Config.Tenant5.SignInAddress,"****",$global:Config.Tenant5.ModernAuth,$global:Config.Tenant5.ConnectToTeams,$global:Config.Tenant5.ConnectToSkype,$global:Config.Tenant5.ConnectToExchange)
-    [void] $Global:grid_Tenants.Rows.Add("6",$global:Config.Tenant6.DisplayName,$global:Config.Tenant6.SignInAddress,"****",$global:Config.Tenant6.ModernAuth,$global:Config.Tenant6.ConnectToTeams,$global:Config.Tenant6.ConnectToSkype,$global:Config.Tenant6.ConnectToExchange)
-    [void] $Global:grid_Tenants.Rows.Add("7",$global:Config.Tenant7.DisplayName,$global:Config.Tenant7.SignInAddress,"****",$global:Config.Tenant7.ModernAuth,$global:Config.Tenant7.ConnectToTeams,$global:Config.Tenant7.ConnectToSkype,$global:Config.Tenant7.ConnectToExchange)
-    [void] $Global:grid_Tenants.Rows.Add("8",$global:Config.Tenant8.DisplayName,$global:Config.Tenant8.SignInAddress,"****",$global:Config.Tenant8.ModernAuth,$global:Config.Tenant8.ConnectToTeams,$global:Config.Tenant8.ConnectToSkype,$global:Config.Tenant8.ConnectToExchange)
-    [void] $Global:grid_Tenants.Rows.Add("9",$global:Config.Tenant9.DisplayName,$global:Config.Tenant9.SignInAddress,"****",$global:Config.Tenant9.ModernAuth,$global:Config.Tenant9.ConnectToTeams,$global:Config.Tenant9.ConnectToSkype,$global:Config.Tenant9.ConnectToExchange)
-    [void] $Global:grid_Tenants.Rows.Add("10",$global:Config.Tenant10.DisplayName,$global:Config.Tenant10.SignInAddress,"****",$global:Config.Tenant10.ModernAuth,$global:Config.Tenant10.ConnectToTeams,$global:Config.Tenant10.ConnectToSkype,$global:Config.Tenant10.ConnectToExchange)
+    #Update the Gui options if we are loaded in the ISE
+    If($PSISE) 
+        {
+
+        #Update the PS ISE Addon Menu
+        Update-BsAddonMenu
+
+        #Populate with Values
+        [void] $Global:grid_Tenants.Rows.Clear()
+        [void] $Global:grid_Tenants.Rows.Add("1",$global:Config.Tenant1.DisplayName,$global:Config.Tenant1.SignInAddress,"****",$global:Config.Tenant1.ModernAuth,$global:Config.Tenant1.ConnectToTeams,$global:Config.Tenant1.ConnectToSkype,$global:Config.Tenant1.ConnectToExchange)
+        [void] $Global:grid_Tenants.Rows.Add("2",$global:Config.Tenant2.DisplayName,$global:Config.Tenant2.SignInAddress,"****",$global:Config.Tenant2.ModernAuth,$global:Config.Tenant2.ConnectToTeams,$global:Config.Tenant2.ConnectToSkype,$global:Config.Tenant2.ConnectToExchange)
+        [void] $Global:grid_Tenants.Rows.Add("3",$global:Config.Tenant3.DisplayName,$global:Config.Tenant3.SignInAddress,"****",$global:Config.Tenant3.ModernAuth,$global:Config.Tenant3.ConnectToTeams,$global:Config.Tenant3.ConnectToSkype,$global:Config.Tenant3.ConnectToExchange)
+        [void] $Global:grid_Tenants.Rows.Add("4",$global:Config.Tenant4.DisplayName,$global:Config.Tenant4.SignInAddress,"****",$global:Config.Tenant4.ModernAuth,$global:Config.Tenant4.ConnectToTeams,$global:Config.Tenant4.ConnectToSkype,$global:Config.Tenant4.ConnectToExchange)
+        [void] $Global:grid_Tenants.Rows.Add("5",$global:Config.Tenant5.DisplayName,$global:Config.Tenant5.SignInAddress,"****",$global:Config.Tenant5.ModernAuth,$global:Config.Tenant5.ConnectToTeams,$global:Config.Tenant5.ConnectToSkype,$global:Config.Tenant5.ConnectToExchange)
+        [void] $Global:grid_Tenants.Rows.Add("6",$global:Config.Tenant6.DisplayName,$global:Config.Tenant6.SignInAddress,"****",$global:Config.Tenant6.ModernAuth,$global:Config.Tenant6.ConnectToTeams,$global:Config.Tenant6.ConnectToSkype,$global:Config.Tenant6.ConnectToExchange)
+        [void] $Global:grid_Tenants.Rows.Add("7",$global:Config.Tenant7.DisplayName,$global:Config.Tenant7.SignInAddress,"****",$global:Config.Tenant7.ModernAuth,$global:Config.Tenant7.ConnectToTeams,$global:Config.Tenant7.ConnectToSkype,$global:Config.Tenant7.ConnectToExchange)
+        [void] $Global:grid_Tenants.Rows.Add("8",$global:Config.Tenant8.DisplayName,$global:Config.Tenant8.SignInAddress,"****",$global:Config.Tenant8.ModernAuth,$global:Config.Tenant8.ConnectToTeams,$global:Config.Tenant8.ConnectToSkype,$global:Config.Tenant8.ConnectToExchange)
+        [void] $Global:grid_Tenants.Rows.Add("9",$global:Config.Tenant9.DisplayName,$global:Config.Tenant9.SignInAddress,"****",$global:Config.Tenant9.ModernAuth,$global:Config.Tenant9.ConnectToTeams,$global:Config.Tenant9.ConnectToSkype,$global:Config.Tenant9.ConnectToExchange)
+        [void] $Global:grid_Tenants.Rows.Add("10",$global:Config.Tenant10.DisplayName,$global:Config.Tenant10.SignInAddress,"****",$global:Config.Tenant10.ModernAuth,$global:Config.Tenant10.ConnectToTeams,$global:Config.Tenant10.ConnectToSkype,$global:Config.Tenant10.ConnectToExchange)
+        }
     }
   Catch {
     Write-Log -component $function -Message "Error reading Config or updating GUI, Loading Defaults" -severity 3
@@ -627,12 +633,15 @@ Function Connect-BsO365Tenant {
 
   Write-Log -component $Function -Message "Called to connect to Tenant $tenant" -severity 1
 
-  #load the relevant stuff in the new enviroment
-  Import-BsGuiElements
-  Read-BsConfigFile
+  #load the relevant stuff for the ISE enviroment
+  If ($PSISE) {
+    Import-BsGuiElements
+    #Clean up any stale sessions (we shouldnt have any, but whatever)
+    Get-PSSession | Remove-PSSession
+    }
 
-  #Clean up any stale sessions (we shouldnt have any, but whatever)
-  Get-PSSession | Remove-PSSession
+  #Import the Config file so we have data  
+  Read-BsConfigFile
 
   #change config based on tenant
   switch ($Tenant)
@@ -1126,46 +1135,54 @@ Function Hide-BsGuiElements {
 }
 
 Function Start-BounShell {
+  $function = 'Start-BounShell'
   #Allows us to seperate all the "onetime" run objects incase we get dot sourced.
-  Write-Log -component "Script Block" -Message "Script executed from $PSScriptRoot" -severity 1
-  Write-Log -component "Startup" -Message "Loading BounShell..." -severity 2
+  Write-Log -component $function -Message "Script executed from $PSScriptRoot" -severity 1
+  Write-Log -component $function -Message "Loading BounShell..." -severity 2
 
+  #Check we are actually in the ISE
+  If(!$PSISE) 
+  {   
+    Write-Log -component $function -Message 'Could not locate $PSISE Variable' -severity 3
+    Write-Log -component $function -Message 'Sorry, BounShell is designed to be run from the PowerShell ISE' -severity 2
+    Write-Log -component $function -Message 'You can however connect to a pre-configured tenant manually using the cmdlet' -severity 2
+    Write-Log -component $function -Message 'PS> Connect-BsO365Tenant -Tenant 1'  -severity 2
+    Write-Log -component $function -Message 'This will connect to the Tenant stored in slot 1 in the current context'  -severity 2
+    Return #Yes I know Return sucks, but I think its better than Throw.
+    
+  }
 
   #Load the Gui Elements
   Import-BsGuiElements
-  
   #check for script update
-  #if ($SkipUpdateCheck -eq $false) {Get-ScriptUpdate} #todo enable update checking
+  if ($SkipUpdateCheck -eq $false) {Get-ScriptUpdate} #todo enable update checking
 
   #check for config file then load the default
 
   #Check for and load the config file if present
   If(Test-Path $global:ConfigFilePath) 
   {   
-    Write-Log -component "Config" -Message "Found $ConfigFilePath, loading..." -severity 1
+    Write-Log -component $function -Message "Found $ConfigFilePath, loading..." -severity 1
     Read-BsConfigFile
   }
 
   Else {
-    Write-Log -component "Config" -Message "Could not locate $ConfigFilePath, Using Defaults" -severity 3
+    Write-Log -component $function -Message "Could not locate $ConfigFilePath, Using Defaults" -severity 3
     #If there is no config file. Load a default
     Import-BsDefaultConfig
 
-    Write-Log -component "Config" -Message "As we didnt find a config file we will assume this is a first run." -severity 3
-    Write-Log -component "Config" -Message "Thus we will remind you that while all care is taken to store your credentials in a safe manner, I cannot be held responsible for any data breaches" -severity 3
-    Write-Log -component "Config" -Message "If someone was to get a hold of your BounShell.xml AND your user profile private encryption key its possible to reverse engineer stored credentials" -severity 3
-    Write-Log -component "Config" -Message "Seriously, Whilst the password store is encrypted, its not perfect!" -severity 3
+    Write-Log -component $function -Message "As we didnt find a config file we will assume this is a first run." -severity 3
+    Write-Log -component $function -Message "Thus we will remind you that while all care is taken to store your credentials in a safe manner, I cannot be held responsible for any data breaches" -severity 3
+    Write-Log -component $function -Message "If someone was to get a hold of your BounShell.xml AND your user profile private encryption key its possible to reverse engineer stored credentials" -severity 3
+    Write-Log -component $function -Message "Seriously, Whilst the password store is encrypted, its not perfect!" -severity 3
   }
 
   #Check for Management Tools
   #Test-ManagementTools #todo fix
   
-  #Make everything available to ourselves.
-  #. "$PSScriptRoot.\Start-BounShell.ps1"
-  
   #Now Create the Objects in the ISE
   Update-BsAddonMenu
-
+  Write-Log -component $function -Message "BounShell Loaded" -severity 2
 }
 
 #now we export the relevant stuff
