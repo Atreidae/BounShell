@@ -1,6 +1,6 @@
 # BounShell
 
-This software is *NOT* ready for production use.. at all
+This software is *NOT* ready for production use.. its Beta and you totally run it at your own risk
 
 As fo writing this readme it's now a PS Module.
 
@@ -16,6 +16,20 @@ And add the following line
 Once PowerShell knows where to find the module.. you can start the tool with "Start-BounShell" from within the PowerShell ISE
 
 I'll add more doco here soon.
+
+
+
+##Initial Setup.
+ATM this tool is mainly designed for the ISE and thus all of it's configuration takes place there.
+Start up the ISE and run **Start-BounShell** this will load the module into memory and add the options to the Add-Ons menu
+Now in the ISE Add-Ons menu navigate to BounShell > Settings...
+
+Fill in the details for your tenants as appropriate hit **Save Config** and close the window.
+
+You can now connect to any of the specified tenants by navigating to the Add-On's menu > BounShell > Tenant Name
+
+
+
 
 
 ## Troubleshooting Module installation and loading.
