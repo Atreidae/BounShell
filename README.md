@@ -11,7 +11,7 @@ Simplest way to do the latter is from and admin PS prompt run
 
 And add the following line
 
-**$env:PSModulePath = $env:PSModulePath + ";c:\github\" #The bounshell folder lives in here**
+**$env:PSModulePath = $env:PSModulePath + ";c:\github\\" #The bounshell folder lives in here**
 
 Once PowerShell knows where to find the module.. you can start the tool with "Start-BounShell" from within the PowerShell ISE
 
