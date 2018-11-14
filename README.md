@@ -1,6 +1,7 @@
 # BounShell
 
 This software is *NOT* ready for production use.. its Beta and you totally run it at your own risk
+**The final version will hopefully be delivered by the PS gallery. So none of this faffing about will be required**
 
 As fo writing this readme it's now a PS Module.
 
