@@ -9,15 +9,16 @@
     
     .NOTES
 
-    Version      	        : 0.2
-    Date			        : 5/11/2018
+    Version      	        : 0.5
+    Date			        : 29/12/2018
     Lync Version		    : Tested against Skype4B 2015
     Author    			    : James Arber
     Header stolen from      : Greig Sheridan who stole it from Pat Richard's amazing "Get-CsConnections.ps1"
+    Special Thanks to       : My Beta Testers. Grieg Sheridan, Pat Richard and Justin O'Meara
 
     
 
-    :v1.0: Initial Release
+    :v0.5: Beta Release
 
     .LINK
     https://www.skype4badmin.com
@@ -44,7 +45,7 @@ param(
 [Net.ServicePointManager]::SecurityProtocol = 'tls12, tls11, tls'
 $StartTime                  =  Get-Date
 $VerbosePreference          =  "SilentlyContinue" #TODO
-[float]$ScriptVersion       =  '0.3'
+[float]$ScriptVersion       =  '0.4'
 [string]$GithubRepo         =  'BounShell' ##todo
 [string]$GithubBranch       =  'devel' #todo
 [string]$BlogPost           =  'http://www.skype4badmin.com/BounShell/' #todo
@@ -174,6 +175,7 @@ Function Get-IEProxy {
 }
 
 Function Get-ScriptUpdate {
+
 
   $Function= 'Get-ScriptUpdate'
   Write-Log -component $function -Message "Checking for Script Update" -severity 1
@@ -880,6 +882,8 @@ Function Connect-BsO365Tenant {
               $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
             } 
             Catch {
+              $ErrorMessage = $_.Exception.Message
+              Write-log -Message $ErrorMessage -Severity 3 -Component $Function
               Write-log -Message 'Error connecting to Exchange Online' -Severity 3 -Component $Function
             }
           }
@@ -894,6 +898,8 @@ Function Connect-BsO365Tenant {
 
             } 
             Catch {
+              $ErrorMessage = $_.Exception.Messag
+              Write-log -Message $ErrorMessage -Severity 3 -Component $Function 
               Write-log -Message 'Error connecting to Skype4B Online' -Severity 3 -Component $Function
             }
           }
@@ -907,6 +913,8 @@ Function Connect-BsO365Tenant {
 
             } 
             Catch {
+              $ErrorMessage = $_.Exception.Message
+              Write-log -Message $ErrorMessage -Severity 3 -Component $Function 
               Write-log -Message 'Error connecting to Microsoft Teams' -Severity 3 -Component $Function
             }
           }
@@ -920,6 +928,8 @@ Function Connect-BsO365Tenant {
 
             } 
             Catch {
+              $ErrorMessage = $_.Exception.Message
+              Write-log -Message $ErrorMessage -Severity 3 -Component $Function 
               Write-log -Message 'Error connecting to Sharepoint Online' -Severity 3 -Component $Function
             }
           }
@@ -934,6 +944,8 @@ Function Connect-BsO365Tenant {
 
             } 
             Catch {
+              $ErrorMessage = $_.Exception.Message
+              Write-log -Message $ErrorMessage -Severity 3 -Component $Function 
               Write-log -Message 'Error connecting to Azure AD' -Severity 3 -Component $Function
             }
           }
@@ -947,6 +959,8 @@ Function Connect-BsO365Tenant {
 
             } 
             Catch {
+              $ErrorMessage = $_.Exception.Message
+              Write-log -Message $ErrorMessage -Severity 3 -Component $Function 
               Write-log -Message 'Error connecting to Office 365 Compliance Centre' -Severity 3 -Component $Function
             }
           }
