@@ -908,7 +908,7 @@ Function Connect-BsO365Tenant {
               Write-Log -Message "Connecting to Microsoft Teams" -Severity 2 -Component $Function
               $TeamsSession = (Connect-MicrosoftTeams -Credential $pscred)
               $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
-              Import-Module (Import-PSSession -Session $TeamsSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
+              #No need to import the session. Import-Module (Import-PSSession -Session $TeamsSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
               $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
 
             } 
