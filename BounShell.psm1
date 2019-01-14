@@ -644,7 +644,7 @@ Function Connect-BsO365Tenant {
 
   #Import the Config file so we have data  
   Read-BsConfigFile
-
+#region tenant switch
   #change config based on tenant
   switch ($Tenant)
       {
@@ -851,13 +851,37 @@ Function Connect-BsO365Tenant {
         
     }
 
-
+#endregion tenant switch
 
   If ($ModernAuth) {
       #If we are dealing with modern auth we need to convert the password back to an insecure string do that here
+      Write-host "Modern Auth is a Seriously Beta feature.... Passwords are placed into the clipboard!" #Todo. Proof of concept only!
       $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($ModernAuthPassword)
       $UnsecurePassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
-      Write-host "Password is $UnsecurePassword" #Todo. Proof of concept only!
+
+      Write-host "Username is $ModernAuthUsername Password is $UnsecurePassword" 
+
+
+
+
+          If ($ConnectToTeams) { #todo Everything
+            Try {
+            # So Now we need to kick off a new window that waits for the clipboard events
+
+              Write-Log -Message "Connecting to Microsoft Teams" -Severity 2 -Component $Function
+              Start-process powershell -ArgumentList "-noexit -command 'Watch-BsCredentials -ModernAuthUsername $ModernAuthUsername -UnsecurePassword $ModernAuthPassword'"
+              $TeamsSession = (Connect-MicrosoftTeams)
+              $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+              #No need to import the session. Import-Module (Import-PSSession -Session $TeamsSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
+              $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+
+            } 
+            Catch {
+              $ErrorMessage = $_.Exception.Message
+              Write-log -Message $ErrorMessage -Severity 3 -Component $Function 
+              Write-log -Message 'Error connecting to Microsoft Teams' -Severity 3 -Component $Function
+            }
+          }
       }
 
 #region NoModern
@@ -903,7 +927,7 @@ Function Connect-BsO365Tenant {
               Write-log -Message 'Error connecting to Skype4B Online' -Severity 3 -Component $Function
             }
           }
-    If ($ConnectToTeams) { #todo Everything
+    If ($ConnectToTeams) {
             Try {
               Write-Log -Message "Connecting to Microsoft Teams" -Severity 2 -Component $Function
               $TeamsSession = (Connect-MicrosoftTeams -Credential $pscred)
@@ -1085,7 +1109,7 @@ Function Import-BsGuiElements {
   #
   $Global:btn_CancelConfig.BackColor = [System.Drawing.Color]::White
   $Global:btn_CancelConfig.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
-  $Global:btn_CancelConfig.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+  $Global:btn_CancelConfig.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Pixel,([System.Byte][System.Byte]0)))
   $Global:btn_CancelConfig.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]8)),([System.Int32]([System.Byte][System.Byte]116)),([System.Int32]([System.Byte][System.Byte]170)))
 
   $Global:btn_CancelConfig.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]821,[System.Int32]368))
@@ -1100,7 +1124,7 @@ Function Import-BsGuiElements {
   #
   $Global:Btn_ReloadConfig.BackColor = [System.Drawing.Color]::White
   $Global:Btn_ReloadConfig.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
-  $Global:Btn_ReloadConfig.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+  $Global:Btn_ReloadConfig.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Pixel,([System.Byte][System.Byte]0)))
   $Global:Btn_ReloadConfig.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]8)),([System.Int32]([System.Byte][System.Byte]116)),([System.Int32]([System.Byte][System.Byte]170)))
 
   $Global:Btn_ReloadConfig.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]589,[System.Int32]368))
@@ -1115,7 +1139,7 @@ Function Import-BsGuiElements {
   #
   $Global:Btn_SaveConfig.BackColor = [System.Drawing.Color]::White
   $Global:Btn_SaveConfig.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
-  $Global:Btn_SaveConfig.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+  $Global:Btn_SaveConfig.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Pixel,([System.Byte][System.Byte]0)))
   $Global:Btn_SaveConfig.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]8)),([System.Int32]([System.Byte][System.Byte]116)),([System.Int32]([System.Byte][System.Byte]170)))
 
   $Global:Btn_SaveConfig.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]705,[System.Int32]368))
@@ -1147,7 +1171,7 @@ Function Import-BsGuiElements {
   $Global:grid_Tenants.AllowUserToDeleteRows = $false
   $Global:dataGridViewCellStyle1.Alignment = [System.Windows.Forms.DataGridViewContentAlignment]::MiddleLeft
   $Global:dataGridViewCellStyle1.BackColor = [System.Drawing.SystemColors]::Control
-  $Global:dataGridViewCellStyle1.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Regular,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+  $Global:dataGridViewCellStyle1.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Regular,[System.Drawing.GraphicsUnit]::Pixel,([System.Byte][System.Byte]0)))
   $Global:dataGridViewCellStyle1.ForeColor = [System.Drawing.SystemColors]::WindowText
   $Global:dataGridViewCellStyle1.SelectionBackColor = [System.Drawing.SystemColors]::Highlight
   $Global:dataGridViewCellStyle1.SelectionForeColor = [System.Drawing.SystemColors]::HighlightText
@@ -1157,7 +1181,7 @@ Function Import-BsGuiElements {
   $Global:grid_Tenants.Columns.AddRange($Global:Tenant_ID,$Global:Tenant_DisplayName,$Global:Tenant_Email,$Global:Tenant_Credentials,$Global:Tenant_ModernAuth,$Global:Tenant_Teams,$Global:Tenant_Skype,$Global:Tenant_Exchange)
   $Global:dataGridViewCellStyle2.Alignment = [System.Windows.Forms.DataGridViewContentAlignment]::MiddleLeft
   $Global:dataGridViewCellStyle2.BackColor = [System.Drawing.SystemColors]::Window
-  $Global:dataGridViewCellStyle2.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Regular,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+  $Global:dataGridViewCellStyle2.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Regular,[System.Drawing.GraphicsUnit]::Pixel,([System.Byte][System.Byte]0)))
   $Global:dataGridViewCellStyle2.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]8)),([System.Int32]([System.Byte][System.Byte]116)),([System.Int32]([System.Byte][System.Byte]170)))
 
   $Global:dataGridViewCellStyle2.SelectionBackColor = [System.Drawing.SystemColors]::Highlight
@@ -1168,7 +1192,7 @@ Function Import-BsGuiElements {
   $Global:grid_Tenants.Name = [System.String]'grid_Tenants'
   $Global:dataGridViewCellStyle3.Alignment = [System.Windows.Forms.DataGridViewContentAlignment]::MiddleLeft
   $Global:dataGridViewCellStyle3.BackColor = [System.Drawing.SystemColors]::Control
-  $Global:dataGridViewCellStyle3.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Regular,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+  $Global:dataGridViewCellStyle3.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Regular,[System.Drawing.GraphicsUnit]::Pixel,([System.Byte][System.Byte]0)))
   $Global:dataGridViewCellStyle3.ForeColor = [System.Drawing.SystemColors]::WindowText
   $Global:dataGridViewCellStyle3.SelectionBackColor = [System.Drawing.SystemColors]::Highlight
   $Global:dataGridViewCellStyle3.SelectionForeColor = [System.Drawing.SystemColors]::HighlightText
@@ -1182,7 +1206,7 @@ Function Import-BsGuiElements {
   #
   $Global:Btn_Default.BackColor = [System.Drawing.Color]::White
   $Global:Btn_Default.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
-  $Global:Btn_Default.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
+  $Global:Btn_Default.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Pixel,([System.Byte][System.Byte]0)))
   $Global:Btn_Default.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]8)),([System.Int32]([System.Byte][System.Byte]116)),([System.Int32]([System.Byte][System.Byte]170)))
 
   $Global:Btn_Default.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]473,[System.Int32]368))
@@ -1368,6 +1392,84 @@ Function Start-BounShell {
   Write-Log -component $function -Message "BounShell Loaded" -severity 2
 }
 
+Function Watch-BsCredentials {
+<#
+      .SYNOPSIS
+      Semi-Secure method of dealing with modern auth
+
+      .DESCRIPTION
+      Places the credential username into the clipboard and waits for a "Ctrl+v" press. Then does the same with the user password
+      on the second paste, we fill the clipboard with crap to try and keep memory "somewhat" clean
+        
+      .PARAMETER ModernAuthUsername
+      The username to stuff into the clipboard
+
+      .PARAMETER UnsecurePassword
+      The password to stuff into the clipboard
+
+      .EXAMPLE
+      Watch-BsCredentials -ModernAuthUsername "joe@fabrikam" -UnsecurePassword "Password"
+      Places joe@fabrikam in the clipboard. waits for a keypress, pastes the password, waits for a keypress and clears the clipboard
+
+      .NOTES
+      N/A
+
+      .LINK
+      http://www.skype4badmin.com
+
+      .INPUTS
+      This function does not accept pipelined input
+
+      .OUTPUTS
+      This function does not create pipelined output
+  #>
+
+  [CmdletBinding()]
+  PARAM(
+    $ModernAuthUsername,
+    $UnsecurePassword
+  )
+  [string]$Function = 'Watch-BsCredentials'
+  Write-Log -component $Function -Message "Called to connect to $ModernAuthUsername" -severity 1
+  # Load the API we need for Keypresses
+  $signature = @'
+    [DllImport("user32.dll", CharSet=CharSet.Auto, ExactSpelling=true)] 
+    public static extern short GetAsyncKeyState(int virtualKeyCode); 
+'@
+
+    # load signatures and make members available
+    $API = Add-Type -MemberDefinition $signature -Name 'Keypress' -Namespace API -PassThru
+    
+    # define that we are waiting for 'v' keypress
+    $waitFor = 'v'
+    $ascii = [byte][char]$waitFor.ToUpper()
+
+    Set-Clipboard -Value $ModernAuthUsername
+    Write-Log -component $Function -Message "$ModernAuthUsername placed into Clipboard" -severity 1
+    Write-Log -component $Function -Message "Press 'Ctrl+v' to paste the username $ModernAuthUsername in the modern auth window" -severity 3
+
+
+    do 
+    {
+        Start-Sleep -Milliseconds 40
+    } until ($API::GetAsyncKeyState($ascii) -eq -32767)
+
+    Set-Clipboard -Value $UnsecurePassword
+    Write-Log -component $Function -Message "Password placed into Clipboard" -severity 1
+    Write-Log -component $Function -Message "Press 'Ctrl+v' to paste the password in the modern auth window" -severity 3
+
+     do 
+    {
+        Start-Sleep -Milliseconds 40
+    } until ($API::GetAsyncKeyState($ascii) -eq -32767)
+
+    Set-Clipboard -Value "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaaaaaaaa"
+
+
+
+
+}
+
 #now we export the relevant stuff
 
 Export-ModuleMember Read-BsConfigFile
@@ -1381,3 +1483,4 @@ Export-ModuleMember Import-BsGuiFunctions
 Export-ModuleMember Show-BsGuiElements
 Export-ModuleMember Hide-BsGuiElements
 Export-ModuleMember Start-BounShell
+Export-ModuleMember Watch-BsCredentials
