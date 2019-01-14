@@ -37,3 +37,11 @@ You can now connect to any of the specified tenants by navigating to the Add-On'
 If you receive an error "The term 'start-bounshell' is not recognized as the name of a cmdlet, function, script file, or operable program. " when running "Start-BounShell" or "The specified module 'bounshell' was not loaded because no valid module file was found in any module directory" when you run "Import-Module BounShell"  check your module path is correctly defined in your current session by running $env:PSModulePath and validating that it does indeed contain the folder above the BounShell folder.
 
 You can also check the contents of the all users profile here C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1
+
+
+## Known Issues
+High DPI scaling causes issues with the GUI elements for login credentials. I'm looking into ways to mediate this
+
+## Fork me!
+BounShell is free, open source and licensed under the MIT Licence. Feel free to view the source, fork it, raise issues and submit your improvements via pull requests. You can find on Github:
+https://github.com/Atreidae/BounShell/
