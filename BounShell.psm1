@@ -1,7 +1,7 @@
 ﻿<#
     .SYNOPSIS
 
-    This is a tool to help users manage multiple office 365 tennants
+    This is a tool to help users manage multiple office 365 tenants
 
     .DESCRIPTION
 
@@ -14,7 +14,7 @@
     Lync Version		    : Tested against Skype4B 2015
     Author    			    : James Arber
     Header stolen from      : Greig Sheridan who stole it from Pat Richard's amazing "Get-CsConnections.ps1"
-    Special Thanks to       : My Beta Testers. Grieg Sheridan, Pat Richard and Justin O'Meara
+    Special Thanks to       : My Beta Testers. Greig Sheridan, Pat Richard and Justin O'Meara
 
     
 
@@ -45,7 +45,7 @@ param(
 [Net.ServicePointManager]::SecurityProtocol = 'tls12, tls11, tls'
 $StartTime                  =  Get-Date
 $VerbosePreference          =  "SilentlyContinue" #TODO
-[float]$ScriptVersion       =  '0.4'
+[float]$ScriptVersion       =  '0.5'
 [string]$GithubRepo         =  'BounShell' ##todo
 [string]$GithubBranch       =  'devel' #todo
 [string]$BlogPost           =  'http://www.skype4badmin.com/BounShell/' #todo
