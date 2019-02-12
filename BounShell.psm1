@@ -1,27 +1,35 @@
-﻿<#
+﻿#requires -Version 3.0 -Modules AzureADPreview, Microsoft.PowerShell.Management, MicrosoftTeams, SkypeOnlineConnector
+<#
     .SYNOPSIS
 
     This is a tool to help users manage multiple office 365 tenants
 
     .DESCRIPTION
 
-    Created by James Arber. www.skype4badmin.com
+    Created by James Arber. www.UcMadScientist.com
     
     .NOTES
 
-    Version      	        : 0.5
-    Date			        : 29/12/2018
-    Lync Version		    : Tested against Skype4B 2015
-    Author    			    : James Arber
+    Version      	          : 0.6
+    Date			              : 10/02/2019
+    Lync Version		        : Tested against Skype4B 2015
+    Author    			        : James Arber
     Header stolen from      : Greig Sheridan who stole it from Pat Richard's amazing "Get-CsConnections.ps1"
     Special Thanks to       : My Beta Testers. Greig Sheridan, Pat Richard and Justin O'Meara
 
+    v0.6: Beta Release
     
+    Formating changes
+    Broke up alot of my one-liners to make it easier for others to read/ understand the flow
+    Updated error messages
+    Better code comments
+    Fixed an issue with the Compliance Portal code
+    Now Gluten Free
 
     :v0.5: Beta Release
 
     .LINK
-    https://www.skype4badmin.com
+    https://www.UcMadScientist.com
 
     .KNOWN ISSUES
     Beta, Buggy as all get out.
@@ -33,7 +41,8 @@
 #>
 
 [CmdletBinding(DefaultParametersetName="Common")]
-param(
+param
+(
   [Parameter(Mandatory=$false)] [switch]$SkipUpdateCheck,
   [Parameter(Mandatory=$false)] [String]$ConfigFilePath = $null,
   [Parameter(Mandatory=$false)] [String]$LogFileLocation = $null,
@@ -45,10 +54,10 @@ param(
 [Net.ServicePointManager]::SecurityProtocol = 'tls12, tls11, tls'
 $StartTime                  =  Get-Date
 $VerbosePreference          =  "SilentlyContinue" #TODO
-[float]$ScriptVersion       =  '0.5'
+[float]$ScriptVersion       =  '0.6'
 [string]$GithubRepo         =  'BounShell' ##todo
 [string]$GithubBranch       =  'devel' #todo
-[string]$BlogPost           =  'http://www.skype4badmin.com/BounShell/' #todo
+[string]$BlogPost           =  'https://www.UcMadScientist.com/BounShell/' #todo
 
 #Check to see if paths were specified, Otherwise set defaults
 If (!$LogFileLocation) 
@@ -64,7 +73,8 @@ If (!$ConfigFilePath)
 #endregion config
 
 
-Function Write-Log {
+Function Write-Log
+{
   <#
       .SYNOPSIS
       Function to output messages to the console based on their severity and create log files
@@ -95,7 +105,7 @@ Function Write-Log {
       N/A
 
       .LINK
-      http://www.skype4badmin.com
+      http://www.UcMadScientist.com
 
       .INPUTS
       This function does not accept pipelined input
@@ -104,7 +114,8 @@ Function Write-Log {
       This function does not create pipelined output
   #>
   [CmdletBinding()]
-  PARAM(
+  PARAM
+  (
     [String]$Message,
     [String]$Path = $global:LogFileLocation,
     [int]$Severity = 1,
@@ -114,6 +125,7 @@ Function Write-Log {
   $Date             = Get-Date -Format 'HH:mm:ss'
   $Date2            = Get-Date -Format 'MM-dd-yyyy'
   $MaxLogFileSizeMB = 10
+  
   If(Test-Path -Path $Path)
   {
     if(((Get-ChildItem -Path $Path).length/1MB) -gt $MaxLogFileSizeMB) # Check the size of the log file and archive if over the limit.
@@ -153,54 +165,71 @@ Function Write-Log {
   }
 }
 
-Function Get-IEProxy {
+Function Get-IEProxy
+{
   Write-Host "Info: Checking for proxy settings" -ForegroundColor Green
-  If ( (Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings').ProxyEnable -ne 0) {
+  If ( (Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings').ProxyEnable -ne 0)
+  {
     $proxies = (Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings').proxyServer
-    if ($proxies) {
-      if ($proxies -ilike "*=*") {
+    if ($proxies) 
+    {
+      if ($proxies -ilike "*=*")
+      {
         return $proxies -replace "=", "://" -split (';') | Select-Object -First 1
       }
-      Else {
+      
+      Else 
+      {
         return ('http://{0}' -f $proxies)
       }
     }
-    Else {
+    
+    Else 
+    {
       return $null
     }
   }
-  Else {
+  Else 
+  {
     return $null
   }
 }
 
-Function Get-ScriptUpdate {
-
-
-  $Function= 'Get-ScriptUpdate'
+Function Get-ScriptUpdate 
+{
+  $Function = 'Get-ScriptUpdate'
   Write-Log -component $function -Message "Checking for Script Update" -severity 1
   Write-Log -component $function -Message "Checking for Proxy" -severity 1
   $ProxyURL = Get-IEProxy
-  If ( $ProxyURL) {
+  
+  If ($ProxyURL)
+  
+  {
     Write-Log -component $function -Message "Using proxy address $ProxyURL" -severity 1
   }
-  Else {
+  
+  Else
+  {
     Write-Log -component $function -Message "No proxy setting detected, using direct connection" -severity 1
   }
-	
+
   $GitHubScriptVersion = Invoke-WebRequest https://raw.githubusercontent.com/atreidae/BounShell/devel/version -TimeoutSec 10 -Proxy $ProxyURL #todo change back to master!
-  If ($GitHubScriptVersion.Content.length -eq 0) {
+  
+  If ($GitHubScriptVersion.Content.length -eq 0) 
+  {
+    #Empty data, throw an error
     Write-Log -component $function -Message "Error checking for new version. You can check manualy here" -severity 3
-    Write-Log -component $function -Message "http://www.skype4badmin.com/find-and-test-user-ip-addresses-in-the-skype-location-database" -severity 1 #Todo Update URL
+    Write-Log -component $function -Message $BlogPost -severity 1 #Todo Update URL
     Write-Log -component $function -Message "Pausing for 5 seconds" -severity 1
     start-sleep 5
   }
-  else { 
-    if ([single]$GitHubScriptVersion.Content -gt [single]$ScriptVersion) {
+  else
+  {
+    #Process the returned data
+    if ([single]$GitHubScriptVersion.Content -gt [single]$ScriptVersion)
+    {
+      #New Version available, #Prompt user to download
       Write-Log -component $function -Message "New Version Available" -severity 3
-      #New Version available
-
-      #Prompt user to download
       $title = "Update Available"
       $message = "an update to this script is available, did you want to download it?"
 
@@ -217,42 +246,49 @@ Function Get-ScriptUpdate {
       switch ($result)
       {
         0 {
+          #User said yes
           Write-Log -component $function -Message "User opted to download update" -severity 1
           Start $BlogPost
           Write-Log -component $function -Message "Exiting Script" -severity 3
           Exit
         }
+        #User said no
         1 {Write-Log -component $function -Message "User opted to skip update" -severity 1
-									
         }
-							
       }
-    }   
-    Else{
+    }
+    
+    #We alreday have the lastest version
+    Else
+    {
       Write-Log -component $function -Message "Script is upto date" -severity 1
     }
-        
   }
-
-
 }
 
-Function Read-BsConfigFile {
+Function Read-BsConfigFile
+{
   $Function= 'Read-BsConfigFile'
   Write-Log -component $function
   Write-Log -component $function -Message "Reading Config file $($global:ConfigFilePath)" -severity 2
-  If(!(Test-Path $global:ConfigFilePath)) {
+  If(!(Test-Path $global:ConfigFilePath)) 
+  
+  {
+    #Cant locate test file, Throw error
     Write-Log -component $function -Message "Could not locate config file!" -severity 3
     Write-Log -component $function -Message "Error reading Config, Loading Defaults" -severity 3
     Import-BsDefaultConfig
   }
-  Else {
+  Else
+  {
+    #Found the config file
     Write-Log -component $function -Message "Found Config file in the specified folder" -severity 1
   }
 
-  Write-Log -component $function -Message "Pulling XML File" -severity 1
+  Write-Log -component $function -Message "Pulling XML data" -severity 1
   [Void](Remove-Variable -Name Config -Scope Script -ErrorAction SilentlyContinue )
-  Try{
+  Try
+  {
     #Load the Config
     $global:Config=@{}
     $global:Config = (Import-CliXml -Path $global:ConfigFilePath)
@@ -261,33 +297,36 @@ Function Read-BsConfigFile {
 
     #Update the Gui options if we are loaded in the ISE
     If($PSISE) 
-        {
+    {
 
-        #Update the PS ISE Addon Menu
-        Update-BsAddonMenu
+      #Update the PS ISE Addon Menu
+      Update-BsAddonMenu
 
-        #Populate with Values
-        [void] $Global:grid_Tenants.Rows.Clear()
-        [void] $Global:grid_Tenants.Rows.Add("1",$global:Config.Tenant1.DisplayName,$global:Config.Tenant1.SignInAddress,"****",$global:Config.Tenant1.ModernAuth,$global:Config.Tenant1.ConnectToTeams,$global:Config.Tenant1.ConnectToSkype,$global:Config.Tenant1.ConnectToExchange)
-        [void] $Global:grid_Tenants.Rows.Add("2",$global:Config.Tenant2.DisplayName,$global:Config.Tenant2.SignInAddress,"****",$global:Config.Tenant2.ModernAuth,$global:Config.Tenant2.ConnectToTeams,$global:Config.Tenant2.ConnectToSkype,$global:Config.Tenant2.ConnectToExchange)
-        [void] $Global:grid_Tenants.Rows.Add("3",$global:Config.Tenant3.DisplayName,$global:Config.Tenant3.SignInAddress,"****",$global:Config.Tenant3.ModernAuth,$global:Config.Tenant3.ConnectToTeams,$global:Config.Tenant3.ConnectToSkype,$global:Config.Tenant3.ConnectToExchange)
-        [void] $Global:grid_Tenants.Rows.Add("4",$global:Config.Tenant4.DisplayName,$global:Config.Tenant4.SignInAddress,"****",$global:Config.Tenant4.ModernAuth,$global:Config.Tenant4.ConnectToTeams,$global:Config.Tenant4.ConnectToSkype,$global:Config.Tenant4.ConnectToExchange)
-        [void] $Global:grid_Tenants.Rows.Add("5",$global:Config.Tenant5.DisplayName,$global:Config.Tenant5.SignInAddress,"****",$global:Config.Tenant5.ModernAuth,$global:Config.Tenant5.ConnectToTeams,$global:Config.Tenant5.ConnectToSkype,$global:Config.Tenant5.ConnectToExchange)
-        [void] $Global:grid_Tenants.Rows.Add("6",$global:Config.Tenant6.DisplayName,$global:Config.Tenant6.SignInAddress,"****",$global:Config.Tenant6.ModernAuth,$global:Config.Tenant6.ConnectToTeams,$global:Config.Tenant6.ConnectToSkype,$global:Config.Tenant6.ConnectToExchange)
-        [void] $Global:grid_Tenants.Rows.Add("7",$global:Config.Tenant7.DisplayName,$global:Config.Tenant7.SignInAddress,"****",$global:Config.Tenant7.ModernAuth,$global:Config.Tenant7.ConnectToTeams,$global:Config.Tenant7.ConnectToSkype,$global:Config.Tenant7.ConnectToExchange)
-        [void] $Global:grid_Tenants.Rows.Add("8",$global:Config.Tenant8.DisplayName,$global:Config.Tenant8.SignInAddress,"****",$global:Config.Tenant8.ModernAuth,$global:Config.Tenant8.ConnectToTeams,$global:Config.Tenant8.ConnectToSkype,$global:Config.Tenant8.ConnectToExchange)
-        [void] $Global:grid_Tenants.Rows.Add("9",$global:Config.Tenant9.DisplayName,$global:Config.Tenant9.SignInAddress,"****",$global:Config.Tenant9.ModernAuth,$global:Config.Tenant9.ConnectToTeams,$global:Config.Tenant9.ConnectToSkype,$global:Config.Tenant9.ConnectToExchange)
-        [void] $Global:grid_Tenants.Rows.Add("10",$global:Config.Tenant10.DisplayName,$global:Config.Tenant10.SignInAddress,"****",$global:Config.Tenant10.ModernAuth,$global:Config.Tenant10.ConnectToTeams,$global:Config.Tenant10.ConnectToSkype,$global:Config.Tenant10.ConnectToExchange)
-        }
+      #Populate with Values
+      [void] $Global:grid_Tenants.Rows.Clear()
+      [void] $Global:grid_Tenants.Rows.Add("1",$global:Config.Tenant1.DisplayName,$global:Config.Tenant1.SignInAddress,"****",$global:Config.Tenant1.ModernAuth,$global:Config.Tenant1.ConnectToTeams,$global:Config.Tenant1.ConnectToSkype,$global:Config.Tenant1.ConnectToExchange)
+      [void] $Global:grid_Tenants.Rows.Add("2",$global:Config.Tenant2.DisplayName,$global:Config.Tenant2.SignInAddress,"****",$global:Config.Tenant2.ModernAuth,$global:Config.Tenant2.ConnectToTeams,$global:Config.Tenant2.ConnectToSkype,$global:Config.Tenant2.ConnectToExchange)
+      [void] $Global:grid_Tenants.Rows.Add("3",$global:Config.Tenant3.DisplayName,$global:Config.Tenant3.SignInAddress,"****",$global:Config.Tenant3.ModernAuth,$global:Config.Tenant3.ConnectToTeams,$global:Config.Tenant3.ConnectToSkype,$global:Config.Tenant3.ConnectToExchange)
+      [void] $Global:grid_Tenants.Rows.Add("4",$global:Config.Tenant4.DisplayName,$global:Config.Tenant4.SignInAddress,"****",$global:Config.Tenant4.ModernAuth,$global:Config.Tenant4.ConnectToTeams,$global:Config.Tenant4.ConnectToSkype,$global:Config.Tenant4.ConnectToExchange)
+      [void] $Global:grid_Tenants.Rows.Add("5",$global:Config.Tenant5.DisplayName,$global:Config.Tenant5.SignInAddress,"****",$global:Config.Tenant5.ModernAuth,$global:Config.Tenant5.ConnectToTeams,$global:Config.Tenant5.ConnectToSkype,$global:Config.Tenant5.ConnectToExchange)
+      [void] $Global:grid_Tenants.Rows.Add("6",$global:Config.Tenant6.DisplayName,$global:Config.Tenant6.SignInAddress,"****",$global:Config.Tenant6.ModernAuth,$global:Config.Tenant6.ConnectToTeams,$global:Config.Tenant6.ConnectToSkype,$global:Config.Tenant6.ConnectToExchange)
+      [void] $Global:grid_Tenants.Rows.Add("7",$global:Config.Tenant7.DisplayName,$global:Config.Tenant7.SignInAddress,"****",$global:Config.Tenant7.ModernAuth,$global:Config.Tenant7.ConnectToTeams,$global:Config.Tenant7.ConnectToSkype,$global:Config.Tenant7.ConnectToExchange)
+      [void] $Global:grid_Tenants.Rows.Add("8",$global:Config.Tenant8.DisplayName,$global:Config.Tenant8.SignInAddress,"****",$global:Config.Tenant8.ModernAuth,$global:Config.Tenant8.ConnectToTeams,$global:Config.Tenant8.ConnectToSkype,$global:Config.Tenant8.ConnectToExchange)
+      [void] $Global:grid_Tenants.Rows.Add("9",$global:Config.Tenant9.DisplayName,$global:Config.Tenant9.SignInAddress,"****",$global:Config.Tenant9.ModernAuth,$global:Config.Tenant9.ConnectToTeams,$global:Config.Tenant9.ConnectToSkype,$global:Config.Tenant9.ConnectToExchange)
+      [void] $Global:grid_Tenants.Rows.Add("10",$global:Config.Tenant10.DisplayName,$global:Config.Tenant10.SignInAddress,"****",$global:Config.Tenant10.ModernAuth,$global:Config.Tenant10.ConnectToTeams,$global:Config.Tenant10.ConnectToSkype,$global:Config.Tenant10.ConnectToExchange)
     }
-  Catch {
+  }
+    
+  Catch
+  {
+    #For some reason we ran into an issue updating variables, throw and error and revert to defaults
     Write-Log -component $function -Message "Error reading Config or updating GUI, Loading Defaults" -severity 3
     Import-BsDefaultConfig
   }
-
 }
 
-Function Write-BsConfigFile {
+Function Write-BsConfigFile
+{
   $function = 'Write-BsConfigFile'
   Write-Log -component $function -Message "Writing Config file" -severity 2
   
@@ -398,26 +437,27 @@ Function Write-BsConfigFile {
 
 
   #Write the XML File
-  Try{
+  Try
+  {
     $global:Config| Export-CliXml -Path "$ENV:UserProfile\BounShell.xml"
     Write-Log -component $function -Message "Config File Saved" -severity 2
   }
-  Catch {
+  Catch 
+  {
     Write-Log -component $function -Message "Error writing Config file" -severity 3
   }
-
-
 }
 
-Function Import-BsDefaultConfig {
+Function Import-BsDefaultConfig 
+{
   #Set Variables to Defaults
   #Remove and re-create the Config Array
-  [Void](Remove-Variable -Name Config -Scope Script -ErrorAction SilentlyContinue )
+  [Void](Remove-Variable -Name Config -Scope Script -ErrorAction SilentlyContinue)
   $global:Config=@{}
   #Populate with Defaults
   [void] $Global:grid_Tenants.Rows.Clear()
   
-  $global:Config.Tenant1 =@{}  
+  $global:Config.Tenant1 =@{}
   $global:Config.Tenant1.DisplayName = "Undefined"
   $global:Config.Tenant1.SignInAddress = "user1@fabrikam.com"
   $global:Config.Tenant1.Credential = "****"
@@ -428,7 +468,7 @@ Function Import-BsDefaultConfig {
   [void] $Global:grid_Tenants.Rows.Add("1",'Undefined','user1@fabrikam.com',"****",$False,$false,$false,$false)
   
   
-  $global:Config.Tenant2 =@{}  
+  $global:Config.Tenant2 =@{}
   $global:Config.Tenant2.DisplayName = "Undefined"
   $global:Config.Tenant2.SignInAddress = "user2@fabrikam.com"
   $global:Config.Tenant2.Credential = "****"
@@ -438,7 +478,7 @@ Function Import-BsDefaultConfig {
   $global:Config.Tenant2.ConnectToExchange = $false
   [void] $Global:grid_Tenants.Rows.Add("2",'Undefined','user2@fabrikam.com',"****",$False,$false,$false,$false)
 
-  $global:Config.Tenant3 =@{}  
+  $global:Config.Tenant3 =@{}
   $global:Config.Tenant3.DisplayName = "Undefined"
   $global:Config.Tenant3.SignInAddress = "user3@fabrikam.com"
   $global:Config.Tenant3.Credential = "****"
@@ -448,7 +488,7 @@ Function Import-BsDefaultConfig {
   $global:Config.Tenant3.ConnectToExchange = $false
   [void] $Global:grid_Tenants.Rows.Add("3",'Undefined','user3@fabrikam.com',"****",$False,$false,$false,$false)
 
-  $global:Config.Tenant4 =@{}  
+  $global:Config.Tenant4 =@{}
   $global:Config.Tenant4.DisplayName = "Undefined"
   $global:Config.Tenant4.SignInAddress = "user4@fabrikam.com"
   $global:Config.Tenant4.Credential = "****"
@@ -458,7 +498,7 @@ Function Import-BsDefaultConfig {
   $global:Config.Tenant4.ConnectToExchange = $false
   [void] $Global:grid_Tenants.Rows.Add("4",'Undefined','user4@fabrikam.com',"****",$False,$false,$false,$false)
 
-  $global:Config.Tenant5 =@{}  
+  $global:Config.Tenant5 =@{}
   $global:Config.Tenant5.DisplayName = "Undefined"
   $global:Config.Tenant5.SignInAddress = "user5@fabrikam.com"
   $global:Config.Tenant5.Credential = "****"
@@ -468,7 +508,7 @@ Function Import-BsDefaultConfig {
   $global:Config.Tenant5.ConnectToExchange = $false
   [void] $Global:grid_Tenants.Rows.Add("5",'Undefined','user5@fabrikam.com',"****",$False,$false,$false,$false)
 
-  $global:Config.Tenant6 =@{}  
+  $global:Config.Tenant6 =@{}
   $global:Config.Tenant6.DisplayName = "Undefined"
   $global:Config.Tenant6.SignInAddress = "user6@fabrikam.com"
   $global:Config.Tenant6.Credential = "****"
@@ -478,7 +518,7 @@ Function Import-BsDefaultConfig {
   $global:Config.Tenant6.ConnectToExchange = $false
   [void] $Global:grid_Tenants.Rows.Add("6",'Undefined','user6@fabrikam.com',"****",$False,$false,$false,$false)
 
-  $global:Config.Tenant7 =@{}  
+  $global:Config.Tenant7 =@{}
   $global:Config.Tenant7.DisplayName = "Undefined"
   $global:Config.Tenant7.SignInAddress = "user@fabrikam.com"
   $global:Config.Tenant7.Credential = "****"
@@ -488,7 +528,7 @@ Function Import-BsDefaultConfig {
   $global:Config.Tenant7.ConnectToExchange = $false
   [void] $Global:grid_Tenants.Rows.Add("7",'Undefined','user7@fabrikam.com',"****",$False,$false,$false,$false)
 
-  $global:Config.Tenant8 =@{}  
+  $global:Config.Tenant8 =@{}
   $global:Config.Tenant8.DisplayName = "Undefined"
   $global:Config.Tenant8.SignInAddress = "user8@fabrikam.com"
   $global:Config.Tenant8.Credential = "****"
@@ -498,7 +538,7 @@ Function Import-BsDefaultConfig {
   $global:Config.Tenant8.ConnectToExchange = $false
   [void] $Global:grid_Tenants.Rows.Add("8",'Undefined','user8@fabrikam.com',"****",$False,$false,$false,$false)
     
-  $global:Config.Tenant9 =@{}  
+  $global:Config.Tenant9 =@{}
   $global:Config.Tenant9.DisplayName = "Undefined"
   $global:Config.Tenant9.SignInAddress = "user@fabrikam.com"
   $global:Config.Tenant9.Credential = "****"
@@ -508,7 +548,7 @@ Function Import-BsDefaultConfig {
   $global:Config.Tenant9.ConnectToExchange = $false
   [void] $Global:grid_Tenants.Rows.Add("9",'Undefined','user9@fabrikam.com',"****",$False,$false,$false,$false)
   
-  $global:Config.Tenant10 =@{}  
+  $global:Config.Tenant10 =@{}
   $global:Config.Tenant10.DisplayName = "Undefined"
   $global:Config.Tenant10.SignInAddress = "user@fabrikam.com"
   $global:Config.Tenant10.Credential = "****"
@@ -517,15 +557,13 @@ Function Import-BsDefaultConfig {
   $global:Config.Tenant10.ConnectToSkype = $false
   $global:Config.Tenant10.ConnectToExchange = $false
   [void] $Global:grid_Tenants.Rows.Add("10",'Undefined','user10@fabrikam.com',"****",$False,$false,$false,$false)
-    
+  
   [Float]$global:Config.ConfigFileVersion = "0.1"
   [string]$global:Config.Description = "BounShell Configuration file. See Skype4BAdmin.com for more information"
-  
-  
-	
 }
 
-Function Invoke-BsNewTenantTab {
+Function Invoke-BsNewTenantTab 
+{
   <#
       .SYNOPSIS
       Function to Open new tab in ISE and call Connect-BsO365Tenant to connect to relevant services
@@ -546,7 +584,7 @@ Function Invoke-BsNewTenantTab {
       N/A
 
       .LINK
-      http://www.skype4badmin.com
+      http://www.UcMadScientist.com
 
       .INPUTS
       This function does not accept pipelined input
@@ -554,45 +592,52 @@ Function Invoke-BsNewTenantTab {
       .OUTPUTS
       This function does not create pipelined output
   #>
-  param(
+  param
+  (
     [Parameter(Mandatory=$true)] [string]$Tabname,
     [Parameter(Mandatory=$true)] [float]$Tenant
-    )    
+  )
   
   $Function= 'Invoke-BsNewTenantTab'
   Write-Log -component $function -Message "Called Invoke-BsNewTenantTab to connect to Tenant $tenant with a Tabname of $tabname" -severity 1 
-  if($tabname -ne 'Undefined') {
-    Try { 
-
-    #kick off a new tab and call it tabname
-    Write-Log -component $function -Message "Opening new ISE tab..." -severity 1 
-    $TabNameTab=$psISE.PowerShellTabs.Add()
-    $TabNameTab.DisplayName = $Tabname
-  
-    #Wait for the tab to wake up
-    Write-Log -component $function -Message "Waiting for tab to become invokable" -severity 1 
+  if($tabname -ne 'Undefined') 
+  {
+    Try
+    {
+      #kick off a new tab and call it tabname
+      Write-Log -component $function -Message "Opening new ISE tab..." -severity 1 
+      $TabNameTab=$psISE.PowerShellTabs.Add()
+      $TabNameTab.DisplayName = $Tabname
+      
+      #Wait for the tab to wake up
+      Write-Log -component $function -Message "Waiting for tab to become invokable" -severity 1 
       Do 
       {sleep -m 100}
       While (!$TabNameTab.CanInvoke)
+      
+      #Kick off the connection
+      Write-Log -component $function -Message "Invoking Command: Connect-BsO365Tenant -Tenant $Tenant" -severity 1
+      $TabNameTab.Invoke("Connect-BsO365Tenant -Tenant $Tenant")
+      
+    }
     
-
-    #Kick off the connection
-    Write-Log -component $function -Message "Invoking Command: Connect-BsO365Tenant -Tenant $Tenant" -severity 1
-    $TabNameTab.Invoke("Connect-BsO365Tenant -Tenant $Tenant")
-    
-  } 
-    Catch {
-    Write-Log -component $function -Message "Failed to open new tab" -severity 3
-  } 
+    Catch
+    {
+      #Something went wrong opening a new tab, probably already a tab with that name open
+      Write-Log -component $function -Message "Failed to open new tab, Is there already a connection open to that tenant?" -severity 3
+    }
   }
-  Else {
-  Write-Log -component $function -Message "Sorry, I cant find a config for Tenant $tenant" -severity 3
+  
+  Else
+  {
+    #Tabname is "undefined", user clicked a tenant thats not confgured yey
+    Write-Log -component $function -Message "Sorry, I cant find a config for Tenant $tenant" -severity 3
   }
-
 }
 
-Function Connect-BsO365Tenant {
-<#
+Function Connect-BsO365Tenant
+{
+  <#
       .SYNOPSIS
       Connects to relevant Office365 services based on the configuration of the tenant we are passed
 
@@ -609,7 +654,7 @@ Function Connect-BsO365Tenant {
       N/A
 
       .LINK
-      http://www.skype4badmin.com
+      http://www.UcMadScientist.com
 
       .INPUTS
       This function does not accept pipelined input
@@ -619,7 +664,8 @@ Function Connect-BsO365Tenant {
   #>
 
   [CmdletBinding()]
-  PARAM(
+  PARAM
+  (
     $Tenant
   )
   [string]$Function = 'Connect-BsO365Tenant'
@@ -632,376 +678,473 @@ Function Connect-BsO365Tenant {
   [bool]$ConnectToCompliance = $false
   $ModernAuthPassword = ConvertTo-SecureString "Foo" -asplaintext -force
   [string]$ModernAuthUsername
-
+  
   Write-Log -component $Function -Message "Called to connect to Tenant $tenant" -severity 1
-
-  #load the relevant stuff for the ISE enviroment
-  If ($PSISE) {
+  
+  #Check to see if we are running in the ISE
+  If ($PSISE)
+  {
+    #load the relevant stuff for the ISE enviroment{
     Import-BsGuiElements
     #Clean up any stale sessions (we shouldnt have any, but whatever)
     Get-PSSession | Remove-PSSession
-    }
+  }
 
   #Import the Config file so we have data  
   Read-BsConfigFile
-#region tenant switch
   #change config based on tenant
   switch ($Tenant)
+  {
+    1 #Tenant 1
+    {
+      #Set Connection flags
+      [bool]$ConnectToTeams = $global:Config.Tenant1.ConnectToTeams
+      [bool]$ConnectToSkype = $global:Config.Tenant1.ConnectToSkype
+      [bool]$ConnectToExchange = $global:Config.Tenant1.ConnectToExchange
+      [bool]$ConnectToSharepoint = $false
+      Write-Log -component $function -Message "Loading $($global:Config.Tenant1.DisplayName) Settings" -severity 2
+      #Check to see if the tenant is configured for modern auth
+      If (!$global:Config.Tenant1.ModernAuth) 
       {
-        1 
-        {
-            #Set Connection flags
-            [bool]$ConnectToTeams = $global:Config.Tenant1.ConnectToTeams
-            [bool]$ConnectToSkype = $global:Config.Tenant1.ConnectToSkype
-            [bool]$ConnectToExchange = $global:Config.Tenant1.ConnectToExchange
-            [bool]$ConnectToSharepoint = $false
-
-            Write-Log -component $function -Message "Loading $($global:Config.Tenant1.DisplayName) Settings" -severity 2
-            If (!$global:Config.Tenant1.ModernAuth) {
-                $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant1.SignInAddress,$global:Config.Tenant1.Credential)
-                }
-            Else{
-                $ModernAuth = $True
-                #Convert the config into something we can work with later
-                $ModernAuthPassword = $global:Config.Tenant1.Credential
-                $ModernAuthUsername = $global:Config.Tenant1.SignInAddress
-                }   
-
-        }
-        2 
-        {
-            #Set Connection flags
-            [bool]$ConnectToTeams = $global:Config.Tenant2.ConnectToTeams
-            [bool]$ConnectToSkype = $global:Config.Tenant2.ConnectToSkype
-            [bool]$ConnectToExchange = $global:Config.Tenant2.ConnectToExchange
-            [bool]$ConnectToSharepoint = $false
-
-            Write-Log -component $function -Message "Loading $($global:Config.Tenant2.DisplayName) Settings" -severity 2
-            If (!$global:Config.Tenant2.ModernAuth) {
-                $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant2.SignInAddress,$global:Config.Tenant2.Credential)
-                }
-            Else{
-                $ModernAuth = $True
-                #Convert the config into something we can work with later
-                $ModernAuthPassword = $global:Config.Tenant2.Credential
-                $ModernAuthUsername = $global:Config.Tenant2.SignInAddress
-                }   
-
-        }
-        3 
-        {
-            #Set Connection flags
-            [bool]$ConnectToTeams = $global:Config.Tenant3.ConnectToTeams
-            [bool]$ConnectToSkype = $global:Config.Tenant3.ConnectToSkype
-            [bool]$ConnectToExchange = $global:Config.Tenant3.ConnectToExchange
-            [bool]$ConnectToSharepoint = $false
-
-            Write-Log -component $function -Message "Loading $($global:Config.Tenant3.DisplayName) Settings" -severity 2
-            If (!$global:Config.Tenant3.ModernAuth) {
-                $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant3.SignInAddress,$global:Config.Tenant3.Credential)
-                }
-            Else{
-                $ModernAuth = $True
-                #Convert the config into something we can work with later
-                $ModernAuthPassword = $global:Config.Tenant3.Credential
-                $ModernAuthUsername = $global:Config.Tenant3.SignInAddress
-                }   
-
-        }
-        4 
-        {
-            #Set Connection flags
-            [bool]$ConnectToTeams = $global:Config.Tenant4.ConnectToTeams
-            [bool]$ConnectToSkype = $global:Config.Tenant4.ConnectToSkype
-            [bool]$ConnectToExchange = $global:Config.Tenant4.ConnectToExchange
-            [bool]$ConnectToSharepoint = $false
-
-            Write-Log -component $function -Message "Loading $($global:Config.Tenant4.DisplayName) Settings" -severity 2
-            If (!$global:Config.Tenant4.ModernAuth) {
-                $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant4.SignInAddress,$global:Config.Tenant4.Credential)
-                }
-            Else{
-                $ModernAuth = $True
-                #Convert the config into something we can work with later
-                $ModernAuthPassword = $global:Config.Tenant4.Credential
-                $ModernAuthUsername = $global:Config.Tenant4.SignInAddress
-                }   
-
-        }
-        5 
-        {
-            #Set Connection flags
-            [bool]$ConnectToTeams = $global:Config.Tenant5.ConnectToTeams
-            [bool]$ConnectToSkype = $global:Config.Tenant5.ConnectToSkype
-            [bool]$ConnectToExchange = $global:Config.Tenant5.ConnectToExchange
-            [bool]$ConnectToSharepoint = $false
-
-            Write-Log -component $function -Message "Loading $($global:Config.Tenant5.DisplayName) Settings" -severity 2
-            If (!$global:Config.Tenant5.ModernAuth) {
-                $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant5.SignInAddress,$global:Config.Tenant5.Credential)
-                }
-            Else{
-                $ModernAuth = $True
-                #Convert the config into something we can work with later
-                $ModernAuthPassword = $global:Config.Tenant5.Credential
-                $ModernAuthUsername = $global:Config.Tenant5.SignInAddress
-                }   
-
-        }
-        6 
-        {
-            #Set Connection flags
-            [bool]$ConnectToTeams = $global:Config.Tenant6.ConnectToTeams
-            [bool]$ConnectToSkype = $global:Config.Tenant6.ConnectToSkype
-            [bool]$ConnectToExchange = $global:Config.Tenant6.ConnectToExchange
-            [bool]$ConnectToSharepoint = $false
-
-            Write-Log -component $function -Message "Loading $($global:Config.Tenant6.DisplayName) Settings" -severity 2
-            If (!$global:Config.Tenant6.ModernAuth) {
-                $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant6.SignInAddress,$global:Config.Tenant6.Credential)
-                }
-            Else{
-                $ModernAuth = $True
-                #Convert the config into something we can work with later
-                $ModernAuthPassword = $global:Config.Tenant6.Credential
-                $ModernAuthUsername = $global:Config.Tenant6.SignInAddress
-                }   
-
-        }
-        7 
-        {
-            #Set Connection flags
-            [bool]$ConnectToTeams = $global:Config.Tenant7.ConnectToTeams
-            [bool]$ConnectToSkype = $global:Config.Tenant7.ConnectToSkype
-            [bool]$ConnectToExchange = $global:Config.Tenant7.ConnectToExchange
-            [bool]$ConnectToSharepoint = $false
-
-            Write-Log -component $function -Message "Loading $($global:Config.Tenant7.DisplayName) Settings" -severity 2
-            If (!$global:Config.Tenant7.ModernAuth) {
-                $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant7.SignInAddress,$global:Config.Tenant7.Credential)
-                }
-            Else{
-                $ModernAuth = $True
-                #Convert the config into something we can work with later
-                $ModernAuthPassword = $global:Config.Tenant7.Credential
-                $ModernAuthUsername = $global:Config.Tenant7.SignInAddress
-                }   
-
-        }
-        8 
-        {
-            #Set Connection flags
-            [bool]$ConnectToTeams = $global:Config.Tenant8.ConnectToTeams
-            [bool]$ConnectToSkype = $global:Config.Tenant8.ConnectToSkype
-            [bool]$ConnectToExchange = $global:Config.Tenant8.ConnectToExchange
-            [bool]$ConnectToSharepoint = $false
-
-            Write-Log -component $function -Message "Loading $($global:Config.Tenant8.DisplayName) Settings" -severity 2
-            If (!$global:Config.Tenant8.ModernAuth) {
-                $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant8.SignInAddress,$global:Config.Tenant8.Credential)
-                }
-            Else{
-                $ModernAuth = $True
-                #Convert the config into something we can work with later
-                $ModernAuthPassword = $global:Config.Tenant8.Credential
-                $ModernAuthUsername = $global:Config.Tenant8.SignInAddress
-                }   
-
-        }
-        9 
-        {
-            #Set Connection flags
-            [bool]$ConnectToTeams = $global:Config.Tenant9.ConnectToTeams
-            [bool]$ConnectToSkype = $global:Config.Tenant9.ConnectToSkype
-            [bool]$ConnectToExchange = $global:Config.Tenant9.ConnectToExchange
-            [bool]$ConnectToSharepoint = $false
-
-            Write-Log -component $function -Message "Loading $($global:Config.Tenant9.DisplayName) Settings" -severity 2
-            If (!$global:Config.Tenant9.ModernAuth) {
-                $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant9.SignInAddress,$global:Config.Tenant9.Credential)
-                }
-            Else{
-                $ModernAuth = $True
-                #Convert the config into something we can work with later
-                $ModernAuthPassword = $global:Config.Tenant9.Credential
-                $ModernAuthUsername = $global:Config.Tenant9.SignInAddress
-                }   
-
-        }
-        10 
-        {
-            #Set Connection flags
-            [bool]$ConnectToTeams = $global:Config.Tenant10.ConnectToTeams
-            [bool]$ConnectToSkype = $global:Config.Tenant10.ConnectToSkype
-            [bool]$ConnectToExchange = $global:Config.Tenant10.ConnectToExchange
-            [bool]$ConnectToSharepoint = $false
-
-            Write-Log -component $function -Message "Loading $($global:Config.Tenant10.DisplayName) Settings" -severity 2
-            If (!$global:Config.Tenant10.ModernAuth) {
-                $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant10.SignInAddress,$global:Config.Tenant10.Credential)
-                }
-            Else{
-                $ModernAuth = $True
-                #Convert the config into something we can work with later
-                $ModernAuthPassword = $global:Config.Tenant10.Credential
-                $ModernAuthUsername = $global:Config.Tenant10.SignInAddress
-                }   
-
-        }
-        
+        #Not using modern auth
+        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant1.SignInAddress,$global:Config.Tenant1.Credential)
+      }
+      Else
+      {
+        #Using modern auth
+        $ModernAuth = $True
+        #Convert the config into something we can work with later
+        $ModernAuthPassword = $global:Config.Tenant1.Credential
+        $ModernAuthUsername = $global:Config.Tenant1.SignInAddress
+      }
     }
-
-#endregion tenant switch
-
-  If ($ModernAuth) {
-      #If we are dealing with modern auth we need to convert the password back to an insecure string do that here
-      Write-host "Modern Auth is a Seriously Beta feature.... Passwords are placed into the clipboard!" #Todo. Proof of concept only!
-      $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($ModernAuthPassword)
-      $UnsecurePassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
-
-      Write-host "Username is $ModernAuthUsername Password is $UnsecurePassword" 
-
-
-
-
-          If ($ConnectToTeams) { #todo Everything
-            Try {
-            # So Now we need to kick off a new window that waits for the clipboard events
-
-              Write-Log -Message "Connecting to Microsoft Teams" -Severity 2 -Component $Function
-              Start-process powershell -ArgumentList "-noexit -command 'Watch-BsCredentials -ModernAuthUsername $ModernAuthUsername -UnsecurePassword $ModernAuthPassword'"
-              $TeamsSession = (Connect-MicrosoftTeams)
-              $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
-              #No need to import the session. Import-Module (Import-PSSession -Session $TeamsSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
-              $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
-
-            } 
-            Catch {
-              $ErrorMessage = $_.Exception.Message
-              Write-log -Message $ErrorMessage -Severity 3 -Component $Function 
-              Write-log -Message 'Error connecting to Microsoft Teams' -Severity 3 -Component $Function
-            }
-          }
+    
+    
+    2 #Tenant 2
+    {
+      #Set Connection flags
+      [bool]$ConnectToTeams = $global:Config.Tenant2.ConnectToTeams
+      [bool]$ConnectToSkype = $global:Config.Tenant2.ConnectToSkype
+      [bool]$ConnectToExchange = $global:Config.Tenant2.ConnectToExchange
+      [bool]$ConnectToSharepoint = $false
+      Write-Log -component $function -Message "Loading $($global:Config.Tenant2.DisplayName) Settings" -severity 2
+      #Check to see if the tenant is configured for modern auth
+      If (!$global:Config.Tenant2.ModernAuth) 
+      {
+        #Not using modern auth
+        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant2.SignInAddress,$global:Config.Tenant2.Credential)
       }
-
-#region NoModern
-  If (!$ModernAuth) { 
-      #See if we got passed creds
-      Write-Log -Message 'Checking for Office365 Credentials' -Severity 1 -Component $Function
-      If ($pscred -eq $null) {
-        Write-Log -Message 'No Office365 credentials Found, Prompting user for creds' -Severity 3 -Component $Function
-      $psCred = Get-Credential}
-      Else{
-        Write-Log -Message "Found Office365 Creds for Username: $($pscred.username)" -Severity 1 -Component $Function
-      
+      Else
+      {
+        #Using modern auth
+        $ModernAuth = $True
+        #Convert the config into something we can work with later
+        $ModernAuthPassword = $global:Config.Tenant2.Credential
+        $ModernAuthUsername = $global:Config.Tenant2.SignInAddress
       }
-
-          If ($ConnectToExchange) {
-            Try {
-              Write-Log -Message "Connecting to Exchange Online" -Severity 2 -Component $Function
-              $O365Session = (New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $pscred -Authentication Basic -AllowRedirection )
-              Write-Log -Message "Importing Session" -Severity 1 -Component $Function
-              $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
-              Import-Module (Import-PSSession -Session $O365Session -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
-              $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
-            } 
-            Catch {
-              $ErrorMessage = $_.Exception.Message
-              Write-log -Message $ErrorMessage -Severity 3 -Component $Function
-              Write-log -Message 'Error connecting to Exchange Online' -Severity 3 -Component $Function
-            }
-          }
-   
-   If ($ConnectToSkype) {
-            Try {
-              Write-Log -Message "Connecting to Skype4B Online" -Severity 2 -Component $Function
-              $S4BOSession = (New-CsOnlineSession -Credential $pscred)
-              $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
-              Import-Module (Import-PSSession -Session $S4BOSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
-              $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
-
-            } 
-            Catch {
-              $ErrorMessage = $_.Exception.Messag
-              Write-log -Message $ErrorMessage -Severity 3 -Component $Function 
-              Write-log -Message 'Error connecting to Skype4B Online' -Severity 3 -Component $Function
-            }
-          }
-    If ($ConnectToTeams) {
-            Try {
-              Write-Log -Message "Connecting to Microsoft Teams" -Severity 2 -Component $Function
-              $TeamsSession = (Connect-MicrosoftTeams -Credential $pscred)
-              $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
-              #No need to import the session. Import-Module (Import-PSSession -Session $TeamsSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
-              $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
-
-            } 
-            Catch {
-              $ErrorMessage = $_.Exception.Message
-              Write-log -Message $ErrorMessage -Severity 3 -Component $Function 
-              Write-log -Message 'Error connecting to Microsoft Teams' -Severity 3 -Component $Function
-            }
-          }
-    If ($ConnectToSharepoint) {
-            Try {
-              Write-Log -Message "Connecting to Sharepoint Online" -Severity 2 -Component $Function
-              $SharepointSession = (Connect-SPOService -Credential $pscred)
-              $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
-              Import-Module (Import-PSSession -Session $SharepointSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
-              $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
-
-            } 
-            Catch {
-              $ErrorMessage = $_.Exception.Message
-              Write-log -Message $ErrorMessage -Severity 3 -Component $Function 
-              Write-log -Message 'Error connecting to Sharepoint Online' -Severity 3 -Component $Function
-            }
-          }
-
-     If ($ConnectToAAD) {
-            Try {
-              Write-Log -Message "Connecting to Azure AD" -Severity 2 -Component $Function
-              $AADSession = (Connect-AzureAD -Credential $pscred)
-              $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
-              Import-Module (Import-PSSession -Session $AADSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
-              $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
-
-            } 
-            Catch {
-              $ErrorMessage = $_.Exception.Message
-              Write-log -Message $ErrorMessage -Severity 3 -Component $Function 
-              Write-log -Message 'Error connecting to Azure AD' -Severity 3 -Component $Function
-            }
-          }
-     If ($ConnectToCompliane) {
-            Try {
-              Write-Log -Message "Connecting to Office 365 Compliance Centre" -Severity 2 -Component $Function
-              $ComplianceSession = (New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.compliance.protection.outlook.com/powershell-liveid/ -Credential $Credential -Authentication Basic -AllowRedirection)
-              $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
-              Import-Module (Import-PSSession -Session $ComplianceSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
-              $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
-
-            } 
-            Catch {
-              $ErrorMessage = $_.Exception.Message
-              Write-log -Message $ErrorMessage -Severity 3 -Component $Function 
-              Write-log -Message 'Error connecting to Office 365 Compliance Centre' -Severity 3 -Component $Function
-            }
-          }
+    }
+    
+    
+    3 #Tenant 3
+    {
+      #Set Connection flags
+      [bool]$ConnectToTeams = $global:Config.Tenant3.ConnectToTeams
+      [bool]$ConnectToSkype = $global:Config.Tenant3.ConnectToSkype
+      [bool]$ConnectToExchange = $global:Config.Tenant3.ConnectToExchange
+      [bool]$ConnectToSharepoint = $false
+      Write-Log -component $function -Message "Loading $($global:Config.Tenant3.DisplayName) Settings" -severity 2
+      #Check to see if the tenant is configured for modern auth
+      If (!$global:Config.Tenant3.ModernAuth) 
+      {
+        #Not using modern auth
+        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant3.SignInAddress,$global:Config.Tenant3.Credential)
+      }
+      Else
+      {
+        #Using modern auth
+        $ModernAuth = $True
+        #Convert the config into something we can work with later
+        $ModernAuthPassword = $global:Config.Tenant3.Credential
+        $ModernAuthUsername = $global:Config.Tenant3.SignInAddress
+      }
+    }
+    
+    
+    4 #Tenant 4
+    {
+      #Set Connection flags
+      [bool]$ConnectToTeams = $global:Config.Tenant4.ConnectToTeams
+      [bool]$ConnectToSkype = $global:Config.Tenant4.ConnectToSkype
+      [bool]$ConnectToExchange = $global:Config.Tenant4.ConnectToExchange
+      [bool]$ConnectToSharepoint = $false
+      Write-Log -component $function -Message "Loading $($global:Config.Tenant4.DisplayName) Settings" -severity 2
+      #Check to see if the tenant is configured for modern auth
+      If (!$global:Config.Tenant4.ModernAuth) 
+      {
+        #Not using modern auth
+        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant4.SignInAddress,$global:Config.Tenant4.Credential)
+      }
+      Else
+      {
+        #Using modern auth
+        $ModernAuth = $True
+        #Convert the config into something we can work with later
+        $ModernAuthPassword = $global:Config.Tenant4.Credential
+        $ModernAuthUsername = $global:Config.Tenant4.SignInAddress
+      }
+    }
+    
+    
+    5 #Tenant 5
+    {
+      #Set Connection flags
+      [bool]$ConnectToTeams = $global:Config.Tenant5.ConnectToTeams
+      [bool]$ConnectToSkype = $global:Config.Tenant5.ConnectToSkype
+      [bool]$ConnectToExchange = $global:Config.Tenant5.ConnectToExchange
+      [bool]$ConnectToSharepoint = $false
+      Write-Log -component $function -Message "Loading $($global:Config.Tenant5.DisplayName) Settings" -severity 2
+      #Check to see if the tenant is configured for modern auth
+      If (!$global:Config.Tenant5.ModernAuth) 
+      {
+        #Not using modern auth
+        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant5.SignInAddress,$global:Config.Tenant5.Credential)
+      }
+      Else
+      {
+        #Using modern auth
+        $ModernAuth = $True
+        #Convert the config into something we can work with later
+        $ModernAuthPassword = $global:Config.Tenant5.Credential
+        $ModernAuthUsername = $global:Config.Tenant5.SignInAddress
+      }
+    }
+    
+    
+    6  #Tenant 6
+    {
+      #Set Connection flags
+      [bool]$ConnectToTeams = $global:Config.Tenant6.ConnectToTeams
+      [bool]$ConnectToSkype = $global:Config.Tenant6.ConnectToSkype
+      [bool]$ConnectToExchange = $global:Config.Tenant6.ConnectToExchange
+      [bool]$ConnectToSharepoint = $false
+      Write-Log -component $function -Message "Loading $($global:Config.Tenant6.DisplayName) Settings" -severity 2
+      #Check to see if the tenant is configured for modern auth
+      If (!$global:Config.Tenant6.ModernAuth) 
+      {
+        #Not using modern auth
+        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant6.SignInAddress,$global:Config.Tenant6.Credential)
+      }
+      Else
+      {
+        #Using modern auth
+        $ModernAuth = $True
+        #Convert the config into something we can work with later
+        $ModernAuthPassword = $global:Config.Tenant6.Credential
+        $ModernAuthUsername = $global:Config.Tenant6.SignInAddress
+      }
+    }
+    
+    
+    7  #Tenant 7
+    {
+      #Set Connection flags
+      [bool]$ConnectToTeams = $global:Config.Tenant7.ConnectToTeams
+      [bool]$ConnectToSkype = $global:Config.Tenant7.ConnectToSkype
+      [bool]$ConnectToExchange = $global:Config.Tenant7.ConnectToExchange
+      [bool]$ConnectToSharepoint = $false
+      Write-Log -component $function -Message "Loading $($global:Config.Tenant7.DisplayName) Settings" -severity 2
+      #Check to see if the tenant is configured for modern auth
+      If (!$global:Config.Tenant7.ModernAuth) 
+      {
+        #Not using modern auth
+        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant7.SignInAddress,$global:Config.Tenant7.Credential)
+      }
+      Else
+      {
+        #Using modern auth
+        $ModernAuth = $True
+        #Convert the config into something we can work with later
+        $ModernAuthPassword = $global:Config.Tenant7.Credential
+        $ModernAuthUsername = $global:Config.Tenant7.SignInAddress
+      }
+    }
+    
+    
+    8  #Tenant 8
+    {
+      #Set Connection flags
+      [bool]$ConnectToTeams = $global:Config.Tenant8.ConnectToTeams
+      [bool]$ConnectToSkype = $global:Config.Tenant8.ConnectToSkype
+      [bool]$ConnectToExchange = $global:Config.Tenant8.ConnectToExchange
+      [bool]$ConnectToSharepoint = $false
+      Write-Log -component $function -Message "Loading $($global:Config.Tenant8.DisplayName) Settings" -severity 2
+      #Check to see if the tenant is configured for modern auth
+      If (!$global:Config.Tenant8.ModernAuth) 
+      {
+        #Not using modern auth
+        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant8.SignInAddress,$global:Config.Tenant8.Credential)
+      }
+      Else
+      {
+        #Using modern auth
+        $ModernAuth = $True
+        #Convert the config into something we can work with later
+        $ModernAuthPassword = $global:Config.Tenant8.Credential
+        $ModernAuthUsername = $global:Config.Tenant8.SignInAddress
+      }
+    }
+    
+    
+    9  #Tenant 9
+    {
+      #Set Connection flags
+      [bool]$ConnectToTeams = $global:Config.Tenant9.ConnectToTeams
+      [bool]$ConnectToSkype = $global:Config.Tenant9.ConnectToSkype
+      [bool]$ConnectToExchange = $global:Config.Tenant9.ConnectToExchange
+      [bool]$ConnectToSharepoint = $false
+      Write-Log -component $function -Message "Loading $($global:Config.Tenant9.DisplayName) Settings" -severity 2
+      #Check to see if the tenant is configured for modern auth
+      If (!$global:Config.Tenant9.ModernAuth) 
+      {
+        #Not using modern auth
+        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant9.SignInAddress,$global:Config.Tenant9.Credential)
+      }
+      Else
+      {
+        #Using modern auth
+        $ModernAuth = $True
+        #Convert the config into something we can work with later
+        $ModernAuthPassword = $global:Config.Tenant9.Credential
+        $ModernAuthUsername = $global:Config.Tenant9.SignInAddress
+      }
+    }
+    
+    
+    10 #Tenant 10
+    {
+      #Set Connection flags
+      [bool]$ConnectToTeams = $global:Config.Tenant10.ConnectToTeams
+      [bool]$ConnectToSkype = $global:Config.Tenant10.ConnectToSkype
+      [bool]$ConnectToExchange = $global:Config.Tenant10.ConnectToExchange
+      [bool]$ConnectToSharepoint = $false
+      Write-Log -component $function -Message "Loading $($global:Config.Tenant10.DisplayName) Settings" -severity 2
+      #Check to see if the tenant is configured for modern auth
+      If (!$global:Config.Tenant10.ModernAuth) 
+      {
+        #Not using modern auth
+        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant10.SignInAddress,$global:Config.Tenant10.Credential)
+      }
+      Else
+      {
+        #Using modern auth
+        $ModernAuth = $True
+        #Convert the config into something we can work with later
+        $ModernAuthPassword = $global:Config.Tenant10.Credential
+        $ModernAuthUsername = $global:Config.Tenant10.SignInAddress
+      }
+    }
+    
+    
   }
 
-#endregion NoModern 
+  #endregion tenant switch
+
+  #check to see if the Modern Auth flag has been set and use the appropriate connection method
+  If ($ModernAuth) 
+  {
+    #As we are dealing with modern auth we need to convert the password back to an insecure string do that here
+    Write-host "Modern Auth is a Seriously Beta feature.... Passwords are placed into the clipboard!" #Todo. Proof of concept only!
+    $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($ModernAuthPassword)
+    $UnsecurePassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+
+    Write-host "Username is $ModernAuthUsername Password is $UnsecurePassword" 
+
+    If ($ConnectToTeams) { #todo Everything
+      Try
+      {
+        # So Now we need to kick off a new window that waits for the clipboard events
+        Write-Log -Message "Connecting to Microsoft Teams" -Severity 2 -Component $Function
+        Start-process powershell -ArgumentList "-noexit -command 'Watch-BsCredentials -ModernAuthUsername $ModernAuthUsername -UnsecurePassword $ModernAuthPassword'"
+        $TeamsSession = (Connect-MicrosoftTeams)
+        $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+        #No need to import the session. Import-Module (Import-PSSession -Session $TeamsSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
+        $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+
+      } 
+      Catch {
+        $ErrorMessage = $_.Exception.Message
+        Write-log -Message $ErrorMessage -Severity 3 -Component $Function 
+        Write-log -Message 'Error connecting to Microsoft Teams' -Severity 3 -Component $Function
+      }
+    }
+  }
+  
+
+
+
+  #region NoModern
+  #If the modern auth flag hasnt been set, we can simply connect to the services using secure credentials
+  If (!$ModernAuth) 
+  {
+    #See if we got passed creds
+    Write-Log -Message 'Checking for Office365 Credentials' -Severity 1 -Component $Function
+    If ($pscred -eq $null) 
+    {
+      #No credentials, prompt user for some
+      Write-Log -Message 'No Office365 credentials Found, Prompting user for creds' -Severity 3 -Component $Function
+      $psCred = Get-Credential
+    }
+    Else
+    {
+      #Found creds, continue
+      Write-Log -Message "Found Office365 Creds for Username: $($pscred.username)" -Severity 1 -Component $Function
+    }
+    
+    #Check for the Exchange connection flag
+    If ($ConnectToExchange)
+    {
+      #Flag is set, connect to Exchange
+      Try
+      {
+        #Exchange connection try block
+        Write-Log -Message "Connecting to Exchange Online" -Severity 2 -Component $Function
+        $O365Session = (New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $pscred -Authentication Basic -AllowRedirection )
+        Write-Log -Message "Importing Session" -Severity 1 -Component $Function
+        $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+        Import-Module (Import-PSSession -Session $O365Session -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
+        $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+      } 
+      Catch 
+      {
+        #We had an issue connecting to Exchange
+        $ErrorMessage = $_.Exception.Message
+        Write-log -Message $ErrorMessage -Severity 3 -Component $Function
+        Write-log -Message 'Error connecting to Exchange Online' -Severity 3 -Component $Function
+      }
+    }
+
+    #Check for the Skype4B connection flag
+    If ($ConnectToSkype) 
+    {
+      #Flag is set, connect to Skype4B
+      Try
+      {
+        #Skype connection try block
+        Write-Log -Message "Connecting to Skype4B Online" -Severity 2 -Component $Function
+        $S4BOSession = (New-CsOnlineSession -Credential $pscred)
+        $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+        Import-Module (Import-PSSession -Session $S4BOSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
+        $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+      } 
+      Catch
+      {
+        #We had an issues connecting to Skype
+        $ErrorMessage = $_.Exception.Messag
+        Write-log -Message $ErrorMessage -Severity 3 -Component $Function 
+        Write-log -Message 'Error connecting to Skype4B Online' -Severity 3 -Component $Function
+      }
+    }
+    
+    #Check for the Teams connection flag
+    If ($ConnectToTeams)
+    {
+      #Flag is set, connect to Teams
+      Try 
+      {
+        #Teams connection try block
+        Write-Log -Message "Connecting to Microsoft Teams" -Severity 2 -Component $Function
+        $TeamsSession = (Connect-MicrosoftTeams -Credential $pscred)
+        $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+        #No need to import the session. Import-Module (Import-PSSession -Session $TeamsSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
+        $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+      } 
+      Catch
+      {
+        #We had an issue connecting to Teams
+        $ErrorMessage = $_.Exception.Message
+        Write-log -Message $ErrorMessage -Severity 3 -Component $Function 
+        Write-log -Message 'Error connecting to Microsoft Teams' -Severity 3 -Component $Function
+      }
+    }
+    
+    #Check for the Sharepoint connection flag
+    If ($ConnectToSharepoint) 
+    {
+      #Flag is set, connect to Sharepoint
+      Try
+      {
+        #Sharepoint connection try block
+        Write-Log -Message "Connecting to Sharepoint Online" -Severity 2 -Component $Function
+        $SharepointSession = (Connect-SPOService -Credential $pscred)
+        $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+        Import-Module (Import-PSSession -Session $SharepointSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
+        $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+      }
+      Catch
+      {
+        #We had an issue connecting to Sharepoint
+        $ErrorMessage = $_.Exception.Message
+        Write-log -Message $ErrorMessage -Severity 3 -Component $Function 
+        Write-log -Message 'Error connecting to Sharepoint Online' -Severity 3 -Component $Function
+      }
+    }
+
+    #Check for the AzureAD connection flag
+    If ($ConnectToAAD) 
+    {
+      #Flag is set, connect to AzureAD
+      Try
+      {
+        #Azure AD try block
+        Write-Log -Message "Connecting to Azure AD" -Severity 2 -Component $Function
+        $AADSession = (Connect-AzureAD -Credential $pscred)
+        $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+        Import-Module (Import-PSSession -Session $AADSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
+        $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+      }
+      Catch
+      {
+        #We had an issue connecting to AzureAD
+        $ErrorMessage = $_.Exception.Message
+        Write-log -Message $ErrorMessage -Severity 3 -Component $Function 
+        Write-log -Message 'Error connecting to Azure AD' -Severity 3 -Component $Function
+      }
+    }
+    
+    #Check for the 365 Compliance Centre flag
+    If ($ConnectToCompliance)
+    {
+      #Flag is set, connect to Compiance Centre
+      Try
+      {
+        Write-Log -Message "Connecting to Office 365 Compliance Centre" -Severity 2 -Component $Function
+        $ComplianceSession = (New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.compliance.protection.outlook.com/powershell-liveid/ -Credential $Credential -Authentication Basic -AllowRedirection)
+        $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+        Import-Module (Import-PSSession -Session $ComplianceSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
+        $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+      }
+      Catch
+      {
+        #We had an issue connecting to the Compliance Centre
+        $ErrorMessage = $_.Exception.Message
+        Write-log -Message $ErrorMessage -Severity 3 -Component $Function 
+        Write-log -Message 'Error connecting to Office 365 Compliance Centre' -Severity 3 -Component $Function
+      }
+    }
+  }
+  #endregion NoModern 
 
 }
 
-Function Update-BsAddonMenu {
+Function Update-BsAddonMenu 
+{
 
  
   #Check to see if we are loaded, if we are cleanup after ourselves
-  if (($psISE.CurrentPowerShellTab.AddOnsMenu.Submenus).displayname -eq "_BounShell") {
+  if (($psISE.CurrentPowerShellTab.AddOnsMenu.Submenus).displayname -eq "_BounShell") 
+  {
     [void]$psISE.CurrentPowerShellTab.AddOnsMenu.Submenus.remove($Global:isemenuitem)
   }
-
 
   #Create Initial Menu Object
   [void]($Global:IseMenuItem = ($psISE.CurrentPowerShellTab.AddOnsMenu.Submenus.Add('_BounShell',$null ,$null)))
@@ -1013,7 +1156,7 @@ Function Update-BsAddonMenu {
 
   #Now add each Tenant
 
-  #For each code in here that adds Tenant 1 through 10
+  #Need to put a for each code in here that adds Tenant 1 through 10
   [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant1.DisplayName)",{Invoke-BsNewTenantTab -tabname $global:Config.Tenant1.DisplayName -Tenant 1}, 'Ctrl+Alt+1'))
   [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant2.DisplayName)",{Invoke-BsNewTenantTab -tabname $global:Config.Tenant2.DisplayName -Tenant 2}, 'Ctrl+Alt+2'))
   [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant3.DisplayName)",{Invoke-BsNewTenantTab -tabname $global:Config.Tenant3.DisplayName -Tenant 3}, 'Ctrl+Alt+3'))
@@ -1023,50 +1166,73 @@ Function Update-BsAddonMenu {
   [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant7.DisplayName)",{Invoke-BsNewTenantTab -tabname $global:Config.Tenant7.DisplayName -Tenant 7}, 'Ctrl+Alt+7'))
   [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant8.DisplayName)",{Invoke-BsNewTenantTab -tabname $global:Config.Tenant8.DisplayName -Tenant 8}, 'Ctrl+Alt+8'))
   [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant9.DisplayName)",{Invoke-BsNewTenantTab -tabname $global:Config.Tenant9.DisplayName -Tenant 9}, 'Ctrl+Alt+9'))
-  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant10.DisplayName)",{Invoke-BsNewTenantTab -tabname $global:Config.Tenant10.DisplayName -Tenant 10}, 'Ctrl+Alt+0'))             
-
-
+  [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant10.DisplayName)",{Invoke-BsNewTenantTab -tabname $global:Config.Tenant10.DisplayName -Tenant 10}, 'Ctrl+Alt+0'))
 }
 
-Function Test-ManagementTools {
+Function Test-ManagementTools
+{
   Write-Log -component "Test-ManagementTools" -Message "Checking for Lync/Skype management tools"
   $CSManagementTools = $false
-  if(!(Get-Module "SkypeForBusiness")) {Import-Module SkypeForBusiness -Verbose:$false}
-  if(!(Get-Module "Lync")) {Import-Module Lync -Verbose:$false}
-  if(Get-Module "SkypeForBusiness") {$ManagementTools = $true}
-  if(Get-Module "Lync") {$ManagementTools = $true}
-  if(!$CSManagementTools) {
-    Write-Log 
-    Write-Log -component "Test-ManagementTools" -Message "Could not locate Lync/Skype4B Management tools" -severity 3 
-    throw  "Could not locate Lync/Skype4B Management tools"
+  If(!(Get-Module "SkypeForBusiness")) 
+  {
+    Import-Module SkypeForBusiness -Verbose:$false
   }
-	
+  If(!(Get-Module "Lync"))
+  {
+    Import-Module Lync -Verbose:$false
+  }
+  If(Get-Module "SkypeForBusiness")
+  {
+    $CSManagementTools = $true
+  }
+  If(Get-Module "Lync")
+  {
+    $CSManagementTools = $true
+  }
+  If(!$CSManagementTools)
+  {
+    Write-Log -component "Test-ManagementTools" -Message "Could not locate Lync/Skype4B Management tools" -severity 3 
+    Throw  "Could not locate Lync/Skype4B Management tools"
+  }
+
   #Check for the AD Management Tools
   $ADManagementTools = $false
-  if(!(Get-Module "ActiveDirectory")) {Import-Module ActiveDirectory -Verbose:$false}
-  if(Get-Module "ActiveDirectory") {$ADManagementTools = $true}
-  if(!$ADManagementTools) {
-    Write-Log 
+  if(!(Get-Module "ActiveDirectory"))
+  {
+    Import-Module ActiveDirectory -Verbose:$false
+  }
+  if(Get-Module "ActiveDirectory") 
+  {
+    $ADManagementTools = $true
+  }
+  if(!$ADManagementTools)
+  {
     Write-Log -component "Test-ManagementTools" -Message "Could not locate Active Directory Management tools" -severity 3
-    throw  "Could not locate Active Directory Management tools"
+    Throw  "Could not locate Active Directory Management tools"
   }
 
   $TeamsManagementTools = $false
-  if(!(Get-Module "MicrosoftTeams")) {Import-Module MicrosoftTeams -Verbose:$false}
-  if(Get-Module "MicrosoftTeams") {$TeamsManagementTools = $true}
-  if(!$TeamsManagementTools) {
-    Write-Log 
+  If(!(Get-Module "MicrosoftTeams"))
+  {
+    Import-Module MicrosoftTeams -Verbose:$false
+  }
+  If(Get-Module "MicrosoftTeams")
+  {
+    $TeamsManagementTools = $true
+  }
+  If(!$TeamsManagementTools)
+  {
     Write-Log -component "Test-CsManagementTools" -Message "Could not locate Teams PowerShell Module" -severity 3 
     Write-Log -component "Test-CsManagementTools" -Message "Run the cmdlet 'Install-Module MicrosoftTeams' to install it" -severity 3 
-      
   }
 }
 
-Function Import-BsGuiElements {
-    #First we need to import the Functions so they exist for the GUI items
-    Import-BsGuiFunctions
+Function Import-BsGuiElements 
+{
+  #First we need to import the Functions so they exist for the GUI items
+  Import-BsGuiFunctions
 
-   #region Gui
+  #region Gui
   [void][System.Reflection.Assembly]::Load('System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a')
   [void][System.Reflection.Assembly]::Load('System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089')
   $Global:SettingsForm = New-Object -TypeName System.Windows.Forms.Form
@@ -1303,45 +1469,53 @@ Function Import-BsGuiElements {
   #endregion Gui
 }
 
-Function Import-BsGuiFunctions {
-    #Gui Cancel button
-    $Global:btn_CancelConfig_Click = {
-        Read-BsConfigFile
-        [void]$Global:SettingsForm.Hide()
-    }
+Function Import-BsGuiFunctions 
+{
+  #Gui Cancel button
+  $Global:btn_CancelConfig_Click =
+  {
+    Read-BsConfigFile
+    [void]$Global:SettingsForm.Hide()
+  }
 
-    #Gui Save Config Button
-    $Global:Btn_SaveConfig_Click = {
-        Write-BsConfigFile
-        Update-BsAddonMenu
-    }
+  #Gui Save Config Button
+  $Global:Btn_SaveConfig_Click =
+  {
+    Write-BsConfigFile
+    Update-BsAddonMenu
+  }
 
-    #Gui Set Defaults Button
-    $Global:Btn_Default_Click = {
-        Import-BsDefaultConfig
-        Update-BsAddonMenu
-    }
+  #Gui Set Defaults Button
+  $Global:Btn_Default_Click =
+  {
+    Import-BsDefaultConfig
+    Update-BsAddonMenu
+  }
 
-    #Gui Button to Reload Config
-    $Global:Btn_ConfigReload_Click = {
-        Read-BsConfigFile
-        Update-BsAddonMenu
-    }
+  #Gui Button to Reload Config
+  $Global:Btn_ConfigReload_Click =
+  {
+    Read-BsConfigFile
+    Update-BsAddonMenu
+  }
 
 
 }
 
-Function Show-BsGuiElements {
+Function Show-BsGuiElements
+{
 
   [void]$Global:SettingsForm.ShowDialog()
 }
 
-Function Hide-BsGuiElements {
+Function Hide-BsGuiElements
+{
 
   [void]$Global:SettingsForm.Hide()
 }
 
-Function Start-BounShell {
+Function Start-BounShell
+{
   $function = 'Start-BounShell'
   #Allows us to seperate all the "onetime" run objects incase we get dot sourced.
   Write-Log -component $function -Message "Script executed from $PSScriptRoot" -severity 1
@@ -1362,18 +1536,22 @@ Function Start-BounShell {
   #Load the Gui Elements
   Import-BsGuiElements
   #check for script update
-  if ($SkipUpdateCheck -eq $false) {Get-ScriptUpdate} #todo enable update checking
+  if ($SkipUpdateCheck -eq $false)
+  {
+    Get-ScriptUpdate
+  } #todo enable update checking
 
   #check for config file then load the default
 
   #Check for and load the config file if present
-  If(Test-Path $global:ConfigFilePath) 
-  {   
+  If(Test-Path $global:ConfigFilePath)
+  {
     Write-Log -component $function -Message "Found $ConfigFilePath, loading..." -severity 1
     Read-BsConfigFile
   }
 
-  Else {
+  Else
+  {
     Write-Log -component $function -Message "Could not locate $ConfigFilePath, Using Defaults" -severity 3
     #If there is no config file. Load a default
     Import-BsDefaultConfig
@@ -1392,8 +1570,9 @@ Function Start-BounShell {
   Write-Log -component $function -Message "BounShell Loaded" -severity 2
 }
 
-Function Watch-BsCredentials {
-<#
+Function Watch-BsCredentials
+{
+  <#
       .SYNOPSIS
       Semi-Secure method of dealing with modern auth
 
@@ -1415,7 +1594,7 @@ Function Watch-BsCredentials {
       N/A
 
       .LINK
-      http://www.skype4badmin.com
+      http://www.UcMadScientist.com
 
       .INPUTS
       This function does not accept pipelined input
@@ -1425,7 +1604,8 @@ Function Watch-BsCredentials {
   #>
 
   [CmdletBinding()]
-  PARAM(
+  PARAM
+  (
     $ModernAuthUsername,
     $UnsecurePassword
   )
@@ -1437,36 +1617,35 @@ Function Watch-BsCredentials {
     public static extern short GetAsyncKeyState(int virtualKeyCode); 
 '@
 
-    # load signatures and make members available
-    $API = Add-Type -MemberDefinition $signature -Name 'Keypress' -Namespace API -PassThru
+  # load signatures and make members available
+  $API = Add-Type -MemberDefinition $signature -Name 'Keypress' -Namespace API -PassThru
     
-    # define that we are waiting for 'v' keypress
-    $waitFor = 'v'
-    $ascii = [byte][char]$waitFor.ToUpper()
+  # define that we are waiting for 'v' keypress
+  $waitFor = 'v'
+  $ascii = [byte][char]$waitFor.ToUpper()
 
-    Set-Clipboard -Value $ModernAuthUsername
-    Write-Log -component $Function -Message "$ModernAuthUsername placed into Clipboard" -severity 1
-    Write-Log -component $Function -Message "Press 'Ctrl+v' to paste the username $ModernAuthUsername in the modern auth window" -severity 3
-
-
-    do 
-    {
-        Start-Sleep -Milliseconds 40
-    } until ($API::GetAsyncKeyState($ascii) -eq -32767)
-
-    Set-Clipboard -Value $UnsecurePassword
-    Write-Log -component $Function -Message "Password placed into Clipboard" -severity 1
-    Write-Log -component $Function -Message "Press 'Ctrl+v' to paste the password in the modern auth window" -severity 3
-
-     do 
-    {
-        Start-Sleep -Milliseconds 40
-    } until ($API::GetAsyncKeyState($ascii) -eq -32767)
-
-    Set-Clipboard -Value "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaaaaaaaa"
+  Set-Clipboard -Value $ModernAuthUsername
+  Write-Log -component $Function -Message "$ModernAuthUsername placed into Clipboard" -severity 1
+  Write-Log -component $Function -Message "Press 'Ctrl+v' to paste the username $ModernAuthUsername in the modern auth window" -severity 3
 
 
+  do 
+  {
+    Start-Sleep -Milliseconds 40
+  }
+  until ($API::GetAsyncKeyState($ascii) -eq -32767)
 
+  Set-Clipboard -Value $UnsecurePassword
+  Write-Log -component $Function -Message "Password placed into Clipboard" -severity 1
+  Write-Log -component $Function -Message "Press 'Ctrl+v' to paste the password in the modern auth window" -severity 3
+
+  do 
+  {
+    Start-Sleep -Milliseconds 40
+  }
+  until ($API::GetAsyncKeyState($ascii) -eq -32767)
+
+  Set-Clipboard -Value "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaaaaaaaa"
 
 }
 
