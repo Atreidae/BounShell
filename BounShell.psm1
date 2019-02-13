@@ -18,7 +18,7 @@
     Special Thanks to       : My Beta Testers. Greig Sheridan, Pat Richard and Justin O'Meara
 
     v0.6: Beta Release
-    
+    Enabled Modern Auth Support
     Formating changes
     Broke up alot of my one-liners to make it easier for others to read/ understand the flow
     Updated error messages
@@ -693,6 +693,7 @@ Function Connect-BsO365Tenant
   #Import the Config file so we have data  
   Read-BsConfigFile
   #change config based on tenant
+  #region tenantswitch
   switch ($Tenant)
   {
     1 #Tenant 1
@@ -947,29 +948,36 @@ Function Connect-BsO365Tenant
     
   }
 
-  #endregion tenant switch
+  #endregion tenantswitch
 
   #check to see if the Modern Auth flag has been set and use the appropriate connection method
   If ($ModernAuth) 
   {
+    Write-host "Modern Auth is a Beta feature...." #Todo.
+    Write-host "Your Username will be copied to the clipboard, Paste it into the Modern Auth Window"
+    Write-host "Once Ctrl+V has been pressed BounShell will copy your password into the clipboard"
+    Write-host "Upon pasting this, BounShell will clear the clipboard and overwrite the memory just incase."
+
     #As we are dealing with modern auth we need to convert the password back to an insecure string do that here
-    Write-host "Modern Auth is a Seriously Beta feature.... Passwords are placed into the clipboard!" #Todo. Proof of concept only!
     $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($ModernAuthPassword)
     $UnsecurePassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+     
 
-    Write-host "Username is $ModernAuthUsername Password is $UnsecurePassword" 
-
-    If ($ConnectToTeams) { #todo Everything
+    If ($ConnectToTeams) {
       Try
       {
         # So Now we need to kick off a new window that waits for the clipboard events
         Write-Log -Message "Connecting to Microsoft Teams" -Severity 2 -Component $Function
-        Start-process powershell -ArgumentList "-noexit -command 'Watch-BsCredentials -ModernAuthUsername $ModernAuthUsername -UnsecurePassword $ModernAuthPassword'"
-        $TeamsSession = (Connect-MicrosoftTeams)
-        $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
-        #No need to import the session. Import-Module (Import-PSSession -Session $TeamsSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
-        $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
-
+        #Create a script block with the expanded variables
+        [String]$cmd = "Watch-BsCredentials -ModernAuthUsername $ModernAuthUsername -UnsecurePassword $UnsecurePassword"
+        [ScriptBlock]$sb = [ScriptBlock]::Create($cmd) 
+        
+        #and now call it
+        Start-process powershell $sb
+        
+        #Now we can invoke the session
+        #$TeamsSession = (Connect-MicrosoftTeams)
+        Connect-MicrosoftTeams
       } 
       Catch {
         $ErrorMessage = $_.Exception.Message
@@ -1481,6 +1489,7 @@ Function Import-BsGuiFunctions
   #Gui Save Config Button
   $Global:Btn_SaveConfig_Click =
   {
+    $Global:btn_CancelConfig.Text = [System.String]'Close'
     Write-BsConfigFile
     Update-BsAddonMenu
   }
@@ -1504,7 +1513,8 @@ Function Import-BsGuiFunctions
 
 Function Show-BsGuiElements
 {
-
+  #Reset the cancel button
+  $Global:btn_CancelConfig.Text = [System.String]'Cancel'
   [void]$Global:SettingsForm.ShowDialog()
 }
 
@@ -1572,36 +1582,7 @@ Function Start-BounShell
 
 Function Watch-BsCredentials
 {
-  <#
-      .SYNOPSIS
-      Semi-Secure method of dealing with modern auth
-
-      .DESCRIPTION
-      Places the credential username into the clipboard and waits for a "Ctrl+v" press. Then does the same with the user password
-      on the second paste, we fill the clipboard with crap to try and keep memory "somewhat" clean
-        
-      .PARAMETER ModernAuthUsername
-      The username to stuff into the clipboard
-
-      .PARAMETER UnsecurePassword
-      The password to stuff into the clipboard
-
-      .EXAMPLE
-      Watch-BsCredentials -ModernAuthUsername "joe@fabrikam" -UnsecurePassword "Password"
-      Places joe@fabrikam in the clipboard. waits for a keypress, pastes the password, waits for a keypress and clears the clipboard
-
-      .NOTES
-      N/A
-
-      .LINK
-      http://www.UcMadScientist.com
-
-      .INPUTS
-      This function does not accept pipelined input
-
-      .OUTPUTS
-      This function does not create pipelined output
-  #>
+  
 
   [CmdletBinding()]
   PARAM
@@ -1610,7 +1591,13 @@ Function Watch-BsCredentials
     $UnsecurePassword
   )
   [string]$Function = 'Watch-BsCredentials'
-  Write-Log -component $Function -Message "Called to connect to $ModernAuthUsername" -severity 1
+  If (!$ModernAuthUsername)
+  {
+    Write-Log -component $Function -Message "This Cmdlet is for BoundShell's internal use only. Please use 'Start-Bounshell' to launch the tool" -severity 3
+    pause
+    return
+  }
+  Write-Log -component $Function -Message "Called to connect to $ModernAuthUsername" -severity 3
   # Load the API we need for Keypresses
   $signature = @'
     [DllImport("user32.dll", CharSet=CharSet.Auto, ExactSpelling=true)] 
