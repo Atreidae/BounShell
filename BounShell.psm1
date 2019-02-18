@@ -1,5 +1,4 @@
-﻿#requires -Version 3.0 -Modules AzureADPreview, Microsoft.PowerShell.Management, MicrosoftTeams, SkypeOnlineConnector
-<#
+﻿<#
     .SYNOPSIS
 
     This is a tool to help users manage multiple office 365 tenants
@@ -10,12 +9,12 @@
     
     .NOTES
 
-    Version      	          : 0.6
-    Date			              : 10/02/2019
-    Lync Version		        : Tested against Skype4B 2015
-    Author    			        : James Arber
-    Header stolen from      : Greig Sheridan who stole it from Pat Richard's amazing "Get-CsConnections.ps1"
-    Special Thanks to       : My Beta Testers. Greig Sheridan, Pat Richard and Justin O'Meara
+    Version                : 0.6
+    Date                   : 10/02/2019
+    Lync Version           : Tested against Skype4B 2015
+    Author                 : James Arber
+    Header stolen from     : Greig Sheridan who stole it from Pat Richard's amazing "Get-CsConnections.ps1"
+    Special Thanks to      : My Beta Testers. Greig Sheridan, Pat Richard and Justin O'Meara
 
     v0.6: Beta Release
     Enabled Modern Auth Support
