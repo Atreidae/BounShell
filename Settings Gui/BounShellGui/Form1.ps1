@@ -1,4 +1,12 @@
-﻿$btn_CancelConfig_Click = {
+﻿$checkBox1_CheckedChanged = {
+
+}
+
+$cbx_NoIntLCD_CheckedChanged_1 = {
+
+}
+
+$btn_CancelConfig_Click = {
 
 }
 
