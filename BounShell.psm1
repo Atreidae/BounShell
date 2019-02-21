@@ -322,7 +322,7 @@ Function Read-BsConfigFile
     #Check the config file version
     If ($global:Config.ConfigFileVersion -lt 0.2)
     {
-       Write-Log -component $function -Message "Old Config File Detected, upgrading config file" -severity 3
+       Write-Log -component $function -Message "Old Config File Detected. Upgrading config file" -severity 3
        Upgrade-BsConfigFile
     }
     
@@ -1591,7 +1591,7 @@ Function Import-BsGuiElements
   $Global:btn_CancelConfig.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Pixel,([System.Byte][System.Byte]0)))
   $Global:btn_CancelConfig.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]8)),([System.Int32]([System.Byte][System.Byte]116)),([System.Int32]([System.Byte][System.Byte]170)))
 
-  $Global:btn_CancelConfig.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]821,[System.Int32]368))
+  $Global:btn_CancelConfig.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]936,[System.Int32]368))
   $Global:btn_CancelConfig.Name = [System.String]'btn_CancelConfig'
   $Global:btn_CancelConfig.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]94,[System.Int32]23))
   $Global:btn_CancelConfig.TabIndex = [System.Int32]59
@@ -1606,7 +1606,7 @@ Function Import-BsGuiElements
   $Global:Btn_ReloadConfig.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Pixel,([System.Byte][System.Byte]0)))
   $Global:Btn_ReloadConfig.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]8)),([System.Int32]([System.Byte][System.Byte]116)),([System.Int32]([System.Byte][System.Byte]170)))
 
-  $Global:Btn_ReloadConfig.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]589,[System.Int32]368))
+  $Global:Btn_ReloadConfig.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]704,[System.Int32]368))
   $Global:Btn_ReloadConfig.Name = [System.String]'Btn_ReloadConfig'
   $Global:Btn_ReloadConfig.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]110,[System.Int32]23))
   $Global:Btn_ReloadConfig.TabIndex = [System.Int32]58
@@ -1621,7 +1621,7 @@ Function Import-BsGuiElements
   $Global:Btn_SaveConfig.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Pixel,([System.Byte][System.Byte]0)))
   $Global:Btn_SaveConfig.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]8)),([System.Int32]([System.Byte][System.Byte]116)),([System.Int32]([System.Byte][System.Byte]170)))
 
-  $Global:Btn_SaveConfig.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]705,[System.Int32]368))
+  $Global:Btn_SaveConfig.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]820,[System.Int32]368))
   $Global:Btn_SaveConfig.Name = [System.String]'Btn_SaveConfig'
   $Global:Btn_SaveConfig.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]110,[System.Int32]23))
   $Global:Btn_SaveConfig.TabIndex = [System.Int32]57
@@ -1689,7 +1689,7 @@ Function Import-BsGuiElements
   $Global:Btn_Default.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Pixel,([System.Byte][System.Byte]0)))
   $Global:Btn_Default.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]8)),([System.Int32]([System.Byte][System.Byte]116)),([System.Int32]([System.Byte][System.Byte]170)))
 
-  $Global:Btn_Default.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]473,[System.Int32]368))
+  $Global:Btn_Default.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]588,[System.Int32]368))
   $Global:Btn_Default.Name = [System.String]'Btn_Default'
   $Global:Btn_Default.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]110,[System.Int32]23))
   $Global:Btn_Default.TabIndex = [System.Int32]77
@@ -1777,12 +1777,13 @@ Function Import-BsGuiElements
   #cliplabel
   #
   $Global:cliplabel.AutoSize = $true
-  $Global:cliplabel.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]456,[System.Int32]370))
+  $Global:cliplabel.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]460,[System.Int32]370))
   $Global:cliplabel.Name = [System.String]'cliplabel'
   $Global:cliplabel.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]53,[System.Int32]13))
   $Global:cliplabel.TabIndex = [System.Int32]79
   $Global:cliplabel.TabStop = $true
   $Global:cliplabel.Text = [System.String]'more info.'
+  $Global:cliplabel.add_Click($Global:cliplabel_click)
   #
   #Global:SettingsForm
   #
@@ -1853,7 +1854,11 @@ Function Import-BsGuiFunctions
     Read-BsConfigFile
     Update-BsAddonMenu
   }
-
+  #Gui link object to open a browser for more info on the modern auth clipboard
+  $Global:cliplabel_click = 
+  {
+    Start "https://UcMadScientist.com/BounShell-Auth/"
+  }
 
 }
 
