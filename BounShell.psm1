@@ -10,20 +10,24 @@
     .NOTES
 
     Version                : 0.6
-    Date                   : 10/02/2019
+    Date                   : 29/03/2019
     Lync Version           : Tested against Skype4B 2015
     Author                 : James Arber
     Header stolen from     : Greig Sheridan who stole it from Pat Richard's amazing "Get-CsConnections.ps1"
     Special Thanks to      : My Beta Testers. Greig Sheridan, Pat Richard and Justin O'Meara
 
-    v0.6: Beta Release
+ 
+    
+    :v0.6: Beta Release
     Enabled Modern Auth Support
     Formating changes
     Broke up alot of my one-liners to make it easier for others to read/ understand the flow
     Updated error messages
     Better code comments
     Fixed an issue with the Compliance Portal code
+    Added Module checker and installer based off Andrew Price's "Detect-MicrosoftTeams-Version" http://www.blogabout.cloud/2018/09/240/
     Now Gluten Free
+    Finally stopped feature creep
 
     :v0.5: Beta Release
 
@@ -212,7 +216,8 @@ Function Get-ScriptUpdate
     Write-Log -component $function -Message "No proxy setting detected, using direct connection" -severity 1
   }
 
-  $GitHubScriptVersion = Invoke-WebRequest https://raw.githubusercontent.com/atreidae/BounShell/devel/version -TimeoutSec 10 -Proxy $ProxyURL #todo change back to master!
+  Write-Log -component $function -Message "Polling https://raw.githubusercontent.com/atreidae/$GithubRepo/$GithubBranch/version" -severity 1
+  $GitHubScriptVersion = Invoke-WebRequest "https://raw.githubusercontent.com/atreidae/$GithubRepo/$GithubBranch/version" -TimeoutSec 10 -Proxy $ProxyURL #todo change back to master!
   
   If ($GitHubScriptVersion.Content.length -eq 0) 
   {
@@ -285,9 +290,64 @@ Function Upgrade-BsConfigFile
   
 
 
-    Write-Log -component $function -Message "Found Config File Version $($global:Config.ConfigFileVersion)" -severity 2
+  Write-Log -component $function -Message "Found Config File Version $($global:Config.ConfigFileVersion)" -severity 2
+
+    #Backup the current config
+  Try
+  {
+    $ShrtDate = Get-Date -Format 'dd-MM-yy'
+    $global:Config| Export-CliXml -Path "$ENV:UserProfile\BounShell-backup-$ShrtDate.xml"
+    Write-Log -component $function -Message "Backup File Saved" -severity 2
+  }
+  Catch 
+  {
+    Write-Log -component $function -Message "Error writing Config Backup file" -severity 4
+    Write-Log -component $function -Message "Sorry, something went wrong here and I couldnt backup your BounShell config. Please check permissions to create $ENV:UserProfile\BounShell-backup-$ShrtDate.xml" -severity 3
+    Throw "Bad File Operation, Abort Script"
+  }
  
-    
+  If ($global:Config.ConfigFileVersion -lt "0.2")
+  {
+    Write-Log -component $function -Message "Adding Version 0.2 changes" -severity 2
+    #Config File Version 0.2 additions
+    $global:Config.AutoUpdatesEnabled = $true
+    $global:Config.ModernAuthClipboardEnabled = $true
+    $global:Config.ModernAuthWarningAccepted = $false
+    $global:Config.Tenant1.ConnectToAzureAD = $false
+    $global:Config.Tenant1.ConnectToCompliance = $false
+    $global:Config.Tenant2.ConnectToAzureAD = $false
+    $global:Config.Tenant2.ConnectToCompliance = $false
+    $global:Config.Tenant3.ConnectToAzureAD = $false
+    $global:Config.Tenant3.ConnectToCompliance = $false
+    $global:Config.Tenant4.ConnectToAzureAD = $false
+    $global:Config.Tenant4.ConnectToCompliance = $false
+    $global:Config.Tenant5.ConnectToAzureAD = $false
+    $global:Config.Tenant5.ConnectToCompliance = $false
+    $global:Config.Tenant6.ConnectToAzureAD = $false
+    $global:Config.Tenant6.ConnectToCompliance = $false
+    $global:Config.Tenant7.ConnectToAzureAD = $false
+    $global:Config.Tenant7.ConnectToCompliance = $false
+    $global:Config.Tenant8.ConnectToAzureAD = $false
+    $global:Config.Tenant8.ConnectToCompliance = $false
+    $global:Config.Tenant9.ConnectToAzureAD = $false
+    $global:Config.Tenant9.ConnectToCompliance = $false
+    $global:Config.Tenant10.ConnectToAzureAD = $false
+    $global:Config.Tenant10.ConnectToCompliance = $false
+    [Float]$global:Config.ConfigFileVersion = "0.2"
+  } 
+ 
+ 
+
+  #Write the XML File
+  Try
+  {
+    $global:Config| Export-CliXml -Path "$ENV:UserProfile\BounShell.xml"
+    Write-Log -component $function -Message "Config File Updated to Version $($global:Config.ConfigFileVersion)" -severity 2
+  }
+  Catch 
+  {
+    Write-Log -component $function -Message "Error writing Config file" -severity 3
+  }    
 }
 
 Function Read-BsConfigFile
@@ -342,16 +402,16 @@ Function Read-BsConfigFile
 
       #Populate with Values
       [void] $Global:grid_Tenants.Rows.Clear()
-      [void] $Global:grid_Tenants.Rows.Add("1",$global:Config.Tenant1.DisplayName,$global:Config.Tenant1.SignInAddress,"****",$global:Config.Tenant1.ModernAuth,$global:Config.Tenant1.ConnectToTeams,$global:Config.Tenant1.ConnectToSkype,$global:Config.Tenant1.ConnectToExchange)
-      [void] $Global:grid_Tenants.Rows.Add("2",$global:Config.Tenant2.DisplayName,$global:Config.Tenant2.SignInAddress,"****",$global:Config.Tenant2.ModernAuth,$global:Config.Tenant2.ConnectToTeams,$global:Config.Tenant2.ConnectToSkype,$global:Config.Tenant2.ConnectToExchange)
-      [void] $Global:grid_Tenants.Rows.Add("3",$global:Config.Tenant3.DisplayName,$global:Config.Tenant3.SignInAddress,"****",$global:Config.Tenant3.ModernAuth,$global:Config.Tenant3.ConnectToTeams,$global:Config.Tenant3.ConnectToSkype,$global:Config.Tenant3.ConnectToExchange)
-      [void] $Global:grid_Tenants.Rows.Add("4",$global:Config.Tenant4.DisplayName,$global:Config.Tenant4.SignInAddress,"****",$global:Config.Tenant4.ModernAuth,$global:Config.Tenant4.ConnectToTeams,$global:Config.Tenant4.ConnectToSkype,$global:Config.Tenant4.ConnectToExchange)
-      [void] $Global:grid_Tenants.Rows.Add("5",$global:Config.Tenant5.DisplayName,$global:Config.Tenant5.SignInAddress,"****",$global:Config.Tenant5.ModernAuth,$global:Config.Tenant5.ConnectToTeams,$global:Config.Tenant5.ConnectToSkype,$global:Config.Tenant5.ConnectToExchange)
-      [void] $Global:grid_Tenants.Rows.Add("6",$global:Config.Tenant6.DisplayName,$global:Config.Tenant6.SignInAddress,"****",$global:Config.Tenant6.ModernAuth,$global:Config.Tenant6.ConnectToTeams,$global:Config.Tenant6.ConnectToSkype,$global:Config.Tenant6.ConnectToExchange)
-      [void] $Global:grid_Tenants.Rows.Add("7",$global:Config.Tenant7.DisplayName,$global:Config.Tenant7.SignInAddress,"****",$global:Config.Tenant7.ModernAuth,$global:Config.Tenant7.ConnectToTeams,$global:Config.Tenant7.ConnectToSkype,$global:Config.Tenant7.ConnectToExchange)
-      [void] $Global:grid_Tenants.Rows.Add("8",$global:Config.Tenant8.DisplayName,$global:Config.Tenant8.SignInAddress,"****",$global:Config.Tenant8.ModernAuth,$global:Config.Tenant8.ConnectToTeams,$global:Config.Tenant8.ConnectToSkype,$global:Config.Tenant8.ConnectToExchange)
-      [void] $Global:grid_Tenants.Rows.Add("9",$global:Config.Tenant9.DisplayName,$global:Config.Tenant9.SignInAddress,"****",$global:Config.Tenant9.ModernAuth,$global:Config.Tenant9.ConnectToTeams,$global:Config.Tenant9.ConnectToSkype,$global:Config.Tenant9.ConnectToExchange)
-      [void] $Global:grid_Tenants.Rows.Add("10",$global:Config.Tenant10.DisplayName,$global:Config.Tenant10.SignInAddress,"****",$global:Config.Tenant10.ModernAuth,$global:Config.Tenant10.ConnectToTeams,$global:Config.Tenant10.ConnectToSkype,$global:Config.Tenant10.ConnectToExchange)
+      [void] $Global:grid_Tenants.Rows.Add("1",$global:Config.Tenant1.DisplayName,$global:Config.Tenant1.SignInAddress,"****",$global:Config.Tenant1.ModernAuth,$global:Config.Tenant1.ConnectToTeams,$global:Config.Tenant1.ConnectToSkype,$global:Config.Tenant1.ConnectToExchange,$global:Config.Tenant1.ConnectToAzureAD,$global:Config.Tenant1.ConnectToCompliance)
+      [void] $Global:grid_Tenants.Rows.Add("2",$global:Config.Tenant2.DisplayName,$global:Config.Tenant2.SignInAddress,"****",$global:Config.Tenant2.ModernAuth,$global:Config.Tenant2.ConnectToTeams,$global:Config.Tenant2.ConnectToSkype,$global:Config.Tenant2.ConnectToExchange,$global:Config.Tenant2.ConnectToAzureAD,$global:Config.Tenant2.ConnectToCompliance)
+      [void] $Global:grid_Tenants.Rows.Add("3",$global:Config.Tenant3.DisplayName,$global:Config.Tenant3.SignInAddress,"****",$global:Config.Tenant3.ModernAuth,$global:Config.Tenant3.ConnectToTeams,$global:Config.Tenant3.ConnectToSkype,$global:Config.Tenant3.ConnectToExchange,$global:Config.Tenant3.ConnectToAzureAD,$global:Config.Tenant3.ConnectToCompliance)
+      [void] $Global:grid_Tenants.Rows.Add("4",$global:Config.Tenant4.DisplayName,$global:Config.Tenant4.SignInAddress,"****",$global:Config.Tenant4.ModernAuth,$global:Config.Tenant4.ConnectToTeams,$global:Config.Tenant4.ConnectToSkype,$global:Config.Tenant4.ConnectToExchange,$global:Config.Tenant4.ConnectToAzureAD,$global:Config.Tenant4.ConnectToCompliance)
+      [void] $Global:grid_Tenants.Rows.Add("5",$global:Config.Tenant5.DisplayName,$global:Config.Tenant5.SignInAddress,"****",$global:Config.Tenant5.ModernAuth,$global:Config.Tenant5.ConnectToTeams,$global:Config.Tenant5.ConnectToSkype,$global:Config.Tenant5.ConnectToExchange,$global:Config.Tenant5.ConnectToAzureAD,$global:Config.Tenant5.ConnectToCompliance)
+      [void] $Global:grid_Tenants.Rows.Add("6",$global:Config.Tenant6.DisplayName,$global:Config.Tenant6.SignInAddress,"****",$global:Config.Tenant6.ModernAuth,$global:Config.Tenant6.ConnectToTeams,$global:Config.Tenant6.ConnectToSkype,$global:Config.Tenant6.ConnectToExchange,$global:Config.Tenant6.ConnectToAzureAD,$global:Config.Tenant6.ConnectToCompliance)
+      [void] $Global:grid_Tenants.Rows.Add("7",$global:Config.Tenant7.DisplayName,$global:Config.Tenant7.SignInAddress,"****",$global:Config.Tenant7.ModernAuth,$global:Config.Tenant7.ConnectToTeams,$global:Config.Tenant7.ConnectToSkype,$global:Config.Tenant7.ConnectToExchange,$global:Config.Tenant7.ConnectToAzureAD,$global:Config.Tenant7.ConnectToCompliance)
+      [void] $Global:grid_Tenants.Rows.Add("8",$global:Config.Tenant8.DisplayName,$global:Config.Tenant8.SignInAddress,"****",$global:Config.Tenant8.ModernAuth,$global:Config.Tenant8.ConnectToTeams,$global:Config.Tenant8.ConnectToSkype,$global:Config.Tenant8.ConnectToExchange,$global:Config.Tenant8.ConnectToAzureAD,$global:Config.Tenant8.ConnectToCompliance)
+      [void] $Global:grid_Tenants.Rows.Add("9",$global:Config.Tenant9.DisplayName,$global:Config.Tenant9.SignInAddress,"****",$global:Config.Tenant9.ModernAuth,$global:Config.Tenant9.ConnectToTeams,$global:Config.Tenant9.ConnectToSkype,$global:Config.Tenant9.ConnectToExchange,$global:Config.Tenant9.ConnectToAzureAD,$global:Config.Tenant9.ConnectToCompliance)
+      [void] $Global:grid_Tenants.Rows.Add("10",$global:Config.Tenant10.DisplayName,$global:Config.Tenant10.SignInAddress,"****",$global:Config.Tenant10.ModernAuth,$global:Config.Tenant10.ConnectToTeams,$global:Config.Tenant10.ConnectToSkype,$global:Config.Tenant10.ConnectToExchange,$global:Config.Tenant10.ConnectToAzureAD,$global:Config.Tenant10.ConnectToCompliance)
     }
   }
     
@@ -493,6 +553,15 @@ Function Write-BsConfigFile
   $Global:grid_Tenants.Rows[8].Cells[3].Value = "****"
   $Global:grid_Tenants.Rows[9].Cells[3].Value = "****"
 
+  #Add the Global Settings
+  #todo, delete these
+  $global:Config.AllowUpdates
+  $global:Config.AllowMFAClipboard
+
+  #Todo map these to the gui elements
+  $global:Config.AutoUpdatesEnabled = $true
+  $global:Config.ModernAuthClipboardEnabled = $true
+ 
 
   #Write the XML File
   Try
@@ -523,7 +592,9 @@ Function Import-BsDefaultConfig
   $global:Config.Tenant1.ConnectToTeams = $false
   $global:Config.Tenant1.ConnectToSkype = $false
   $global:Config.Tenant1.ConnectToExchange = $false
-  [void] $Global:grid_Tenants.Rows.Add("1",'Undefined','user1@fabrikam.com',"****",$False,$false,$false,$false)
+  $global:Config.Tenant1.ConnectToAzureAD = $false
+  $global:Config.Tenant1.ConnectToCompliance = $false
+  [void] $Global:grid_Tenants.Rows.Add("1",'Undefined','user1@fabrikam.com',"****",$False,$false,$false,$false,$false,$false)
   
   
   $global:Config.Tenant2 =@{}
@@ -534,8 +605,10 @@ Function Import-BsDefaultConfig
   $global:Config.Tenant2.ConnectToTeams = $false
   $global:Config.Tenant2.ConnectToSkype = $false
   $global:Config.Tenant2.ConnectToExchange = $false
-  [void] $Global:grid_Tenants.Rows.Add("2",'Undefined','user2@fabrikam.com',"****",$False,$false,$false,$false)
-
+  $global:Config.Tenant2.ConnectToAzureAD = $false
+  $global:Config.Tenant2.ConnectToCompliance = $false
+  [void] $Global:grid_Tenants.Rows.Add("2",'Undefined','user2@fabrikam.com',"****",$False,$false,$false,$false,$false,$false)
+  
   $global:Config.Tenant3 =@{}
   $global:Config.Tenant3.DisplayName = "Undefined"
   $global:Config.Tenant3.SignInAddress = "user3@fabrikam.com"
@@ -544,8 +617,10 @@ Function Import-BsDefaultConfig
   $global:Config.Tenant3.ConnectToTeams = $false
   $global:Config.Tenant3.ConnectToSkype = $false
   $global:Config.Tenant3.ConnectToExchange = $false
-  [void] $Global:grid_Tenants.Rows.Add("3",'Undefined','user3@fabrikam.com',"****",$False,$false,$false,$false)
-
+  $global:Config.Tenant3.ConnectToAzureAD = $false
+  $global:Config.Tenant3.ConnectToCompliance = $false
+  [void] $Global:grid_Tenants.Rows.Add("3",'Undefined','user3@fabrikam.com',"****",$False,$false,$false,$false,$false,$false)
+  
   $global:Config.Tenant4 =@{}
   $global:Config.Tenant4.DisplayName = "Undefined"
   $global:Config.Tenant4.SignInAddress = "user4@fabrikam.com"
@@ -554,8 +629,10 @@ Function Import-BsDefaultConfig
   $global:Config.Tenant4.ConnectToTeams = $false
   $global:Config.Tenant4.ConnectToSkype = $false
   $global:Config.Tenant4.ConnectToExchange = $false
-  [void] $Global:grid_Tenants.Rows.Add("4",'Undefined','user4@fabrikam.com',"****",$False,$false,$false,$false)
-
+  $global:Config.Tenant4.ConnectToAzureAD = $false
+  $global:Config.Tenant4.ConnectToCompliance = $false
+  [void] $Global:grid_Tenants.Rows.Add("4",'Undefined','user4@fabrikam.com',"****",$False,$false,$false,$false,$false,$false)
+  
   $global:Config.Tenant5 =@{}
   $global:Config.Tenant5.DisplayName = "Undefined"
   $global:Config.Tenant5.SignInAddress = "user5@fabrikam.com"
@@ -564,8 +641,10 @@ Function Import-BsDefaultConfig
   $global:Config.Tenant5.ConnectToTeams = $false
   $global:Config.Tenant5.ConnectToSkype = $false
   $global:Config.Tenant5.ConnectToExchange = $false
-  [void] $Global:grid_Tenants.Rows.Add("5",'Undefined','user5@fabrikam.com',"****",$False,$false,$false,$false)
-
+  $global:Config.Tenant5.ConnectToAzureAD = $false
+  $global:Config.Tenant5.ConnectToCompliance = $false
+  [void] $Global:grid_Tenants.Rows.Add("5",'Undefined','user5@fabrikam.com',"****",$False,$false,$false,$false,$false,$false)
+  
   $global:Config.Tenant6 =@{}
   $global:Config.Tenant6.DisplayName = "Undefined"
   $global:Config.Tenant6.SignInAddress = "user6@fabrikam.com"
@@ -574,8 +653,10 @@ Function Import-BsDefaultConfig
   $global:Config.Tenant6.ConnectToTeams = $false
   $global:Config.Tenant6.ConnectToSkype = $false
   $global:Config.Tenant6.ConnectToExchange = $false
-  [void] $Global:grid_Tenants.Rows.Add("6",'Undefined','user6@fabrikam.com',"****",$False,$false,$false,$false)
-
+  $global:Config.Tenant6.ConnectToAzureAD = $false
+  $global:Config.Tenant6.ConnectToCompliance = $false
+  [void] $Global:grid_Tenants.Rows.Add("6",'Undefined','user6@fabrikam.com',"****",$False,$false,$false,$false,$false,$false)
+  
   $global:Config.Tenant7 =@{}
   $global:Config.Tenant7.DisplayName = "Undefined"
   $global:Config.Tenant7.SignInAddress = "user@fabrikam.com"
@@ -584,8 +665,10 @@ Function Import-BsDefaultConfig
   $global:Config.Tenant7.ConnectToTeams = $false
   $global:Config.Tenant7.ConnectToSkype = $false
   $global:Config.Tenant7.ConnectToExchange = $false
-  [void] $Global:grid_Tenants.Rows.Add("7",'Undefined','user7@fabrikam.com',"****",$False,$false,$false,$false)
-
+  $global:Config.Tenant7.ConnectToAzureAD = $false
+  $global:Config.Tenant7.ConnectToCompliance = $false
+  [void] $Global:grid_Tenants.Rows.Add("7",'Undefined','user7@fabrikam.com',"****",$False,$false,$false,$false,$false,$false)
+  
   $global:Config.Tenant8 =@{}
   $global:Config.Tenant8.DisplayName = "Undefined"
   $global:Config.Tenant8.SignInAddress = "user8@fabrikam.com"
@@ -594,7 +677,9 @@ Function Import-BsDefaultConfig
   $global:Config.Tenant8.ConnectToTeams = $false
   $global:Config.Tenant8.ConnectToSkype = $false
   $global:Config.Tenant8.ConnectToExchange = $false
-  [void] $Global:grid_Tenants.Rows.Add("8",'Undefined','user8@fabrikam.com',"****",$False,$false,$false,$false)
+  $global:Config.Tenant8.ConnectToAzureAD = $false
+  $global:Config.Tenant8.ConnectToCompliance = $false
+  [void] $Global:grid_Tenants.Rows.Add("8",'Undefined','user8@fabrikam.com',"****",$False,$false,$false,$false,$false,$false)
     
   $global:Config.Tenant9 =@{}
   $global:Config.Tenant9.DisplayName = "Undefined"
@@ -604,7 +689,9 @@ Function Import-BsDefaultConfig
   $global:Config.Tenant9.ConnectToTeams = $false
   $global:Config.Tenant9.ConnectToSkype = $false
   $global:Config.Tenant9.ConnectToExchange = $false
-  [void] $Global:grid_Tenants.Rows.Add("9",'Undefined','user9@fabrikam.com',"****",$False,$false,$false,$false)
+  $global:Config.Tenant9.ConnectToAzureAD = $false
+  $global:Config.Tenant9.ConnectToCompliance = $false
+  [void] $Global:grid_Tenants.Rows.Add("9",'Undefined','user9@fabrikam.com',"****",$False,$false,$false,$false,$false,$false)
   
   $global:Config.Tenant10 =@{}
   $global:Config.Tenant10.DisplayName = "Undefined"
@@ -614,7 +701,9 @@ Function Import-BsDefaultConfig
   $global:Config.Tenant10.ConnectToTeams = $false
   $global:Config.Tenant10.ConnectToSkype = $false
   $global:Config.Tenant10.ConnectToExchange = $false
-  [void] $Global:grid_Tenants.Rows.Add("10",'Undefined','user10@fabrikam.com',"****",$False,$false,$false,$false)
+  $global:Config.Tenant10.ConnectToAzureAD = $false
+  $global:Config.Tenant10.ConnectToCompliance = $false
+  [void] $Global:grid_Tenants.Rows.Add("10",'Undefined','user10@fabrikam.com',"****",$False,$false,$false,$false,$false,$false)
   
   [Float]$global:Config.ConfigFileVersion = "0.2"
   [string]$global:Config.Description = "BounShell Configuration file. See Skype4BAdmin.com for more information"
@@ -769,7 +858,7 @@ Function Connect-BsO365Tenant
   #Check to see if we are running in the ISE
   If ($PSISE)
   {
-    #load the relevant stuff for the ISE enviroment{
+    #load the relevant stuff for the ISE enviroment
     Import-BsGuiElements
     #Clean up any stale sessions (we shouldnt have any, but whatever)
     Get-PSSession | Remove-PSSession
@@ -1478,64 +1567,6 @@ Function Update-BsAddonMenu
   [void]($Global:IseMenuItem.Submenus.add("$($global:Config.Tenant10.DisplayName)",{Invoke-BsNewTenantTab -tabname $global:Config.Tenant10.DisplayName -Tenant 10}, 'Ctrl+Alt+0'))
 }
 
-Function Test-ManagementTools
-{
-  Write-Log -component "Test-ManagementTools" -Message "Checking for Lync/Skype management tools"
-  $CSManagementTools = $false
-  If(!(Get-Module "SkypeForBusiness")) 
-  {
-    Import-Module SkypeForBusiness -Verbose:$false
-  }
-  If(!(Get-Module "Lync"))
-  {
-    Import-Module Lync -Verbose:$false
-  }
-  If(Get-Module "SkypeForBusiness")
-  {
-    $CSManagementTools = $true
-  }
-  If(Get-Module "Lync")
-  {
-    $CSManagementTools = $true
-  }
-  If(!$CSManagementTools)
-  {
-    Write-Log -component "Test-ManagementTools" -Message "Could not locate Lync/Skype4B Management tools" -severity 3 
-    Throw  "Could not locate Lync/Skype4B Management tools"
-  }
-
-  #Check for the AD Management Tools
-  $ADManagementTools = $false
-  if(!(Get-Module "ActiveDirectory"))
-  {
-    Import-Module ActiveDirectory -Verbose:$false
-  }
-  if(Get-Module "ActiveDirectory") 
-  {
-    $ADManagementTools = $true
-  }
-  if(!$ADManagementTools)
-  {
-    Write-Log -component "Test-ManagementTools" -Message "Could not locate Active Directory Management tools" -severity 3
-    Throw  "Could not locate Active Directory Management tools"
-  }
-
-  $TeamsManagementTools = $false
-  If(!(Get-Module "MicrosoftTeams"))
-  {
-    Import-Module MicrosoftTeams -Verbose:$false
-  }
-  If(Get-Module "MicrosoftTeams")
-  {
-    $TeamsManagementTools = $true
-  }
-  If(!$TeamsManagementTools)
-  {
-    Write-Log -component "Test-CsManagementTools" -Message "Could not locate Teams PowerShell Module" -severity 3 
-    Write-Log -component "Test-CsManagementTools" -Message "Run the cmdlet 'Install-Module MicrosoftTeams' to install it" -severity 3 
-  }
-}
-
 Function Import-BsGuiElements 
 {
   #First we need to import the Functions so they exist for the GUI items
@@ -1896,11 +1927,7 @@ Function Start-BounShell
 
   #Load the Gui Elements
   Import-BsGuiElements
-  #check for script update
-  if ($SkipUpdateCheck -eq $false)
-  {
-    Get-ScriptUpdate
-  } #todo enable update checking
+
 
   #check for config file then load the default
 
@@ -1923,6 +1950,12 @@ Function Start-BounShell
     Write-Log -component $function -Message "Seriously, Whilst the password store is encrypted, its not perfect!" -severity 3
     Pause
   }
+
+    #check for script update
+  if ($SkipUpdateCheck -eq $false)
+  {
+    Get-ScriptUpdate
+  } #todo enable update checking
 
   #Check for Management Tools
   #Test-ManagementTools #todo fix
@@ -2003,6 +2036,48 @@ Function Import-BsO365Token
       $AzureADCred = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.UserPasswordCredential" -ArgumentList $Credential.UserName,$Credential.Password
       $authResult = [Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContextIntegratedAuthExtensions]::AcquireTokenAsync($authContext,"https://RESOURCE-URL.COM",$client_Id,$AzureADCred)
   #>
+}
+
+Function Test-InstalledModules 
+{
+
+
+  param
+  (
+    [Parameter(Mandatory=$true)] [string]$ModuleName,
+    [Parameter(Mandatory=$true)] [float]$ModuleVersion
+  )
+  [string]$Function = 'Watch-BsCredentials'
+  
+  $needsinstall = $false
+  #Pull the module from the local machine
+  $Module = Get-Module -Name $ModuleName -ListAvailable
+  
+  #If we have more than one version we need to clean up
+  if($Module.count -gt 1)
+  {
+    Write-Log -component $Function -Message "Found multiple copies of $ModuleName" -severity 3
+    $needscleanup = $true
+    
+    # Identify modules with multiple versions installed
+    $MultiModules = $Module | Group-Object -Property name -NoElement | Where-Object count -gt 1
+  }
+      
+  
+  
+
+
+
+  #Module not installed
+  if($Module.count -eq 0)
+  {
+    Write-Log -component $Function -Message "$ModuleName Not Installed on Local Computer" -severity 3
+    $needsinstall = $true
+  }
+
+          Write-host "Press Ctrl+C to abort this connection or"
+        $disclaimer = (Read-host -Prompt "Type 'I Accept' to continue")
+
 }
 
 #now we export the relevant stuff
