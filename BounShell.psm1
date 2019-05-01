@@ -2038,7 +2038,7 @@ Function Import-BsO365Token
   #>
 }
 
-Function Test-InstalledModules 
+Function Test-BsInstalledModules 
 {
 
 
@@ -2047,9 +2047,14 @@ Function Test-InstalledModules
     [Parameter(Mandatory=$true)] [string]$ModuleName,
     [Parameter(Mandatory=$true)] [float]$ModuleVersion
   )
-  [string]$Function = 'Watch-BsCredentials'
+  [string]$Function = 'Test-BsInstalledModules'
+   Write-Log -component $Function -Message "Called to check $ModuleName" -severity 1
+   
+  $NeedsInstall = $false
+  $NeedsUpdate = $false
+  $NeedsCleaup = $false
+  $LatestModuleVersion = $null
   
-  $needsinstall = $false
   #Pull the module from the local machine
   $Module = Get-Module -Name $ModuleName -ListAvailable
   
@@ -2062,11 +2067,13 @@ Function Test-InstalledModules
     # Identify modules with multiple versions installed
     $MultiModules = $Module | Group-Object -Property name -NoElement | Where-Object count -gt 1
   }
-      
+   
+  #If we have one module, check its up to date
+  if($Module.count -eq 1)
+  {
+    Write-Log -component $Function -Message "Found one copy of $ModuleName" -severity 1
+  }
   
-  
-
-
 
   #Module not installed
   if($Module.count -eq 0)
@@ -2075,10 +2082,101 @@ Function Test-InstalledModules
     $needsinstall = $true
   }
 
-          Write-host "Press Ctrl+C to abort this connection or"
-        $disclaimer = (Read-host -Prompt "Type 'I Accept' to continue")
+  #Okay, we have checked if everything is installed, now lets check and report on the version
+ 
+   Write-Log -component $Function -Message "Checking for the latest version of $ModuleName in the PSGallery" -severity 2
+   $gallery = $module.where({$_.repositorysourcelocation})
+
+ foreach ($module in $gallery) {
+
+     #find the current version in the gallery
+     Try {
+        $online = Find-Module -Name $module.name -Repository PSGallery -ErrorAction Stop
+     }
+     Catch {
+     #Todo What the fuck?
+        Write-Warning -Message ('Module {0} was not found in the PSGallery' -f $module.name)
+     }
+
+     #compare versions
+     if ($online.version -gt $module.version) 
+     {
+        $NeedsUpdate = $true
+        Write-Log -component $Function -Message "An updated version of the $ModuleName module is available in the PSGallery" -severity 2
+     }
+     
+     else 
+     {
+        Write-Log -component $Function -Message "Your version of the $ModuleName module is up to date" -severity 2
+     }
+
+     #write a custom object to the pipeline
+     [pscustomobject]@{
+        Name = $module.name
+        MultipleVersions = ($g.name -contains $module.name)
+        InstalledVersion = $module.version
+        OnlineVersion = $online.version
+        Update = $NeedsUpdate
+        Path = $module.modulebase
+     }
+  
 
 }
+
+Function Repair-BsInstalledModules 
+{
+  param
+  (
+    [Parameter(Mandatory=$true)] [string]$ModuleName,
+    [Parameter(Mandatory=$true)] [string]$Operation #Install, Cleaup, Update
+  )
+ 
+   [string]$Function = 'Repair-BsInstalledModules'
+   Write-Log -component $Function -Message "Called to $Operation $ModuleName" -severity 1
+   Write-Log -component $Function -Message "Checking for elevated session" -severity 1
+  #Check we are running as admin, we dont want to install modules in the users context
+  if (!(([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator'))){
+      # throw 'Please Note: You are trying to run this script without evalated Administator Priviliges. In order to run this script you will required Powershell running in Administrator Mode'
+      Write-Log -component $Function -Message "Not Running as administrator, invoking new session" -severity 2
+      #Todo, kick off a new window with admin privs
+
+    }
+    else 
+    {
+      Write-Log -component $Function -Message "Running as administrator, performing $Operation" -severity 2
+    } 
+
+    Switch ($Operation)
+
+    {
+      "Install"
+      { 
+        Install-Module -name $ModuleName
+      }
+      "Cleanup"
+      { 
+        #Pull the currently installed modules
+        $Module = Get-Module -Name $ModuleName -ListAvailable
+        # Identify modules with multiple versions installed
+        $g = $module | Group-Object -Property name -NoElement | Where-Object count -gt 1}
+        #Remove all but the latest one
+
+        foreach ($module in $g)
+        {
+        Write-Log -component $Function -Message "Removing $($Module.version)" -severity 2
+        Uninstall-Module -Name $MicrosoftTeams -RequiredVersion $module.version 
+     
+        }
+
+      default      { 'anything else'}
+    }
+
+   
+
+ 
+   
+  }
+ 
 
 #now we export the relevant stuff
 
