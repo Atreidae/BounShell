@@ -8,7 +8,7 @@ Use NuGet to automatically install it from the PowerShell gallery
 `Install-Module -Name BounShell`
 
 
-### Method two 
+### Method Two 
 Grab the code from GitHub and install it in your modules folder: (C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules or C:\Program Files\WindowsPowerShell\Modules by default)
 
 <a href="https://github.com/Atreidae/BounShell">https://github.com/Atreidae/BounShell</a>
