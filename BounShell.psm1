@@ -15,9 +15,7 @@
     Author                 : James Arber
     Header stolen from     : Greig Sheridan who stole it from Pat Richard's amazing "Get-CsConnections.ps1"
     Special Thanks to      : My Beta Testers. Greig Sheridan, Pat Richard and Justin O'Meara
-
- 
-    
+  
     :v0.6: Beta Release
     Enabled Modern Auth Support
     Formating changes
@@ -29,10 +27,31 @@
     Now Gluten Free
     Finally stopped feature creep
 
-    :v0.5: Beta Release
+    :v0.5: Closed Beta Release
+
+    Disclaimer: Whilst I take considerable effort to ensure this script is error free and wont harm your enviroment.
+    I have no way to test every possible senario it may be used in. I provide these scripts free
+    to the Lync and Skype4B community AS IS without any warranty on its appropriateness for use in
+    your environment. I disclaim all implied warranties including,
+    without limitation, any implied warranties of merchantability or of fitness for a particular
+    purpose. The entire risk arising out of the use or performance of the sample scripts and
+    documentation remains with you. In no event shall I be liable for any damages whatsoever
+    (including, without limitation, damages for loss of business profits, business interruption,
+    loss of business information, or other pecuniary loss) arising out of the use of or inability
+    to use the script or documentation.
+
+    Acknowledgements 	
+    : Testing and Advice
+    Greig Sheridan https://greiginsydney.com/about/ @greiginsydney
+
+    : Auto Update Code
+    Pat Richard https://ucunleashed.com @patrichard
+
+    : Proxy Detection
+    Michel de Rooij	http://eightwone.com
 
     .LINK
-    https://www.UcMadScientist.com
+    https://www.UcMadScientist.com/BounShell
 
     .KNOWN ISSUES
     Beta, Buggy as all get out.
@@ -853,8 +872,7 @@ Function Connect-BsO365Tenant
   $ModernAuthPassword = ConvertTo-SecureString "Foo" -asplaintext -force
   [string]$ModernAuthUsername
   
-  Write-Log -component $Function -Message "Called to connect to Tenant $tenant" -severity 1
-  
+
   #Check to see if we are running in the ISE
   If ($PSISE)
   {
@@ -866,6 +884,77 @@ Function Connect-BsO365Tenant
 
   #Import the Config file so we have data  
   Read-BsConfigFile
+
+
+  #check to see if a tenant was specified
+   If ($Tenant.length -eq 0) 
+    {
+      Write-Log -Message 'Connect-BsO365Tenant calle without a tenant, displaying menu' -severity 1
+			
+      #Menu code thanks to Greig.
+
+      #Dodgy hack until I refactor the config code #TODO
+      $Tenants = @()
+      $Tenants += ($global:Config.Tenant1.DisplayName)
+      $Tenants += ($global:Config.Tenant2.DisplayName)
+      $Tenants += ($global:Config.Tenant3.DisplayName)
+      $Tenants += ($global:Config.Tenant4.DisplayName)
+      $Tenants += ($global:Config.Tenant5.DisplayName)
+      $Tenants += ($global:Config.Tenant6.DisplayName)
+      $Tenants += ($global:Config.Tenant7.DisplayName)
+      $Tenants += ($global:Config.Tenant8.DisplayName)
+      $Tenants += ($global:Config.Tenant9.DisplayName)
+      $Tenants += ($global:Config.Tenant10.DisplayName)
+
+
+      #First figure out the maximum width of the items name (for the tabular menu):
+      $width = 0
+      foreach ($Tenant in ($Tenants)) 
+      {
+        if ($Tenant.Length -gt $width) 
+        {
+          $width = $Tenant.Length
+        }
+      }
+
+      #Provide an on-screen menu of Front End Pools for the user to choose from:
+      $index = 1
+      Write-Host ""
+      Write-Host -Object ('ID    '), ('Tenant Name'.Padright($width + 1), ' ')
+      foreach ($Tenant in ($Tenants)) 
+      {
+        Write-Host -Object ($index.ToString()).PadRight(2, ' '), " | ", ($Tenant.Padright($width + 1), ' ')
+        $index++
+      }
+      $index--	#Undo that last increment
+      Write-Host
+      Write-Host -Object 'Choose the tenant you wish to use'
+      $chosen = Read-Host -Prompt 'Or any other value to quit'
+      Write-Log -Message "User input $chosen" -severity 1
+      if ($chosen -notmatch '^\d$') 
+      {
+        Exit
+      }
+      if ([int]$chosen -lt 0) 
+      {
+        Exit
+      }
+      if ([int]$chosen -gt $index) 
+      {
+        Exit
+      }
+      $Tenant = $chosen
+     
+    }
+
+
+
+
+
+
+  Write-Log -component $Function -Message "Called to connect to Tenant $tenant" -severity 1
+  
+
   #change config based on tenant
   #region tenantswitch
   switch ($Tenant)
@@ -1893,6 +1982,12 @@ Function Import-BsGuiFunctions
 
 }
 
+Function Import-BsIseFunctions 
+{
+
+
+}
+
 Function Show-BsGuiElements
 {
   #Reset the cancel button
@@ -1913,21 +2008,8 @@ Function Start-BounShell
   Write-Log -component $function -Message "Script executed from $PSScriptRoot" -severity 1
   Write-Log -component $function -Message "Loading BounShell..." -severity 2
 
-  #Check we are actually in the ISE
-  If(!$PSISE) 
-  {   
-    Write-Log -component $function -Message 'Could not locate $PSISE Variable' -severity 3
-    Write-Log -component $function -Message 'Sorry, BounShell is designed to be run from the PowerShell ISE' -severity 2
-    Write-Log -component $function -Message 'You can however connect to a pre-configured tenant manually using the cmdlet' -severity 2
-    Write-Log -component $function -Message 'PS> Connect-BsO365Tenant -Tenant 1'  -severity 2
-    Write-Log -component $function -Message 'This will connect to the Tenant stored in slot 1 in the current context'  -severity 2
-    Return #Yes I know Return sucks, but I think its better than Throw.
-    
-  }
-
   #Load the Gui Elements
   Import-BsGuiElements
-
 
   #check for config file then load the default
 
@@ -1957,12 +2039,30 @@ Function Start-BounShell
     Get-ScriptUpdate
   } #todo enable update checking
 
-  #Check for Management Tools
+  #Check for Modules
   #Test-ManagementTools #todo fix
   
   #Now Create the Objects in the ISE
-  Update-BsAddonMenu
+  If($PSISE) 
+  {
+    Update-BsAddonMenu
+  }
+  
+  
   Write-Log -component $function -Message "BounShell Loaded" -severity 2
+  
+  #Check we are actually in the ISE
+  If(!$PSISE) 
+  {   
+    Write-Host ""
+    Write-Log -component $function -Message 'Could not locate $PSISE Variable' -severity 1
+    Write-Log -component $function -Message 'Launching BounShell without ISE Support, Keyboard Shotcuts will be unavailable' -severity 2
+    Write-Host ""
+    Write-Log -component $function -Message 'To configure BounShell tenants run Show-BsGuiElements' -severity 2
+    Write-Log -component $function -Message 'To connect to a tenant run Connect-BsO365Tenant'  -severity 2
+    Return #Yes I know Return sucks, but I think its better than Throw.
+    
+  }
 }
 
 Function Watch-BsCredentials
@@ -2087,14 +2187,14 @@ Function Test-BsInstalledModules
    Write-Log -component $Function -Message "Checking for the latest version of $ModuleName in the PSGallery" -severity 2
    $gallery = $module.where({$_.repositorysourcelocation})
 
- foreach ($module in $gallery) {
+  foreach ($module in $gallery) {
 
      #find the current version in the gallery
      Try {
         $online = Find-Module -Name $module.name -Repository PSGallery -ErrorAction Stop
      }
      Catch {
-     #Todo What the fuck?
+      #Todo What the fuck?
         Write-Warning -Message ('Module {0} was not found in the PSGallery' -f $module.name)
      }
 
@@ -2118,6 +2218,7 @@ Function Test-BsInstalledModules
         OnlineVersion = $online.version
         Update = $NeedsUpdate
         Path = $module.modulebase
+     }
      }
   
 
@@ -2161,13 +2262,13 @@ Function Repair-BsInstalledModules
         $g = $module | Group-Object -Property name -NoElement | Where-Object count -gt 1}
         #Remove all but the latest one
 
-        foreach ($module in $g)
+        <#foreach ($module in $g)
         {
         Write-Log -component $Function -Message "Removing $($Module.version)" -severity 2
         Uninstall-Module -Name $MicrosoftTeams -RequiredVersion $module.version 
      
         }
-
+        #>
       default      { 'anything else'}
     }
 
