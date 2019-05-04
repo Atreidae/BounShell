@@ -1,7 +1,6 @@
 # BounShell
 
-
-## Installation>
+## Installation
 Installation of BounShell is simple.
 
 ### Method One
@@ -36,7 +35,7 @@ git home https://github.com/Atreidae/BounShell.git c:\github\Bounshell
 notepad $profile.AllUsersAllHosts
 #And add the following line
 $env:PSModulePath = $env:PSModulePath + ";c:\github\" 
-#Save and restart PowerShell</code></pre>
+#Save and restart PowerShell
 ```
 
 ## Initial Setup.
@@ -50,7 +49,7 @@ Fill in the details for your tenants as appropriate hit **Save Config** and clos
 
 You can now connect to any of the specified tenants by navigating to the Add-On's menu > BounShell > Tenant Name
 
-Not using the ISE? Run Connect-BsO365Tenant and choose a tenant to connect to.
+Not using the ISE? Run **Connect-BsO365Tenant** and choose a tenant to connect to.
 
 ## Modern Auth Beta (Beta 0.6 and up)
 I've implemented a basic form of dealing with Modern Auth. When you attempt to connect to a tenant with the **Modern Auth** flag set BounShell will invoke the modern auth credential window and then copy your username to the clipboard. Simply paste this into the modern auth window using **Ctrl+V** and BounShell will then copy your password into the clipboard.
