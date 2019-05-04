@@ -418,7 +418,8 @@ Function Read-BsConfigFile
 
       #Update the PS ISE Addon Menu
       Update-BsAddonMenu
-
+    }
+    
       #Populate with Values
       [void] $Global:grid_Tenants.Rows.Clear()
       [void] $Global:grid_Tenants.Rows.Add("1",$global:Config.Tenant1.DisplayName,$global:Config.Tenant1.SignInAddress,"****",$global:Config.Tenant1.ModernAuth,$global:Config.Tenant1.ConnectToTeams,$global:Config.Tenant1.ConnectToSkype,$global:Config.Tenant1.ConnectToExchange,$global:Config.Tenant1.ConnectToAzureAD,$global:Config.Tenant1.ConnectToCompliance)
@@ -431,7 +432,7 @@ Function Read-BsConfigFile
       [void] $Global:grid_Tenants.Rows.Add("8",$global:Config.Tenant8.DisplayName,$global:Config.Tenant8.SignInAddress,"****",$global:Config.Tenant8.ModernAuth,$global:Config.Tenant8.ConnectToTeams,$global:Config.Tenant8.ConnectToSkype,$global:Config.Tenant8.ConnectToExchange,$global:Config.Tenant8.ConnectToAzureAD,$global:Config.Tenant8.ConnectToCompliance)
       [void] $Global:grid_Tenants.Rows.Add("9",$global:Config.Tenant9.DisplayName,$global:Config.Tenant9.SignInAddress,"****",$global:Config.Tenant9.ModernAuth,$global:Config.Tenant9.ConnectToTeams,$global:Config.Tenant9.ConnectToSkype,$global:Config.Tenant9.ConnectToExchange,$global:Config.Tenant9.ConnectToAzureAD,$global:Config.Tenant9.ConnectToCompliance)
       [void] $Global:grid_Tenants.Rows.Add("10",$global:Config.Tenant10.DisplayName,$global:Config.Tenant10.SignInAddress,"****",$global:Config.Tenant10.ModernAuth,$global:Config.Tenant10.ConnectToTeams,$global:Config.Tenant10.ConnectToSkype,$global:Config.Tenant10.ConnectToExchange,$global:Config.Tenant10.ConnectToAzureAD,$global:Config.Tenant10.ConnectToCompliance)
-    }
+    
   }
     
   Catch
@@ -1958,21 +1959,30 @@ Function Import-BsGuiFunctions
   {
     $Global:btn_CancelConfig.Text = [System.String]'Close'
     Write-BsConfigFile
+    If ($PSISE)
+    {
     Update-BsAddonMenu
+    }
   }
 
   #Gui Set Defaults Button
   $Global:Btn_Default_Click =
   {
     Import-BsDefaultConfig
+    If ($PSISE)
+    {
     Update-BsAddonMenu
+    }
   }
 
   #Gui Button to Reload Config
   $Global:Btn_ConfigReload_Click =
   {
     Read-BsConfigFile
+    If ($PSISE)
+    {
     Update-BsAddonMenu
+    }
   }
   #Gui link object to open a browser for more info on the modern auth clipboard
   $Global:cliplabel_click = 
