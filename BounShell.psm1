@@ -2054,9 +2054,8 @@ Function Start-BounShell
   #Check we are actually in the ISE
   If(!$PSISE) 
   {   
-    Write-Host ""
     Write-Log -component $function -Message 'Could not locate $PSISE Variable' -severity 1
-    Write-Log -component $function -Message 'Launching BounShell without ISE Support, Keyboard Shotcuts will be unavailable' -severity 2
+    Write-Log -component $function -Message 'Launched BounShell without ISE Support, Keyboard Shotcuts will be unavailable' -severity 2
     Write-Host ""
     Write-Log -component $function -Message 'To configure BounShell tenants run Show-BsGuiElements' -severity 2
     Write-Log -component $function -Message 'To connect to a tenant run Connect-BsO365Tenant'  -severity 2
@@ -2121,23 +2120,6 @@ Function Watch-BsCredentials
 
 }
 
-Function Import-BsO365Token
-{
-  #Development only. Code not in use
-  <#
-      #Import the required AzureAD dll
-      Add-Type -Path 'C:\Program Files\WindowsPowerShell\Modules\AzureADPreview\2.0.2.5\Microsoft.IdentityModel.Clients.ActiveDirectory.dll'
-  
-      $accesstoken = [Microsoft.IdentityModel.Clients.ActiveDirectory.TokenCache]::DefaultShared
-      $accesstoken.ReadItems() | select DisplayableId, Authority, ClientId, Resource
-      $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList #PLACE AUTHORITY URL HERE#
-      $client_id = "CLIENT_ID INFO"
-      $Credential = Get-Credential YOURUSERNAME@COMPANY.COM
-      $AzureADCred = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.UserPasswordCredential" -ArgumentList $Credential.UserName,$Credential.Password
-      $authResult = [Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContextIntegratedAuthExtensions]::AcquireTokenAsync($authContext,"https://RESOURCE-URL.COM",$client_Id,$AzureADCred)
-  #>
-}
-
 Function Test-BsInstalledModules 
 {
 
@@ -2179,7 +2161,7 @@ Function Test-BsInstalledModules
   if($Module.count -eq 0)
   {
     Write-Log -component $Function -Message "$ModuleName Not Installed on Local Computer" -severity 3
-    $needsinstall = $true
+    $NeedsInstall = $true
   }
 
   #Okay, we have checked if everything is installed, now lets check and report on the version
@@ -2293,4 +2275,6 @@ Export-ModuleMember Show-BsGuiElements
 Export-ModuleMember Hide-BsGuiElements
 Export-ModuleMember Start-BounShell
 Export-ModuleMember Watch-BsCredentials
-Export-ModuleMember Import-BsO365Token
+Export-ModuleMember Test-BsInstalledModules
+Export-ModuleMember Repair-BsInstalledModules
+
