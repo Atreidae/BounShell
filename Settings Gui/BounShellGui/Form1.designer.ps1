@@ -9,11 +9,15 @@ $SettingsForm = New-Object -TypeName System.Windows.Forms.Form
 [System.Windows.Forms.DataGridViewTextBoxColumn]$Tenant_ID = $null
 [System.Windows.Forms.DataGridViewTextBoxColumn]$Tenant_DisplayName = $null
 [System.Windows.Forms.DataGridViewTextBoxColumn]$Tenant_Email = $null
-[System.Windows.Forms.DataGridViewButtonColumn]$Tenant_Credentials = $null
+[System.Windows.Forms.DataGridViewTextBoxColumn]$Tenant_Credentials = $null
 [System.Windows.Forms.DataGridViewCheckBoxColumn]$Tenant_ModernAuth = $null
 [System.Windows.Forms.DataGridViewCheckBoxColumn]$Tenant_Teams = $null
 [System.Windows.Forms.DataGridViewCheckBoxColumn]$Tenant_Skype = $null
 [System.Windows.Forms.DataGridViewCheckBoxColumn]$Tenant_Exchange = $null
+[System.Windows.Forms.DataGridViewCheckBoxColumn]$Tenant_AzureAD = $null
+[System.Windows.Forms.DataGridViewCheckBoxColumn]$Tenant_Compliance = $null
+[System.Windows.Forms.CheckBox]$cbx_ClipboardAuth = $null
+[System.Windows.Forms.LinkLabel]$cliplabel = $null
 [System.Windows.Forms.CheckBox]$cbx_AutoUpdates = $null
 function InitializeComponent
 {
@@ -29,22 +33,27 @@ $Btn_Default = (New-Object -TypeName System.Windows.Forms.Button)
 $Tenant_ID = (New-Object -TypeName System.Windows.Forms.DataGridViewTextBoxColumn)
 $Tenant_DisplayName = (New-Object -TypeName System.Windows.Forms.DataGridViewTextBoxColumn)
 $Tenant_Email = (New-Object -TypeName System.Windows.Forms.DataGridViewTextBoxColumn)
-$Tenant_Credentials = (New-Object -TypeName System.Windows.Forms.DataGridViewButtonColumn)
+$Tenant_Credentials = (New-Object -TypeName System.Windows.Forms.DataGridViewTextBoxColumn)
 $Tenant_ModernAuth = (New-Object -TypeName System.Windows.Forms.DataGridViewCheckBoxColumn)
 $Tenant_Teams = (New-Object -TypeName System.Windows.Forms.DataGridViewCheckBoxColumn)
 $Tenant_Skype = (New-Object -TypeName System.Windows.Forms.DataGridViewCheckBoxColumn)
 $Tenant_Exchange = (New-Object -TypeName System.Windows.Forms.DataGridViewCheckBoxColumn)
+$Tenant_AzureAD = (New-Object -TypeName System.Windows.Forms.DataGridViewCheckBoxColumn)
+$Tenant_Compliance = (New-Object -TypeName System.Windows.Forms.DataGridViewCheckBoxColumn)
+$cbx_ClipboardAuth = (New-Object -TypeName System.Windows.Forms.CheckBox)
+$cliplabel = (New-Object -TypeName System.Windows.Forms.LinkLabel)
 ([System.ComponentModel.ISupportInitialize]$grid_Tenants).BeginInit()
 $SettingsForm.SuspendLayout()
 #
 #btn_CancelConfig
 #
 $btn_CancelConfig.BackColor = [System.Drawing.Color]::White
+$btn_CancelConfig.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
 $btn_CancelConfig.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
 $btn_CancelConfig.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
 $btn_CancelConfig.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]8)),([System.Int32]([System.Byte][System.Byte]116)),([System.Int32]([System.Byte][System.Byte]170)))
 
-$btn_CancelConfig.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]821,[System.Int32]368))
+$btn_CancelConfig.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]936,[System.Int32]368))
 $btn_CancelConfig.Name = [System.String]'btn_CancelConfig'
 $btn_CancelConfig.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]94,[System.Int32]23))
 $btn_CancelConfig.TabIndex = [System.Int32]59
@@ -59,7 +68,7 @@ $Btn_ReloadConfig.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
 $Btn_ReloadConfig.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
 $Btn_ReloadConfig.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]8)),([System.Int32]([System.Byte][System.Byte]116)),([System.Int32]([System.Byte][System.Byte]170)))
 
-$Btn_ReloadConfig.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]589,[System.Int32]368))
+$Btn_ReloadConfig.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]704,[System.Int32]368))
 $Btn_ReloadConfig.Name = [System.String]'Btn_ReloadConfig'
 $Btn_ReloadConfig.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]110,[System.Int32]23))
 $Btn_ReloadConfig.TabIndex = [System.Int32]58
@@ -74,7 +83,7 @@ $Btn_SaveConfig.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
 $Btn_SaveConfig.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
 $Btn_SaveConfig.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]8)),([System.Int32]([System.Byte][System.Byte]116)),([System.Int32]([System.Byte][System.Byte]170)))
 
-$Btn_SaveConfig.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]705,[System.Int32]368))
+$Btn_SaveConfig.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]820,[System.Int32]368))
 $Btn_SaveConfig.Name = [System.String]'Btn_SaveConfig'
 $Btn_SaveConfig.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]110,[System.Int32]23))
 $Btn_SaveConfig.TabIndex = [System.Int32]57
@@ -110,7 +119,7 @@ $dataGridViewCellStyle1.SelectionForeColor = [System.Drawing.SystemColors]::High
 $dataGridViewCellStyle1.WrapMode = [System.Windows.Forms.DataGridViewTriState]::True
 $grid_Tenants.ColumnHeadersDefaultCellStyle = $dataGridViewCellStyle1
 $grid_Tenants.ColumnHeadersHeightSizeMode = [System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode]::AutoSize
-$grid_Tenants.Columns.AddRange($Tenant_ID,$Tenant_DisplayName,$Tenant_Email,$Tenant_Credentials,$Tenant_ModernAuth,$Tenant_Teams,$Tenant_Skype,$Tenant_Exchange)
+$grid_Tenants.Columns.AddRange($Tenant_ID,$Tenant_DisplayName,$Tenant_Email,$Tenant_Credentials,$Tenant_ModernAuth,$Tenant_Teams,$Tenant_Skype,$Tenant_Exchange,$Tenant_AzureAD,$Tenant_Compliance)
 $dataGridViewCellStyle2.Alignment = [System.Windows.Forms.DataGridViewContentAlignment]::MiddleLeft
 $dataGridViewCellStyle2.BackColor = [System.Drawing.SystemColors]::Window
 $dataGridViewCellStyle2.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Regular,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
@@ -130,7 +139,7 @@ $dataGridViewCellStyle3.SelectionBackColor = [System.Drawing.SystemColors]::High
 $dataGridViewCellStyle3.SelectionForeColor = [System.Drawing.SystemColors]::HighlightText
 $dataGridViewCellStyle3.WrapMode = [System.Windows.Forms.DataGridViewTriState]::True
 $grid_Tenants.RowHeadersDefaultCellStyle = $dataGridViewCellStyle3
-$grid_Tenants.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]903,[System.Int32]336))
+$grid_Tenants.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]1020,[System.Int32]336))
 $grid_Tenants.TabIndex = [System.Int32]76
 $grid_Tenants.add_CellContentClick($grid_Tenants_CellContentClick)
 #
@@ -141,7 +150,7 @@ $Btn_Default.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
 $Btn_Default.Font = (New-Object -TypeName System.Drawing.Font -ArgumentList @([System.String]'Microsoft Sans Serif',[System.Single]8.25,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Point,([System.Byte][System.Byte]0)))
 $Btn_Default.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]8)),([System.Int32]([System.Byte][System.Byte]116)),([System.Int32]([System.Byte][System.Byte]170)))
 
-$Btn_Default.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]473,[System.Int32]368))
+$Btn_Default.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]588,[System.Int32]368))
 $Btn_Default.Name = [System.String]'Btn_Default'
 $Btn_Default.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]110,[System.Int32]23))
 $Btn_Default.TabIndex = [System.Int32]77
@@ -179,8 +188,10 @@ $Tenant_Email.Width = [System.Int32]78
 #Tenant_Credentials
 #
 $Tenant_Credentials.Frozen = $true
-$Tenant_Credentials.HeaderText = [System.String]'Credentials'
+$Tenant_Credentials.HeaderText = [System.String]'Password'
 $Tenant_Credentials.Name = [System.String]'Tenant_Credentials'
+$Tenant_Credentials.Resizable = [System.Windows.Forms.DataGridViewTriState]::True
+$Tenant_Credentials.SortMode = [System.Windows.Forms.DataGridViewColumnSortMode]::NotSortable
 #
 #Tenant_ModernAuth
 #
@@ -202,16 +213,57 @@ $Tenant_Skype.Name = [System.String]'Tenant_Skype'
 $Tenant_Exchange.HeaderText = [System.String]'Connect to Exchange?'
 $Tenant_Exchange.Name = [System.String]'Tenant_Exchange'
 #
+#Tenant_AzureAD
+#
+$Tenant_AzureAD.HeaderText = [System.String]'Connect to Azure AD'
+$Tenant_AzureAD.Name = [System.String]'Tenant_AzureAD'
+$Tenant_AzureAD.Resizable = [System.Windows.Forms.DataGridViewTriState]::True
+$Tenant_AzureAD.SortMode = [System.Windows.Forms.DataGridViewColumnSortMode]::Automatic
+#
+#Tenant_Compliance
+#
+$Tenant_Compliance.HeaderText = [System.String]'Connect to Compliance Centre'
+$Tenant_Compliance.Name = [System.String]'Tenant_Compliance'
+#
+#cbx_ClipboardAuth
+#
+$cbx_ClipboardAuth.AutoSize = $true
+$cbx_ClipboardAuth.ForeColor = [System.Drawing.Color]::FromArgb(([System.Int32]([System.Byte][System.Byte]8)),([System.Int32]([System.Byte][System.Byte]116)),([System.Int32]([System.Byte][System.Byte]170)))
+
+$cbx_ClipboardAuth.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]230,[System.Int32]370))
+$cbx_ClipboardAuth.Name = [System.String]'cbx_ClipboardAuth'
+$cbx_ClipboardAuth.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]228,[System.Int32]17))
+$cbx_ClipboardAuth.TabIndex = [System.Int32]78
+$cbx_ClipboardAuth.Text = [System.String]'Disable Modern Auth Clipboard Intergration'
+$cbx_ClipboardAuth.UseVisualStyleBackColor = $true
+$cbx_ClipboardAuth.add_CheckedChanged($checkBox1_CheckedChanged)
+#
+#cliplabel
+#
+$cliplabel.AutoSize = $true
+$cliplabel.Location = (New-Object -TypeName System.Drawing.Point -ArgumentList @([System.Int32]456,[System.Int32]370))
+$cliplabel.Name = [System.String]'cliplabel'
+$cliplabel.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]53,[System.Int32]13))
+$cliplabel.TabIndex = [System.Int32]79
+$cliplabel.TabStop = $true
+$cliplabel.Text = [System.String]'more info.'
+#
 #SettingsForm
 #
+$SettingsForm.AcceptButton = $Btn_SaveConfig
 $SettingsForm.BackColor = [System.Drawing.Color]::White
-$SettingsForm.ClientSize = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]925,[System.Int32]404))
+$SettingsForm.CancelButton = $btn_CancelConfig
+$SettingsForm.ClientSize = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]1044,[System.Int32]404))
+$SettingsForm.Controls.Add($cliplabel)
+$SettingsForm.Controls.Add($cbx_ClipboardAuth)
 $SettingsForm.Controls.Add($Btn_Default)
 $SettingsForm.Controls.Add($grid_Tenants)
 $SettingsForm.Controls.Add($cbx_AutoUpdates)
 $SettingsForm.Controls.Add($btn_CancelConfig)
 $SettingsForm.Controls.Add($Btn_ReloadConfig)
 $SettingsForm.Controls.Add($Btn_SaveConfig)
+$SettingsForm.MaximizeBox = $false
+$SettingsForm.MinimizeBox = $false
 $SettingsForm.Name = [System.String]'SettingsForm'
 $SettingsForm.add_Load($SettingsForm_Load)
 ([System.ComponentModel.ISupportInitialize]$grid_Tenants).EndInit()
@@ -231,6 +283,10 @@ Add-Member -InputObject $SettingsForm -Name Tenant_ModernAuth -Value $Tenant_Mod
 Add-Member -InputObject $SettingsForm -Name Tenant_Teams -Value $Tenant_Teams -MemberType NoteProperty
 Add-Member -InputObject $SettingsForm -Name Tenant_Skype -Value $Tenant_Skype -MemberType NoteProperty
 Add-Member -InputObject $SettingsForm -Name Tenant_Exchange -Value $Tenant_Exchange -MemberType NoteProperty
+Add-Member -InputObject $SettingsForm -Name Tenant_AzureAD -Value $Tenant_AzureAD -MemberType NoteProperty
+Add-Member -InputObject $SettingsForm -Name Tenant_Compliance -Value $Tenant_Compliance -MemberType NoteProperty
+Add-Member -InputObject $SettingsForm -Name cbx_ClipboardAuth -Value $cbx_ClipboardAuth -MemberType NoteProperty
+Add-Member -InputObject $SettingsForm -Name cliplabel -Value $cliplabel -MemberType NoteProperty
 Add-Member -InputObject $SettingsForm -Name cbx_AutoUpdates -Value $cbx_AutoUpdates -MemberType NoteProperty
 }
 . InitializeComponent
