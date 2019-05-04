@@ -1,5 +1,9 @@
 # BounShell
 
+Bounshell is a tool to allow Office365 Administrators to login to multiple Office365 Tenants and Services simply and easily
+For detailed infomation, see https://www.UcMadScientist.com/BounShell/
+
+
 ## Installation
 Installation of BounShell is simple.
 
