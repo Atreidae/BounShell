@@ -9,13 +9,23 @@
     
     .NOTES
 
-    Version                : 0.6.1
+    Version                : 0.6.2
     Date                   : 04/05/2019
     Lync Version           : Tested against Skype4B 2015
     Author                 : James Arber
     Header stolen from     : Greig Sheridan who stole it from Pat Richard's amazing "Get-CsConnections.ps1"
     Special Thanks to      : My Beta Testers. Greig Sheridan, Pat Richard and Justin O'Meara
-  
+
+
+    :v0.6.2: Beta Release
+    Fixed PowerShell Nuget packaging
+    Fixed bug in update code cause by move to SymVer (Thanks Greig)
+    
+    :v0.6.1: Beta Release
+    Moved to SymVer versioning 
+    Pubished to PowerShell gallery
+          
+
     :v0.6: Beta Release
     Enabled Modern Auth Support
     Formating changes
@@ -76,7 +86,7 @@ param
 [Net.ServicePointManager]::SecurityProtocol = 'tls12, tls11, tls'
 $StartTime                  =  Get-Date
 $VerbosePreference          =  "SilentlyContinue" #TODO
-[float]$ScriptVersion       =  '0.6.1'
+[String]$ScriptVersion       =  '0.6.2'
 [string]$GithubRepo         =  'BounShell' ##todo
 [string]$GithubBranch       =  'devel' #todo
 [string]$BlogPost           =  'https://www.UcMadScientist.com/BounShell/' #todo
@@ -249,13 +259,42 @@ Function Get-ScriptUpdate
   else
   {
     #Process the returned data
-    if ([single]$GitHubScriptVersion.Content -gt [single]$ScriptVersion)
-    {
-      #New Version available, #Prompt user to download
-      Write-Log -component $function -Message "New Version Available" -severity 3
-      $title = "Update Available"
-      $message = "an update to this script is available, did you want to download it?"
+    #Symver support!
+    [string]$Symver = ($GitHubScriptVersion.Content)
+    $splitgitver = $symver.split(".") 
+    $splitver = $ScriptVersion.split(".")
+    $needsupdate=$false
+    #Check for Major version
 
+    if ([single]$splitgitver[0] -gt [single]$splitver[0])
+    {
+      $Needupdate=$true
+      #New Major Build available, #Prompt user to download
+      Write-Log -component $function -Message "New Major Version Available" -severity 3
+      $title = "Update Available"
+      $message = "a major update to this script is available, did you want to download it?"
+    }
+
+    if ([single]$splitgitver[1] -gt [single]$splitver[1])
+    {
+      $Needupdate=$true
+      #New Major Build available, #Prompt user to download
+      Write-Log -component $function -Message "New Minor Version Available" -severity 3
+      $title = "Update Available"
+      $message = "a minor update to this script is available, did you want to download it?"
+    }
+
+    if ([single]$splitgitver[2] -gt [single]$splitver[2])
+    {
+      $Needupdate=$true
+      #New Major Build available, #Prompt user to download
+      Write-Log -component $function -Message "New Bugfix Available" -severity 3
+      $title = "Update Available"
+      $message = "a bugfix update to this script is available, did you want to download it?"
+    }
+
+    If($needupdate)
+    {
       $yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes", `
       "Launches a browser window with the update"
 
@@ -273,7 +312,8 @@ Function Get-ScriptUpdate
           Write-Log -component $function -Message "User opted to download update" -severity 1
           Start $BlogPost
           Write-Log -component $function -Message "Exiting Script" -severity 3
-          Exit
+          pause
+          exit
         }
         #User said no
         1 {Write-Log -component $function -Message "User opted to skip update" -severity 1
