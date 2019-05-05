@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>BounShell</id>
+    <version>0.6.1</version>
+    <authors>James Arber</authors>
+    <owners>UcMadScientist</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+    <projectUrl>https://www.ucmadscientist.com/bounshell</projectUrl>
+    <description>A tool to allow Office365 admins to connect to mutiple services and tenants simply and easily</description>
+    <releaseNotes>Enabled Modern Auth Support
+        Formating changes
+        Broke up alot of my one-liners to make it easier for others to read/ understand the flow
+        Updated error messages
+        Better code comments
+        Fixed an issue with the Compliance Portal code
+        Added Module checker and installer based off Andrew Prices "Detect-MicrosoftTeams-Version" http://www.blogabout.cloud/2018/09/240/
+        Now Gluten Free
+        Finally stopped feature creep</releaseNotes>
+    <copyright>(c) 2019 James Arber. All rights reserved.</copyright>
+    <tags>Office365 Microsoft365 SkypeOnline ExchangeOnline AzureAD MicrosoftTeams PSModule PSIncludes_Function PSFunction_Read-BsConfigFile PSFunction_Write-BsConfigFile PSFunction_Import-BsDefaultConfig PSFunction_Invoke-BsNewTenantTab PSFunction_Connect-BsO365Tenant PSFunction_Update-BsAddonMenu PSFunction_Import-BsGuiElements PSFunction_Import-BsGuiFunctions PSFunction_Show-BsGuiElements PSFunction_Hide-BsGuiElements PSFunction_Start-BounShell PSFunction_Watch-BsCredentials PSFunction_Test-BsInstalledModules PSFunction_Repair-BsInstalledModules PSCommand_Read-BsConfigFile PSCommand_Write-BsConfigFile PSCommand_Import-BsDefaultConfig PSCommand_Invoke-BsNewTenantTab PSCommand_Connect-BsO365Tenant PSCommand_Update-BsAddonMenu PSCommand_Import-BsGuiElements PSCommand_Import-BsGuiFunctions PSCommand_Show-BsGuiElements PSCommand_Hide-BsGuiElements PSCommand_Start-BounShell PSCommand_Watch-BsCredentials PSCommand_Test-BsInstalledModules PSCommand_Repair-BsInstalledModules</tags>
+  </metadata>
+</package>

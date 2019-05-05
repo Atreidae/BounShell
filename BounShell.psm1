@@ -9,8 +9,8 @@
     
     .NOTES
 
-    Version                : 0.6
-    Date                   : 29/03/2019
+    Version                : 0.6.1
+    Date                   : 04/05/2019
     Lync Version           : Tested against Skype4B 2015
     Author                 : James Arber
     Header stolen from     : Greig Sheridan who stole it from Pat Richard's amazing "Get-CsConnections.ps1"
@@ -76,7 +76,7 @@ param
 [Net.ServicePointManager]::SecurityProtocol = 'tls12, tls11, tls'
 $StartTime                  =  Get-Date
 $VerbosePreference          =  "SilentlyContinue" #TODO
-[float]$ScriptVersion       =  '0.6'
+[float]$ScriptVersion       =  '0.6.1'
 [string]$GithubRepo         =  'BounShell' ##todo
 [string]$GithubBranch       =  'devel' #todo
 [string]$BlogPost           =  'https://www.UcMadScientist.com/BounShell/' #todo
