@@ -20,6 +20,7 @@
     :v0.6.2: Beta Release
     Fixed PowerShell Nuget packaging
     Fixed bug in update code cause by move to SymVer (Thanks Greig)
+    Fixed Typo's in configuration grid
     
     :v0.6.1: Beta Release
     Moved to SymVer versioning 
@@ -916,12 +917,12 @@ Function Connect-BsO365Tenant
 
   #Check to see if we are running in the ISE
   If ($PSISE)
-  {
-    #load the relevant stuff for the ISE enviroment
-    Import-BsGuiElements
+  {  
     #Clean up any stale sessions (we shouldnt have any, but whatever)
     Get-PSSession | Remove-PSSession
   }
+  #load the gui stuff for configuration #todo, put  check here and only load it if its not loaded.
+  Import-BsGuiElements
 
   #Import the Config file so we have data  
   Read-BsConfigFile
@@ -930,7 +931,7 @@ Function Connect-BsO365Tenant
   #check to see if a tenant was specified
    If ($Tenant.length -eq 0) 
     {
-      Write-Log -Message 'Connect-BsO365Tenant calle without a tenant, displaying menu' -severity 1
+      Write-Log -Message 'Connect-BsO365Tenant called without a tenant, displaying menu' -severity 1
 			
       #Menu code thanks to Greig.
 
@@ -958,7 +959,7 @@ Function Connect-BsO365Tenant
         }
       }
 
-      #Provide an on-screen menu of Front End Pools for the user to choose from:
+      #Provide an on-screen menu of tenants for the user to choose from:
       $index = 1
       Write-Host ""
       Write-Host -Object ('ID    '), ('Tenant Name'.Padright($width + 1), ' ')
@@ -989,10 +990,6 @@ Function Connect-BsO365Tenant
     }
 
 
-
-
-
-
   Write-Log -component $Function -Message "Called to connect to Tenant $tenant" -severity 1
   
 
@@ -1007,12 +1004,14 @@ Function Connect-BsO365Tenant
       [bool]$ConnectToSkype = $global:Config.Tenant1.ConnectToSkype
       [bool]$ConnectToExchange = $global:Config.Tenant1.ConnectToExchange
       [bool]$ConnectToSharepoint = $false
+      [bool]$ConnectToAzureAD = $global:Config.Tenant1.ConnectToAzureAD
+      [bool]$ConnectToCompliance = $global:Config.Tenant1.ConnectToCompliance
       Write-Log -component $function -Message "Loading $($global:Config.Tenant1.DisplayName) Settings" -severity 2
       #Check to see if the tenant is configured for modern auth
       If (!$global:Config.Tenant1.ModernAuth) 
       {
         #Not using modern auth
-        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant1.SignInAddress,$global:Config.Tenant1.Credential)
+        $global:StoredPsCred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant1.SignInAddress,$global:Config.Tenant1.Credential)
       }
       Else
       {
@@ -1032,12 +1031,14 @@ Function Connect-BsO365Tenant
       [bool]$ConnectToSkype = $global:Config.Tenant2.ConnectToSkype
       [bool]$ConnectToExchange = $global:Config.Tenant2.ConnectToExchange
       [bool]$ConnectToSharepoint = $false
+      [bool]$ConnectToAzureAD = $global:Config.Tenant2.ConnectToAzureAD
+      [bool]$ConnectToCompliance = $global:Config.Tenant2.ConnectToCompliance
       Write-Log -component $function -Message "Loading $($global:Config.Tenant2.DisplayName) Settings" -severity 2
       #Check to see if the tenant is configured for modern auth
       If (!$global:Config.Tenant2.ModernAuth) 
       {
         #Not using modern auth
-        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant2.SignInAddress,$global:Config.Tenant2.Credential)
+        $global:StoredPsCred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant2.SignInAddress,$global:Config.Tenant2.Credential)
       }
       Else
       {
@@ -1057,12 +1058,14 @@ Function Connect-BsO365Tenant
       [bool]$ConnectToSkype = $global:Config.Tenant3.ConnectToSkype
       [bool]$ConnectToExchange = $global:Config.Tenant3.ConnectToExchange
       [bool]$ConnectToSharepoint = $false
+      [bool]$ConnectToAzureAD = $global:Config.Tenant3.ConnectToAzureAD
+      [bool]$ConnectToCompliance = $global:Config.Tenant3.ConnectToCompliance
       Write-Log -component $function -Message "Loading $($global:Config.Tenant3.DisplayName) Settings" -severity 2
       #Check to see if the tenant is configured for modern auth
       If (!$global:Config.Tenant3.ModernAuth) 
       {
         #Not using modern auth
-        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant3.SignInAddress,$global:Config.Tenant3.Credential)
+        $global:StoredPsCred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant3.SignInAddress,$global:Config.Tenant3.Credential)
       }
       Else
       {
@@ -1082,12 +1085,14 @@ Function Connect-BsO365Tenant
       [bool]$ConnectToSkype = $global:Config.Tenant4.ConnectToSkype
       [bool]$ConnectToExchange = $global:Config.Tenant4.ConnectToExchange
       [bool]$ConnectToSharepoint = $false
+      [bool]$ConnectToAzureAD = $global:Config.Tenant4.ConnectToAzureAD
+      [bool]$ConnectToCompliance = $global:Config.Tenant4.ConnectToCompliance
       Write-Log -component $function -Message "Loading $($global:Config.Tenant4.DisplayName) Settings" -severity 2
       #Check to see if the tenant is configured for modern auth
       If (!$global:Config.Tenant4.ModernAuth) 
       {
         #Not using modern auth
-        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant4.SignInAddress,$global:Config.Tenant4.Credential)
+        $global:StoredPsCred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant4.SignInAddress,$global:Config.Tenant4.Credential)
       }
       Else
       {
@@ -1107,12 +1112,14 @@ Function Connect-BsO365Tenant
       [bool]$ConnectToSkype = $global:Config.Tenant5.ConnectToSkype
       [bool]$ConnectToExchange = $global:Config.Tenant5.ConnectToExchange
       [bool]$ConnectToSharepoint = $false
+      [bool]$ConnectToAzureAD = $global:Config.Tenant5.ConnectToAzureAD
+      [bool]$ConnectToCompliance = $global:Config.Tenant5.ConnectToCompliance
       Write-Log -component $function -Message "Loading $($global:Config.Tenant5.DisplayName) Settings" -severity 2
       #Check to see if the tenant is configured for modern auth
       If (!$global:Config.Tenant5.ModernAuth) 
       {
         #Not using modern auth
-        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant5.SignInAddress,$global:Config.Tenant5.Credential)
+        $global:StoredPsCred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant5.SignInAddress,$global:Config.Tenant5.Credential)
       }
       Else
       {
@@ -1132,12 +1139,14 @@ Function Connect-BsO365Tenant
       [bool]$ConnectToSkype = $global:Config.Tenant6.ConnectToSkype
       [bool]$ConnectToExchange = $global:Config.Tenant6.ConnectToExchange
       [bool]$ConnectToSharepoint = $false
+      [bool]$ConnectToAzureAD = $global:Config.Tenant6.ConnectToAzureAD
+      [bool]$ConnectToCompliance = $global:Config.Tenant6.ConnectToCompliance
       Write-Log -component $function -Message "Loading $($global:Config.Tenant6.DisplayName) Settings" -severity 2
       #Check to see if the tenant is configured for modern auth
       If (!$global:Config.Tenant6.ModernAuth) 
       {
         #Not using modern auth
-        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant6.SignInAddress,$global:Config.Tenant6.Credential)
+        $global:StoredPsCred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant6.SignInAddress,$global:Config.Tenant6.Credential)
       }
       Else
       {
@@ -1157,12 +1166,14 @@ Function Connect-BsO365Tenant
       [bool]$ConnectToSkype = $global:Config.Tenant7.ConnectToSkype
       [bool]$ConnectToExchange = $global:Config.Tenant7.ConnectToExchange
       [bool]$ConnectToSharepoint = $false
+      [bool]$ConnectToAzureAD = $global:Config.Tenant7.ConnectToAzureAD
+      [bool]$ConnectToCompliance = $global:Config.Tenant7.ConnectToCompliance
       Write-Log -component $function -Message "Loading $($global:Config.Tenant7.DisplayName) Settings" -severity 2
       #Check to see if the tenant is configured for modern auth
       If (!$global:Config.Tenant7.ModernAuth) 
       {
         #Not using modern auth
-        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant7.SignInAddress,$global:Config.Tenant7.Credential)
+        $global:StoredPsCred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant7.SignInAddress,$global:Config.Tenant7.Credential)
       }
       Else
       {
@@ -1182,12 +1193,14 @@ Function Connect-BsO365Tenant
       [bool]$ConnectToSkype = $global:Config.Tenant8.ConnectToSkype
       [bool]$ConnectToExchange = $global:Config.Tenant8.ConnectToExchange
       [bool]$ConnectToSharepoint = $false
+      [bool]$ConnectToAzureAD = $global:Config.Tenant8.ConnectToAzureAD
+      [bool]$ConnectToCompliance = $global:Config.Tenant8.ConnectToCompliance
       Write-Log -component $function -Message "Loading $($global:Config.Tenant8.DisplayName) Settings" -severity 2
       #Check to see if the tenant is configured for modern auth
       If (!$global:Config.Tenant8.ModernAuth) 
       {
         #Not using modern auth
-        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant8.SignInAddress,$global:Config.Tenant8.Credential)
+        $global:StoredPsCred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant8.SignInAddress,$global:Config.Tenant8.Credential)
       }
       Else
       {
@@ -1207,12 +1220,15 @@ Function Connect-BsO365Tenant
       [bool]$ConnectToSkype = $global:Config.Tenant9.ConnectToSkype
       [bool]$ConnectToExchange = $global:Config.Tenant9.ConnectToExchange
       [bool]$ConnectToSharepoint = $false
+      [bool]$ConnectToAzureAD = $global:Config.Tenant9.ConnectToAzureAD
+      [bool]$ConnectToCompliance = $global:Config.Tenant9.ConnectToCompliance
+      
       Write-Log -component $function -Message "Loading $($global:Config.Tenant9.DisplayName) Settings" -severity 2
       #Check to see if the tenant is configured for modern auth
       If (!$global:Config.Tenant9.ModernAuth) 
       {
         #Not using modern auth
-        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant9.SignInAddress,$global:Config.Tenant9.Credential)
+        $global:StoredPsCred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant9.SignInAddress,$global:Config.Tenant9.Credential)
       }
       Else
       {
@@ -1232,12 +1248,14 @@ Function Connect-BsO365Tenant
       [bool]$ConnectToSkype = $global:Config.Tenant10.ConnectToSkype
       [bool]$ConnectToExchange = $global:Config.Tenant10.ConnectToExchange
       [bool]$ConnectToSharepoint = $false
+      [bool]$ConnectToAzureAD = $global:Config.Tenant10.ConnectToAzureAD
+      [bool]$ConnectToCompliance = $global:Config.Tenant10.ConnectToCompliance
       Write-Log -component $function -Message "Loading $($global:Config.Tenant10.DisplayName) Settings" -severity 2
       #Check to see if the tenant is configured for modern auth
       If (!$global:Config.Tenant10.ModernAuth) 
       {
         #Not using modern auth
-        $global:pscred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant10.SignInAddress,$global:Config.Tenant10.Credential)
+        $global:StoredPsCred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant10.SignInAddress,$global:Config.Tenant10.Credential)
       }
       Else
       {
@@ -1248,7 +1266,31 @@ Function Connect-BsO365Tenant
         $ModernAuthUsername = $global:Config.Tenant10.SignInAddress
       }
     }
-    
+     11 #Tenant 11 should never happen. this is refactoring for 0.3 config file with array support
+    {
+      #Set Connection flags
+      [bool]$ConnectToTeams = $global:Config.Tenant[$tenant].ConnectToTeams
+      [bool]$ConnectToSkype = $global:Config.Tenant[$tenant].ConnectToSkype
+      [bool]$ConnectToExchange = $global:Config.Tenant[$tenant].ConnectToExchange
+      [bool]$ConnectToSharepoint = $false
+      [bool]$ConnectToAzureAD = $global:Config.Tenant[$tenant].ConnectToAzureAD
+      [bool]$ConnectToCompliance = $global:Config.Tenant[$tenant].ConnectToCompliance
+      Write-Log -component $function -Message "Loading $($global:Config.Tenant[$tenant].DisplayName) Settings" -severity 2
+      #Check to see if the tenant is configured for modern auth
+      If (!$global:Config.Tenant[$tenant].ModernAuth) 
+      {
+        #Not using modern auth
+        $global:StoredPsCred = New-Object System.Management.Automation.PSCredential($global:Config.Tenant[$tenant].SignInAddress,$global:Config.Tenant[$tenant].Credential)
+      }
+      Else
+      {
+        #Using modern auth
+        $ModernAuth = $True
+        #Convert the config into something we can work with later
+        $ModernAuthPassword = $global:Config.Tenant[$tenant].Credential
+        $ModernAuthUsername = $global:Config.Tenant[$tenant].SignInAddress
+      }
+    }
     
   }
 
@@ -1264,10 +1306,10 @@ Function Connect-BsO365Tenant
       If ($global:Config.ModernAuthClipboardEnabled = $true)
       {
         Write-log -Message 'User hasnt accepted the Modern Auth disclaimer, prompt' -Severity 1 -Component $Function
-        Write-host "Modern Auth Clipboard intergration is currently enabled" #Todo.
+        Write-host "Modern Auth Clipboard intergration is currently enabled"
         Write-host "Your Username and password will be placed into the clipboard to facilitate login"
         Write-host "You can disable this feature in Add-ons > BounShell > Settings"
-        Write-host "More information on this is available at https://UcMadScientist.com/BounShell-Auth/"
+        Write-host "More information on this is available at https://UcMadScientist.com/BounShell/"
         Write-host "You will only be shown this warning once."
         Write-host "."
         Write-host "**************************************************************************************"
@@ -1292,9 +1334,9 @@ Function Connect-BsO365Tenant
       }
     }
 
-    Write-host "Modern Auth is a Beta feature...." #Todo.
-    Write-host "Your Username will be copied to the clipboard, Paste it into the Modern Auth Window"
-    Write-host "Once Ctrl+V has been pressed BounShell will copy your password into the clipboard"
+    
+    Write-host "Your Username has been copied to the clipboard"
+    Write-host "Paste it into the Modern Auth Window, then paste your password using and sign in"
     Write-host "Upon pasting this, BounShell will clear the clipboard and overwrite the memory just incase."
 
     #As we are dealing with modern auth we need to convert the password back to an insecure string do that here
@@ -1319,7 +1361,6 @@ Function Connect-BsO365Tenant
         Start-Sleep -Seconds 3
         
         #Now we can invoke the session
-        #$TeamsSession = (Connect-MicrosoftTeams)
         Connect-MicrosoftTeams
       } 
       Catch {
@@ -1353,7 +1394,7 @@ Function Connect-BsO365Tenant
         Write-Log -Message "Importing Session" -Severity 1 -Component $Function
         $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
         Import-Module (Import-PSSession -Session $O365Session -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
-        $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+        $VerbosePreference = "Continue" #Todo. fix for import-psmodule ignoring the -Verbose:$false flag
       } 
       Catch 
       {
@@ -1436,7 +1477,7 @@ Function Connect-BsO365Tenant
     }
 
     #Check for the AzureAD connection flag
-    If ($ConnectToAAD) 
+    If ($ConnectToAzureAD) 
     {
       #Flag is set, connect to AzureAD
       Try
@@ -1476,7 +1517,7 @@ Function Connect-BsO365Tenant
       #Flag is set, connect to Compiance Centre
       Try
       {
-        Write-Log -Message "Connecting to Office 365 Compliance Centre" -Severity 2 -Component $Function
+        Write-Log -Message "Connecting to Office 365 Security and Compliance Centre" -Severity 2 -Component $Function
 
         #So Now we need to kick off a new window that waits for the clipboard events
         #Create a script block with the expanded variables
@@ -1501,7 +1542,7 @@ Function Connect-BsO365Tenant
         #We had an issue connecting to the Compliance Centre
         $ErrorMessage = $_.Exception.Message
         Write-log -Message $ErrorMessage -Severity 3 -Component $Function 
-        Write-log -Message 'Error connecting to Office 365 Compliance Centre' -Severity 3 -Component $Function
+        Write-log -Message 'Error connecting to Office 365 Security Compliance Centre' -Severity 3 -Component $Function
       }
     }
   }
@@ -1513,19 +1554,20 @@ Function Connect-BsO365Tenant
   #region NoModern
   #If the modern auth flag hasnt been set, we can simply connect to the services using secure credentials
   If (!$ModernAuth) 
+
   {
     #See if we got passed creds
     Write-Log -Message 'Checking for Office365 Credentials' -Severity 1 -Component $Function
-    If ($pscred -eq $null) 
+    If ($global:StoredPsCred -eq $null) 
     {
       #No credentials, prompt user for some
       Write-Log -Message 'No Office365 credentials Found, Prompting user for creds' -Severity 3 -Component $Function
-      $psCred = Get-Credential
+      $global:StoredPsCred = Get-Credential
     }
     Else
     {
       #Found creds, continue
-      Write-Log -Message "Found Office365 Creds for Username: $($pscred.username)" -Severity 1 -Component $Function
+      Write-Log -Message "Found Office365 Creds for Username: $($global:StoredPsCred.username)" -Severity 1 -Component $Function
     }
     
     #Check for the Exchange connection flag
@@ -1534,6 +1576,7 @@ Function Connect-BsO365Tenant
       #Flag is set, connect to Exchange
       Try
       {
+        $pscred = $global:StoredPsCred
         #Exchange connection try block
         Write-Log -Message "Connecting to Exchange Online" -Severity 2 -Component $Function
         $O365Session = (New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $pscred -Authentication Basic -AllowRedirection )
@@ -1557,6 +1600,7 @@ Function Connect-BsO365Tenant
       #Flag is set, connect to Skype4B
       Try
       {
+        $pscred = $global:StoredPsCred
         #Skype connection try block
         Write-Log -Message "Connecting to Skype4B Online" -Severity 2 -Component $Function
         $S4BOSession = (New-CsOnlineSession -Credential $pscred)
@@ -1579,6 +1623,7 @@ Function Connect-BsO365Tenant
       #Flag is set, connect to Teams
       Try 
       {
+        $pscred = $global:StoredPsCred
         #Teams connection try block
         Write-Log -Message "Connecting to Microsoft Teams" -Severity 2 -Component $Function
         $TeamsSession = (Connect-MicrosoftTeams -Credential $pscred)
@@ -1601,6 +1646,7 @@ Function Connect-BsO365Tenant
       #Flag is set, connect to Sharepoint
       Try
       {
+        $pscred = $global:StoredPsCred
         #Sharepoint connection try block
         Write-Log -Message "Connecting to Sharepoint Online" -Severity 2 -Component $Function
         $SharepointSession = (Connect-SPOService -Credential $pscred)
@@ -1623,6 +1669,7 @@ Function Connect-BsO365Tenant
       #Flag is set, connect to AzureAD
       Try
       {
+        $pscred = $global:StoredPsCred
         #Azure AD try block
         Write-Log -Message "Connecting to Azure AD" -Severity 2 -Component $Function
         $AADSession = (Connect-AzureAD -Credential $pscred)
@@ -1645,8 +1692,9 @@ Function Connect-BsO365Tenant
       #Flag is set, connect to Compiance Centre
       Try
       {
+        $pscred = $global:StoredPsCred
         Write-Log -Message "Connecting to Office 365 Compliance Centre" -Severity 2 -Component $Function
-        $ComplianceSession = (New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.compliance.protection.outlook.com/powershell-liveid/ -Credential $Credential -Authentication Basic -AllowRedirection)
+        $ComplianceSession = (New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.compliance.protection.outlook.com/powershell-liveid/ -Credential $pscred -Authentication Basic -AllowRedirection)
         $VerbosePreference = "SilentlyContinue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
         Import-Module (Import-PSSession -Session $ComplianceSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
         $VerbosePreference = "Continue" #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
@@ -1913,14 +1961,14 @@ Function Import-BsGuiElements
     #
   #Tenant_AzureAD
   #
-  $Global:Tenant_AzureAD.HeaderText = [System.String]'Connect to Azure AD'
+  $Global:Tenant_AzureAD.HeaderText = [System.String]'Connect to Azure AD?'
   $Global:Tenant_AzureAD.Name = [System.String]'Tenant_AzureAD'
   $Global:Tenant_AzureAD.Resizable = [System.Windows.Forms.DataGridViewTriState]::True
   $Global:Tenant_AzureAD.SortMode = [System.Windows.Forms.DataGridViewColumnSortMode]::Automatic
   #
   #Tenant_Compliance
   #
-  $Global:Tenant_Compliance.HeaderText = [System.String]'Connect to Compliance Centre'
+  $Global:Tenant_Compliance.HeaderText = [System.String]'Connect to Compliance Centre?'
   $Global:Tenant_Compliance.Name = [System.String]'Tenant_Compliance'
   #
   #cbx_ClipboardAuth
