@@ -18,7 +18,8 @@ Grab the code from GitHub and install it in your modules folder: (C:\WINDOWS\sys
 <a href="https://github.com/Atreidae/BounShell">https://github.com/Atreidae/BounShell</a>
 
 ### Install required modules
-The current beta (0.6) doesnt automatially install the required modules (some of the code is there... but I'm still working on it) so you can install them manually with the following code
+This is no longer required as of beta 0.6.4, BounShell will automatically prompt to install required modules when updating usernames.
+Pre beta 0.6.4 modules werent automatially installed so you can install them manually with the following code
 
 ```PowerShell
 #Install the modules
@@ -60,7 +61,8 @@ I've implemented a basic form of dealing with Modern Auth. When you attempt to c
 Paste this again using **Ctrl+V** and BounShell will clean the password out of the clipboard for you.
 
 ## Known Issues
-High DPI scaling causes issues with the GUI elements for login credentials. I'm looking into ways to mediate this
+High DPI scaling causes issues with the GUI elements for login credentials. I'm probably going to re-write the whole gui in WPF
+I've had reports that running **Show-BsGuiElements** in PowerShell instead of the ISE works well. (Thanks Sean)
 
 Pasting too quickly with Modern Auth causes the username to not be pasted.
 
