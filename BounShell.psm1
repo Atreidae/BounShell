@@ -9,13 +9,16 @@
     
     .NOTES
 
-    Version                : 0.6.4
-    Date                   : 18/05/2019
+    Version                : 0.6.5
+    Date                   : 19/07/2019
     Lync Version           : Tested against Skype4B 2015
     Author                 : James Arber
     Header stolen from     : Greig Sheridan who stole it from Pat Richard's amazing "Get-CsConnections.ps1"
     Special Thanks to      : My Beta Testers. Greig Sheridan, Pat Richard and Justin O'Meara
 
+
+    :v0.6.5: Public Beta BugFix
+    Updated CSOnlineSession Timers to delay ISE crash bug
 
     :v0.6.4: Public Beta Release
     PowerShell package management, (installs, updates and removes old versions of required modules)
