@@ -906,8 +906,50 @@ Function Invoke-BsNewTenantTab
   )
   
   $function = 'Invoke-BsNewTenantTab'
-  Write-Log -component $function -Message "Called Invoke-BsNewTenantTab to connect to Tenant $Tenant with a Tabname of $Tabname" -severity 1 
-  if($Tabname -ne 'Undefined') 
+  Write-Log -component $function -Message "Called Invoke-BsNewTenantTab to connect to Tenant $Tenant with a Tabname of $TabName" -severity 1 
+  $TabExists = $False
+  
+  #Check to see if we already have a tab open with that name
+  Write-Log -component $function -Message "Checking to see if we already have a tab open called $TabName" -severity 1 
+  $OpenTabs = ($PSISE.PowerShellTabs.displayname)
+  
+  Write-Log -component $function -Message "Existing tabs $OpenTabs" -severity 1  
+  
+  If ($OpenTabs -Contains $Tabname)
+  { 
+    #We found an existing tab with that name, prompt the user
+    
+    $title = "Tab, $Tabname already exists"
+    $Message = "There appears to already be a tab called $TabName, Did you want a new tab called 'Copy of $TabName' instead?"
+    $yes = New-Object -TypeName System.Management.Automation.Host.ChoiceDescription -ArgumentList '&Yes', `
+    'Opens a new Tab'
+
+    $no = New-Object -TypeName System.Management.Automation.Host.ChoiceDescription -ArgumentList '&No', `
+    'Aborts the connection'
+
+    $options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
+
+    $result = $host.ui.PromptForChoice($title, $Message, $options, 0) 
+
+    switch ($result)
+    {
+      0 
+      {
+        #User said yes
+        Write-Log -component $function -Message 'User opted to open a new tab' -severity 1
+        $TabName = ("Copy of $TabName")
+      }
+        #User said no
+      1 
+      {
+          Write-Log -component $function -Message 'User opted to abort connection' -severity 1
+          Write-Log -component $function -Message 'Aborting connection...' -severity 3
+          $TabExists = $True
+      }
+    }
+  }   
+  
+  if(($Tabname -ne 'Undefined') -and ($TabExists -eq $False)) 
   {
     Try
     {
@@ -936,9 +978,9 @@ Function Invoke-BsNewTenantTab
     }
   }
   
-  Else
+  if($Tabname -eq 'Undefined')
   {
-    #Tabname is "undefined", user clicked a tenant thats not confgured yey
+    #Tabname is "undefined", user clicked a tenant thats not confgured yay
     Write-Log -component $function -Message "Sorry, I cant find a config for Tenant $Tenant" -severity 3
   }
 }
