@@ -9,13 +9,16 @@
     
     .NOTES
 
-    Version                : 0.6.5
-    Date                   : 19/07/2019
+    Version                : 0.6.6
+    Date                   : 24/08/2019
     Lync Version           : Tested against Skype4B 2015
     Author                 : James Arber
     Header stolen from     : Greig Sheridan who stole it from Pat Richard's amazing "Get-CsConnections.ps1"
     Special Thanks to      : My Beta Testers. Greig Sheridan, Pat Richard and Justin O'Meara
-
+    
+    :v0.6.6: Public Beta BugFix
+    Added Reconnect flag to CSOnline session to resolve ISE crash
+    Added new Gui Window (Not Enabled)
 
     :v0.6.5: Public Beta BugFix
     Updated CSOnlineSession Timers to delay ISE crash bug
@@ -29,8 +32,6 @@
     Improved Modern Auth clipboard behaviour
     Fixed up alot of formatting and readibility issues with ISE Steroids
     
-
-
     :v0.6.3: Limited Beta Release
     Enabled AD Security and Compliance Center connection
     Enabled Azure AD connection
@@ -48,7 +49,6 @@
     Moved to SymVer versioning 
     Pubished to PowerShell gallery
           
-
     :v0.6: Closed Beta Release
     Enabled Modern Auth Support
     Formating changes
@@ -109,7 +109,7 @@ param
 [Net.ServicePointManager]::SecurityProtocol = 'tls12, tls11, tls'
 $StartTime                          = Get-Date
 $VerbosePreference                  = 'SilentlyContinue' #TODO
-[String]$ScriptVersion              = '0.6.4'
+[String]$ScriptVersion              = '0.6.6'
 [string]$GithubRepo                 = 'BounShell'
 [string]$GithubBranch               = 'devel' #todo
 [string]$BlogPost                   = 'https://www.UcMadScientist.com/BounShell/' 
@@ -1596,11 +1596,12 @@ Function Connect-BsO365Tenant
         $VerbosePreference = 'SilentlyContinue' #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
         Import-Module (Import-PSSession -Session $S4BOSession -AllowClobber -DisableNameChecking) -Global -DisableNameChecking
         $VerbosePreference = 'Continue' #Todo. fix for  import-psmodule ignoring the -Verbose:$false flag
+        Enable-CsOnlineSessionForReconnection #Fix for ISE Lockup!
       } 
       Catch
       {
         #We had an issues connecting to Skype
-        $ErrorMessage = $_.Exception.Messag
+        $ErrorMessage = $_.Exception.Message
         Write-Log -Message $ErrorMessage -Severity 3 -Component $function 
         Write-Log -Message 'Error connecting to Skype4B Online' -Severity 3 -Component $function
       }
@@ -2695,6 +2696,12 @@ Function Repair-BsInstalledModules
       }
     }
   }
+}
+
+
+Function Import-BsGui2Elements
+{
+
 }
  
 
