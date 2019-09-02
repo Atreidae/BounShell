@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Settings_Gui_2"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" x:Name="Settings" x:Class="Settings_Gui_2.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="1086">
+        Title="BounShell Settings" Height="450" Width="1086" ResizeMode="NoResize">
     <Window.Resources>
         <SolidColorBrush x:Key="ListBorder" Color="#828790"/>
         <Style x:Key="ListViewStyle1" TargetType="{x:Type ListView}">
@@ -41,10 +41,8 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid>
-        <Button x:Name="btn_NewTenant" Content="New Connection" HorizontalAlignment="Left" Margin="10,0,0,45.657" Width="128.523" Height="28.999" VerticalAlignment="Bottom"/>
-        <Button x:Name="btn_DeleteTenant" Content="Delete Connection" HorizontalAlignment="Left" Margin="181.7,0,0,45.657" Width="128.523" Height="28.999" VerticalAlignment="Bottom"/>
-        <ListView x:Name="grid_Tenant" HorizontalAlignment="Left" Margin="10,10,0,79.656" Width="298.223">
+    <Grid x:Name="grd_Main">
+        <ListView x:Name="lst_Tenant" HorizontalAlignment="Left" Margin="10,10,0,79.656" Width="298.223">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="ID"/>
@@ -53,37 +51,59 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        <Button x:Name="btn_NewTenant" Content="New Connection" HorizontalAlignment="Left" Margin="10,0,0,45.657" Width="128.523" Height="28.999" VerticalAlignment="Bottom"/>
+        <Button x:Name="btn_DeleteTenant" Content="Delete Connection" HorizontalAlignment="Left" Margin="181.7,0,0,45.657" Width="128.523" Height="28.999" VerticalAlignment="Bottom"/>
+        <Button x:Name="btn_SaveTenant" Content="Save Connection" HorizontalAlignment="Left" Margin="181.7,0,0,10" Width="128.523" Height="28.999" VerticalAlignment="Bottom"/>
+        <Button x:Name="btn_RevertTenant" Content="Revert Connection" HorizontalAlignment="Left" Margin="10,0,0,10" Width="128.523" Height="28.999" VerticalAlignment="Bottom"/>
         <TextBlock x:Name="txt_TenantID" Height="17" Margin="313.223,10,0,0" TextWrapping="Wrap" Text="Tenant ID" VerticalAlignment="Top" HorizontalAlignment="Left" Width="144.361" FontWeight="SemiBold"/>
         <TextBox x:Name="tbx_TenantID" Height="20" Margin="464,5,0,0" TextWrapping="Wrap" Text="TenantName" VerticalAlignment="Top" HorizontalAlignment="Left" Width="28.916" IsEnabled="False"/>
+        <Button x:Name="btn_MoveTenantUp" Content="Move Up" Margin="497.916,5,516.561,0" Height="20" VerticalAlignment="Top"/>
+        <Button x:Name="btn_MoveTenantDown" Content="Move Dn" Margin="0,5,448.038,0" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Width="63.523"/>
+        <TextBlock x:Name="txt_TenantShortCut" Height="17" Margin="378.365,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="SemiBold" HorizontalAlignment="Left" Width="80.635"><Run Text="Ctrl + Alt + "/><Run Text="0"/></TextBlock>
         <TextBlock x:Name="txt_TenantDisplayName" Height="19" Margin="313.223,32,0,0" TextWrapping="Wrap" Text="Display name" VerticalAlignment="Top" FontWeight="SemiBold" HorizontalAlignment="Left" Width="150.777"/>
         <TextBox x:Name="tbx_TenantDisplayName" Height="20" Margin="464,30,391.57,0" TextWrapping="Wrap" Text="Tenant Name" VerticalAlignment="Top"/>
         <TextBlock x:Name="txt_TenantSignInAddress" Height="19" Margin="313.223,56,0,0" TextWrapping="Wrap" Text="Sign In Address" VerticalAlignment="Top" FontWeight="SemiBold" HorizontalAlignment="Left" Width="150.777"/>
         <TextBox x:Name="tbx_TenantSignInAddress" Height="20" Margin="464,55,391.57,0" TextWrapping="Wrap" Text="Example@Tenant.com" VerticalAlignment="Top"/>
         <TextBlock x:Name="txt_TenantPassword" Height="19" Margin="313.223,80,0,0" TextWrapping="Wrap" Text="Password" VerticalAlignment="Top" FontWeight="SemiBold" HorizontalAlignment="Left" Width="150.777"/>
         <PasswordBox x:Name="tbx_TenantPassword" Height="19" Margin="464,78,391.57,0" VerticalAlignment="Top" Password="This is a fake password"/>
-        <Separator Height="14" Margin="310.223,151,378.991,0" VerticalAlignment="Top"/>
+        <TextBlock x:Name="txt_TenantRootDomain" Height="19" Margin="313.223,104,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="SemiBold" HorizontalAlignment="Left" Width="150.777"><Run Text="O"/><Run Text="n"/><Run Text="M"/><Run Text="icrosoft "/><Run Text="sub"/><Run Text="domain"/></TextBlock>
+        <TextBox x:Name="tbx_TenantRootDomain" Height="20" Margin="464,102,499.449,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="exampletenant"/>
+        <TextBlock x:Name="txt_OnMicrososft_com" Margin="0,102,392.131,0" TextWrapping="Wrap" Height="19" VerticalAlignment="Top" HorizontalAlignment="Right" Width="102.318"><Run Text="."/><Run Text="onmicrosoft.com"/></TextBlock>
         <CheckBox x:Name="cbx_TenantModernAuth" Content="Requires Modern Auth (Multi Factor)" Height="17" Margin="313.223,129,391.57,0" VerticalAlignment="Top"/>
-        <TextBlock x:Name="txt_TenantPassword_Copy" Height="19" Margin="313.223,104,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="SemiBold" HorizontalAlignment="Left" Width="150.777"><Run Text="O"/><Run Text="n"/><Run Text="M"/><Run Text="icrosoft "/><Run Text="sub"/><Run Text="domain"/></TextBlock>
-        <TextBox x:Name="tbx_TenantSignInAddress_Copy" Height="20" Margin="464,102,499.449,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="exampletenant"/>
-        <TextBlock x:Name="txt_TenantPassword_Copy1" Margin="0,102,392.131,0" TextWrapping="Wrap" Height="19" VerticalAlignment="Top" HorizontalAlignment="Right" Width="102.318"><Run Text="."/><Run Text="onmicrosoft.com"/></TextBlock>
         <TextBlock x:Name="txt_TenantDisplayNameChanged" Height="19" Margin="0,32,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
-        <TextBlock x:Name="txt_TenantRootDomainChanged" Height="19" Margin="0,106,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
-        <TextBlock x:Name="txt_TenantPasswordChanged" Height="19" Margin="0,82,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
         <TextBlock x:Name="txt_TenantSignInAddressChanged" Height="19" Margin="0,58,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
+        <TextBlock x:Name="txt_TenantPasswordChanged" Height="19" Margin="0,82,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
+        <TextBlock x:Name="txt_TenantRootDomainChanged" Height="19" Margin="0,106,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
         <TextBlock x:Name="txt_TenantModernAuthChanged" Height="19" Margin="0,127,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
-        <Grid Margin="310.223,0,378.991,10" Height="92" VerticalAlignment="Bottom">
+        <Separator Height="14" Margin="310.223,151,378.991,0" VerticalAlignment="Top"/>
+        <Grid x:Name="grd_ConnectionOptions" Margin="310.223,165,378.991,107">
+            <CheckBox x:Name="cbx_ConnectToTeams" Content="Connect to Microsoft Teams PowerShell" Margin="10,84.96,10,0" VerticalAlignment="Top"/>
+            <CheckBox x:Name="cbx_ConnectToSkype" Content="Connect to Skype for Business Online PowerShell" Margin="10,125.156,10,0" VerticalAlignment="Top"/>
+            <CheckBox x:Name="cbx_ConnectToAzureAD" Content="Connect to Azure AD PowerShell" Margin="10,24.666,10,0" VerticalAlignment="Top"/>
+            <CheckBox x:Name="cbx_ConnectToAzureCompliance" Margin="10,44.764,10,0" Content="Connect to Azure Compliance Centre" VerticalAlignment="Top" d:LayoutOverrides="VerticalAlignment"/>
+            <CheckBox x:Name="cbx_ConnectToSharepointOnline" Content="Connect to SharePoint Online PowerShell" Margin="10,105.058,10,0" VerticalAlignment="Top"/>
+            <CheckBox x:Name="cbx_ConnectToExchangeOnline" Content="Connect to Exchange Online PowerShell" Margin="10,64.862,10,67.039" d:LayoutOverrides="Height" VerticalAlignment="Top"/>
+            <TextBlock x:Name="txt_TenantServiceOptions" Height="19" Margin="2.579,0.666,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="SemiBold" HorizontalAlignment="Left" Width="150.777"><Run Text="Tenant "/><Run Text="Service Connections"/></TextBlock>
+            <TextBlock x:Name="txt_TenantConnectToAzureADChanged" Height="19" Margin="0,23.666,0,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
+            <TextBlock x:Name="txt_TenantConnectToAzureComplianceChanged" Height="19" Margin="0,43.764,0,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
+            <TextBlock x:Name="txt_TenantConnectToExchangeOnlineChanged" Margin="0,63.862,0,64.138" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
+            <TextBlock x:Name="txt_TenantConnecToTeamsChanged" Margin="0,0,0,46.942" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Bottom"/>
+            <TextBlock x:Name="txt_TenantConnectToSharePointChanged" Margin="0,0,0,26.844" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Bottom"/>
+            <TextBlock x:Name="txt_TenantConnectToSkypeOnlineChanged" Margin="0,0,0,3.844" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Bottom"/>
+        </Grid>
+        <Grid x:Name="grd_BounShellOptions" Margin="310.223,0,378.991,10" Height="92" VerticalAlignment="Bottom">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="105*"/>
                 <ColumnDefinition Width="94*"/>
             </Grid.ColumnDefinitions>
-            <CheckBox x:Name="cbx_SkypeOverideDomain1" Content="Check for PowerShell module updates" Margin="10,45.098,10,0" Grid.ColumnSpan="2" VerticalAlignment="Top"/>
-            <CheckBox x:Name="cbx_SkypeOverideAdmin1" Content="Check for BounShell updates" Margin="10,25,10,0" Grid.ColumnSpan="2" VerticalAlignment="Top"/>
-            <TextBlock x:Name="txt_SkypeConnectionFix1" Height="19" Margin="2.5,1,27.639,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="SemiBold" Grid.ColumnSpan="2" Text="BounShell Specific Options"/>
-            <CheckBox x:Name="cbx_SkypeOverideDomain1_Copy" Content="Enable Modern Auth clipboard integration" Margin="10,65.196,-58.648,0" VerticalAlignment="Top"/>
-            <TextBlock x:Name="txt_ModernAuthLink" Margin="63.648,0,27.639,11.844" TextWrapping="Wrap" Grid.Column="1" Foreground="Blue" TextDecorations="Underline" VerticalAlignment="Bottom"><Run Text="Learn more."/><Run Text=".."/></TextBlock>
-            <TextBlock x:Name="txt_TenantModernAuthChanged_Copy6" Margin="0,24,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Top" Grid.Column="1"/>
-            <TextBlock x:Name="txt_TenantModernAuthChanged_Copy7" Margin="0,0,0,25.754" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="19" VerticalAlignment="Bottom"/>
-            <TextBlock x:Name="txt_TenantModernAuthChanged_Copy8" Margin="0,0,0,5.656" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="19" VerticalAlignment="Bottom"/>
+            <TextBlock x:Name="txt_BounShellTitle" Height="19" Margin="2.5,1,27.639,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="SemiBold" Grid.ColumnSpan="2" Text="BounShell Specific Options"/>
+            <CheckBox x:Name="cbx_BounShellCheckForPowerShellUpdates" Content="Check for PowerShell module updates" Margin="10,45.098,10,0" Grid.ColumnSpan="2" VerticalAlignment="Top" IsChecked="True"/>
+            <CheckBox x:Name="cbx_BounShellCheckForUpdates" Content="Check for BounShell updates" Margin="10,25,10,0" Grid.ColumnSpan="2" VerticalAlignment="Top" IsChecked="True"/>
+            <CheckBox x:Name="cbx_BounShellEnableModernAuthClipboard" Content="Enable Modern Auth clipboard integration" Margin="10,65.196,-58.648,0" VerticalAlignment="Top" IsChecked="True"/>
+            <TextBlock x:Name="txt_BounShellModernAuthLink" Margin="63.648,0,27.639,11.844" TextWrapping="Wrap" Grid.Column="1" Foreground="Blue" TextDecorations="Underline" VerticalAlignment="Bottom"><Run Text="Learn more."/><Run Text=".."/></TextBlock>
+            <TextBlock x:Name="txt_BounShellCheckForPowerShellUpdatesChanged" Margin="0,24,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Top" Grid.Column="1"/>
+            <TextBlock x:Name="txt_BounShellCheckForUpdatesChanged" Margin="0,0,0,25.754" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="19" VerticalAlignment="Bottom"/>
+            <TextBlock x:Name="txt_BounShellEnableModernAuthClipboardChanged" Margin="0,0,0,5.656" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="19" VerticalAlignment="Bottom"/>
         </Grid>
         <Separator Margin="507.009,197,165.991,199" RenderTransformOrigin="0.5,0.5">
             <Separator.RenderTransform>
@@ -95,93 +115,75 @@
                 </TransformGroup>
             </Separator.RenderTransform>
         </Separator>
-        <Grid Margin="310.223,165,378.991,107">
-            <CheckBox x:Name="cbx_ConnectToTeams" Content="Connect to Microsoft Teams PowerShell" Margin="10,84.96,10,0" VerticalAlignment="Top"/>
-            <CheckBox x:Name="cbx_ConnectToSkype" Content="Connect to Skype for Business Online PowerShell" Margin="10,125.156,10,0" VerticalAlignment="Top"/>
-            <CheckBox x:Name="cbx_ConnectToSkype_Copy" Content="Connect to Azure AD PowerShell" Margin="10,24.666,10,0" VerticalAlignment="Top"/>
-            <CheckBox x:Name="cbx_ConnectToSkype_Copy2" Margin="10,44.764,10,0" Content="Connect to Azure Compliance Centre" VerticalAlignment="Top" d:LayoutOverrides="VerticalAlignment"/>
-            <CheckBox x:Name="cbx_ConnectToSkype_Copy3" Content="Connect to SharePoint Online PowerShell" Margin="10,105.058,10,0" VerticalAlignment="Top"/>
-            <CheckBox x:Name="cbx_ConnectToSkype_Copy1" Content="Connect to Exchange Online PowerShell" Margin="10,64.862,10,67.039" d:LayoutOverrides="Height" VerticalAlignment="Top"/>
-            <TextBlock x:Name="txt_TenantPassword_Copy2" Height="19" Margin="2.579,0.666,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="SemiBold" HorizontalAlignment="Left" Width="150.777"><Run Text="Tenant "/><Run Text="Service Connections"/></TextBlock>
-            <TextBlock x:Name="txt_TenantModernAuthChanged_Copy" Height="19" Margin="0,23.666,0,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
-            <TextBlock x:Name="txt_TenantModernAuthChanged_Copy1" Height="19" Margin="0,43.764,0,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
-            <TextBlock x:Name="txt_TenantModernAuthChanged_Copy2" Margin="0,63.862,0,64.138" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
-            <TextBlock x:Name="txt_TenantModernAuthChanged_Copy3" Margin="0,0,0,46.942" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Bottom"/>
-            <TextBlock x:Name="txt_TenantModernAuthChanged_Copy4" Margin="0,0,0,26.844" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Bottom"/>
-            <TextBlock x:Name="txt_TenantModernAuthChanged_Copy5" Margin="0,0,0,3.844" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Bottom"/>
-        </Grid>
-        <Grid Margin="0,4.05,10,0" HorizontalAlignment="Right" Width="354.777" Height="136.336" VerticalAlignment="Top">
+        <Grid x:Name="grd_SkypeOptions" Margin="0,4.05,10,0" HorizontalAlignment="Right" Width="354.777" Height="136.336" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="105*"/>
                 <ColumnDefinition Width="94*"/>
             </Grid.ColumnDefinitions>
-            <CheckBox x:Name="cbx_SkypeOverideDomain3" Content="Admin Override Domain" Margin="10,0,5,10" Height="17" VerticalAlignment="Bottom"/>
-            <CheckBox x:Name="cbx_SkypeAllowReconnect3" Content="Allow Reconnect (Fixes ISE hard lockup)" Margin="10,45.335,10,0" IsChecked="True" Height="17" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
-            <CheckBox x:Name="cbx_SkypeOverideAdmin3" Content="Override Discovery URI" Margin="10,0,10,32" Height="18.001" VerticalAlignment="Bottom"/>
-            <TextBlock x:Name="txt_SkypeISEFixes3" Height="19" Margin="10,25.335,55.639,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="SemiBold"><Run Text="ISE "/><Run Text="Bug Fixes"/></TextBlock>
-            <TextBlock x:Name="txt_SkypeConnectionFix3" Margin="10,62.335,20.139,55.001" TextWrapping="Wrap" FontWeight="SemiBold" Grid.ColumnSpan="2"><Run Text="BPOS / renamed "/><Run Text="/ hybrid "/><Run Text="tenant"/><Run Text=" and "/><Run Text="delegated admin"/><Run Text=" "/><Run Text="workarounds"/></TextBlock>
-            <TextBox x:Name="tbx_SkypeDiscoveryUri3" Margin="0,0,15.009,31" TextWrapping="Wrap" Text="fabrikam.onmicrosoft.com" Grid.Column="1" Height="21.001" VerticalAlignment="Bottom"/>
-            <TextBox x:Name="tbx_SkypeAdminDomain3" Margin="0,0,15.009,10" TextWrapping="Wrap" Height="20" VerticalAlignment="Bottom" Text="fabrikam.com" Grid.Column="1"/>
-            <TextBlock x:Name="txt_TenantRootDomainChanged_Copy6" Margin="0,0,0,30" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Bottom" RenderTransformOrigin="0.001,-2.169"/>
-            <TextBlock x:Name="txt_TenantRootDomainChanged_Copy7" Margin="0,0,0,11" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Bottom" Grid.Column="1"/>
-            <TextBlock x:Name="txt_SkypeISEFixes3_Copy" Height="19" Margin="10,6.335,15.009,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Grid.ColumnSpan="2" Foreground="#FFD447D4" Background="Black"><Run Text=" "/><Run Text="■ "/><Run Text="Skype for Business "/><Run Text="Online"/></TextBlock>
-            <TextBlock x:Name="txt_TenantRootDomainChanged_Copy8" Margin="0,45.335,-0.009,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top" RenderTransformOrigin="0.001,-2.169"/>
+            <TextBlock x:Name="txt_SkypeTitle" Height="19" Margin="10,6.335,15.009,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Grid.ColumnSpan="2" Foreground="#FFD447D4" Background="Black"><Run Text=" "/><Run Text="■ "/><Run Text="Skype for Business "/><Run Text="Online"/></TextBlock>
+            <CheckBox x:Name="cbx_SkypeOverideDomain" Content="Admin Override Domain" Margin="10,0,5,10" Height="17" VerticalAlignment="Bottom"/>
+            <CheckBox x:Name="cbx_SkypeAllowReconnect" Content="Allow Reconnect (Fixes ISE hard lockup)" Margin="10,45.335,10,0" IsChecked="True" Height="17" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+            <CheckBox x:Name="cbx_SkypeOverideAdmin" Content="Override Discovery URI" Margin="10,0,10,32" Height="18.001" VerticalAlignment="Bottom"/>
+            <TextBlock x:Name="txt_SkypeISEFixes" Height="19" Margin="10,25.335,55.639,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="SemiBold"><Run Text="ISE "/><Run Text="Bug Fixes"/></TextBlock>
+            <TextBlock x:Name="txt_SkypeConnectionFix" Margin="10,62.335,20.139,55.001" TextWrapping="Wrap" FontWeight="SemiBold" Grid.ColumnSpan="2"><Run Text="BPOS / renamed "/><Run Text="/ hybrid "/><Run Text="tenant"/><Run Text=" and "/><Run Text="delegated admin"/><Run Text=" "/><Run Text="workarounds"/></TextBlock>
+            <TextBox x:Name="tbx_SkypeDiscoveryUri" Margin="0,0,15.009,31" TextWrapping="Wrap" Text="fabrikam.onmicrosoft.com" Grid.Column="1" Height="21.001" VerticalAlignment="Bottom"/>
+            <TextBox x:Name="tbx_SkypeAdminDomain" Margin="0,0,15.009,10" TextWrapping="Wrap" Height="20" VerticalAlignment="Bottom" Text="fabrikam.com" Grid.Column="1"/>
+            <TextBlock x:Name="txt_SkypeDiscoveryURIChanged" Margin="0,0,0,30" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Bottom" RenderTransformOrigin="0.001,-2.169"/>
+            <TextBlock x:Name="txt_SkypeAdminDomainChanged" Margin="0,0,0,11" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Bottom" Grid.Column="1"/>
+            <TextBlock x:Name="txt_SkypeAllowReconnectChanged" Margin="0,45.335,-0.009,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top" RenderTransformOrigin="0.001,-2.169"/>
         </Grid>
-        <TextBlock x:Name="txt_TenantID_Copy" Height="17" Margin="497.916,8,435.723,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="SemiBold"><Run Text="Ctrl + Alt + "/><Run Text="0"/></TextBlock>
-        <Grid Margin="0,135,10,0" HorizontalAlignment="Right" Width="354.777" Height="52.336" VerticalAlignment="Top">
+        <Grid x:Name="grd_AzureADOptions" Margin="0,135,10,0" HorizontalAlignment="Right" Width="354.777" Height="52.336" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="105*"/>
                 <ColumnDefinition Width="94*"/>
             </Grid.ColumnDefinitions>
-            <CheckBox x:Name="cbx_SkypeOverideAdmin4" Content="Azure Environment Name" Margin="10,27.335,10,0" Height="18.001" VerticalAlignment="Top"/>
-            <TextBox x:Name="tbx_SkypeDiscoveryUri1" Margin="0,25.335,15.009,0" TextWrapping="Wrap" Text="AzureCloud" Grid.Column="1" Height="21.001" VerticalAlignment="Top"/>
-            <TextBlock x:Name="txt_TenantRootDomainChanged_Copy2" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top"/>
-            <TextBlock x:Name="txt_SkypeISEFixes3_Copy1" Height="19" Margin="10,6.335,15.009,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Grid.ColumnSpan="2" Foreground="#FFFF9623" Background="Black"><Run Text=" "/><Run Text="■ "/><Run Text="Azure AD"/></TextBlock>
+            <TextBlock x:Name="txt_AzureADTitle" Height="19" Margin="10,6.335,15.009,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Grid.ColumnSpan="2" Foreground="#FFFF9623" Background="Black"><Run Text=" "/><Run Text="■ "/><Run Text="Azure AD"/></TextBlock>
+            <CheckBox x:Name="cbx_AzureADEnviromentName" Content="Azure Environment Name" Margin="10,27.335,10,0" Height="18.001" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbx_AzureADEnviromentName" Margin="0,25.335,15.009,0" TextWrapping="Wrap" Text="AzureCloud" Grid.Column="1" Height="21.001" VerticalAlignment="Top"/>
+            <TextBlock x:Name="txt_AzureADEnviromentNameChanged" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top"/>
         </Grid>
-        <Grid Margin="0,182.336,10,184.328" HorizontalAlignment="Right" Width="354.777">
+        <Grid x:Name="grd_AzureComplianceOptions" Margin="0,182.336,10,184.328" HorizontalAlignment="Right" Width="354.777">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <CheckBox x:Name="cbx_SkypeOverideAdmin2" Content="Connection Uri" Margin="10,27.335,10,0" Height="18.001" VerticalAlignment="Top"/>
-            <TextBox x:Name="tbx_SkypeDiscoveryUri2" Margin="0,25.335,15.009,0" Text="https://ps.compliance.protection.outlook.com/powershell-liveid/" Grid.Column="1" Height="21.001" VerticalAlignment="Top" MaxLines="1"/>
-            <TextBlock x:Name="txt_TenantRootDomainChanged_Copy1" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top"/>
-            <TextBlock x:Name="txt_SkypeISEFixes3_Copy2" Height="19" Margin="10,6.335,15.009,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Grid.ColumnSpan="2" Foreground="#FF29FCFF" Background="Black"><Run Text=" "/><Run Text="■ "/><Run Text="Azure "/><Run Text="Compliance"/></TextBlock>
+            <TextBlock x:Name="txt_AzureComplianceTitle" Height="19" Margin="10,6.335,15.009,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Grid.ColumnSpan="2" Foreground="#FF29FCFF" Background="Black"><Run Text=" "/><Run Text="■ "/><Run Text="Azure "/><Run Text="Compliance"/></TextBlock>
+            <CheckBox x:Name="cbx_AzureComplianceURI" Content="Connection Uri" Margin="10,27.335,10,0" Height="18.001" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbx_AzureComplianceURI" Margin="0,25.335,15.009,0" Text="https://ps.compliance.protection.outlook.com/powershell-liveid/" Grid.Column="1" Height="21.001" VerticalAlignment="Top" MaxLines="1"/>
+            <TextBlock x:Name="txt_AzureComplianceURIChanged" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top"/>
         </Grid>
-        <Grid Margin="0,0,10,131.992" HorizontalAlignment="Right" Width="354.777" Height="52.336" VerticalAlignment="Bottom">
+        <Grid x:Name="grd_ExchangeOnlineOptions" Margin="0,0,10,131.992" HorizontalAlignment="Right" Width="354.777" Height="52.336" VerticalAlignment="Bottom">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <CheckBox x:Name="cbx_SkypeOverideAdmin5" Content="Connection Uri" Margin="10,27.335,10,0" Height="18.001" VerticalAlignment="Top"/>
-            <TextBox x:Name="tbx_SkypeDiscoveryUri4" Margin="0,25.335,15.009,0" Text="https://outlook.office365.com/powershell-liveid/" Grid.Column="1" Height="21.001" VerticalAlignment="Top" MaxLines="1"/>
-            <TextBlock x:Name="txt_TenantRootDomainChanged_Copy3" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top"/>
-            <TextBlock x:Name="txt_SkypeISEFixes3_Copy3" Height="19" Margin="10,6.335,15.009,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Grid.ColumnSpan="2" Foreground="#FFFA9EDA" Background="Black"><Run Text=" "/><Run Text="■ "/><Run Text="Exchange Online"/><LineBreak/><Run/></TextBlock>
+            <TextBlock x:Name="txt_ExchangeOnlineTitle" Height="19" Margin="10,6.335,15.009,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Grid.ColumnSpan="2" Foreground="#FFFA9EDA" Background="Black"><Run Text=" "/><Run Text="■ "/><Run Text="Exchange Online"/><LineBreak/><Run/></TextBlock>
+            <CheckBox x:Name="cbx_ExchangeOnlineURI" Content="Connection Uri" Margin="10,27.335,10,0" Height="18.001" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbx_ExchangeOnlineURI" Margin="0,25.335,15.009,0" Text="https://outlook.office365.com/powershell-liveid/" Grid.Column="1" Height="21.001" VerticalAlignment="Top" MaxLines="1"/>
+            <TextBlock x:Name="txt_ExchangeOnlineURIChanged" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top"/>
         </Grid>
-        <Grid Margin="0,0,10,79.656" HorizontalAlignment="Right" Width="354.777" Height="52.336" VerticalAlignment="Bottom">
+        <Grid x:Name="grd_TeamsOptions" Margin="0,0,10,79.656" HorizontalAlignment="Right" Width="354.777" Height="52.336" VerticalAlignment="Bottom">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <CheckBox x:Name="cbx_SkypeOverideAdmin6" Content="Teams Environment Name" Margin="10,27.335,10,0" Height="18.001" VerticalAlignment="Top"/>
-            <TextBox x:Name="tbx_SkypeDiscoveryUri5" Margin="10,25.335,15.009,0" Text="TeamsGCCH" Grid.Column="1" Height="21.001" VerticalAlignment="Top" MaxLines="1"/>
-            <TextBlock x:Name="txt_TenantRootDomainChanged_Copy4" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top"/>
-            <TextBlock x:Name="txt_SkypeISEFixes3_Copy4" Height="19" Margin="10,6.335,15.009,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Grid.ColumnSpan="2" Foreground="White" Background="Black"><Run Text=" "/><Run Text="■"/><Run Text=" Microsoft Teams"/></TextBlock>
+            <TextBlock x:Name="txt_TeamsTitle" Height="19" Margin="10,6.335,15.009,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Grid.ColumnSpan="2" Foreground="White" Background="Black"><Run Text=" "/><Run Text="■"/><Run Text=" Microsoft Teams"/></TextBlock>
+            <CheckBox x:Name="cbx_TeamsEnviroment" Content="Teams Environment Name" Margin="10,27.335,10,0" Height="18.001" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbx_TeamsEnviroment" Margin="10,25.335,15.009,0" Text="TeamsGCCH" Grid.Column="1" Height="21.001" VerticalAlignment="Top" MaxLines="1"/>
+            <TextBlock x:Name="txt_TeamsEnviromentChanged" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top"/>
         </Grid>
-        <Grid Margin="0,0,10,11" HorizontalAlignment="Right" Width="354.777" Height="68.656" VerticalAlignment="Bottom">
+        <Grid x:Name="grd_SharePointOptions" Margin="0,0,10,11" HorizontalAlignment="Right" Width="354.777" Height="68.656" VerticalAlignment="Bottom">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <CheckBox x:Name="cbx_SkypeOverideAdmin7" Content="URL" Margin="10,27.335,10,0" Height="18.001" VerticalAlignment="Top"/>
-            <TextBox x:Name="tbx_SkypeDiscoveryUri6" Margin="10,25.335,15.009,0" Text="https://contoso-admin.sharepoint.com" Grid.Column="1" Height="21.001" VerticalAlignment="Top" MaxLines="1"/>
-            <TextBlock x:Name="txt_TenantRootDomainChanged_Copy5" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top"/>
-            <TextBlock x:Name="txt_SkypeISEFixes3_Copy5" Height="19" Margin="10,6.335,15.009,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Grid.ColumnSpan="2" Foreground="#FFF9FF81" Background="Black"><Run Text=" "/><Run Text="■"/><Run Text=" "/><Run Text="SharePoint Online"/></TextBlock>
-            <CheckBox x:Name="cbx_SkypeOverideAdmin7_Copy" Content="Region" Margin="10,47.336,10,0" Height="18.001" VerticalAlignment="Top"/>
-            <TextBox x:Name="tbx_SkypeDiscoveryUri6_Copy" Margin="10,45.336,15.009,0" Text="Default" Grid.Column="1" Height="21.001" VerticalAlignment="Top" MaxLines="1"/>
-            <TextBlock x:Name="txt_TenantRootDomainChanged_Copy" Margin="0,45.336,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top"/>
+            <TextBlock x:Name="txt_SharepointTitle" Height="19" Margin="10,6.335,15.009,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Grid.ColumnSpan="2" Foreground="#FFF9FF81" Background="Black"><Run Text=" "/><Run Text="■"/><Run Text=" "/><Run Text="SharePoint Online"/></TextBlock>
+            <CheckBox x:Name="cbx_SharepointURL" Content="URL" Margin="10,27.335,10,0" Height="18.001" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbx_SharepointURL" Margin="10,25.335,15.009,0" Text="https://contoso-admin.sharepoint.com" Grid.Column="1" Height="21.001" VerticalAlignment="Top" MaxLines="1"/>
+            <TextBlock x:Name="txt_SharepointURLChanged" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top"/>
+            <CheckBox x:Name="cbx_SharepointRegion" Content="Region" Margin="10,47.336,10,0" Height="18.001" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbx_SharepointRegion" Margin="10,45.336,15.009,0" Text="Default" Grid.Column="1" Height="21.001" VerticalAlignment="Top" MaxLines="1"/>
+            <TextBlock x:Name="txt_SharepointRegionChanged" Margin="0,45.336,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top"/>
         </Grid>
-        <Button x:Name="btn_NewTenant_Copy" Content="Save Settings" HorizontalAlignment="Left" Margin="181.7,0,0,10" Width="128.523" Height="28.999" VerticalAlignment="Bottom"/>
-        <Button x:Name="btn_NewTenant_Copy1" Content="Revert Settings" HorizontalAlignment="Left" Margin="10,0,0,10" Width="128.523" Height="28.999" VerticalAlignment="Bottom"/>
     </Grid>
 </Window>
