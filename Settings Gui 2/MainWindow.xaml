@@ -1,11 +1,9 @@
 ﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Settings_Gui_2"
-        xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" x:Name="Settings" x:Class="Settings_Gui_2.MainWindow"
-        mc:Ignorable="d"
+        xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" x:Name="Settings"
         Title="BounShell Settings" Height="450" Width="1086" ResizeMode="NoResize">
     <Window.Resources>
         <SolidColorBrush x:Key="ListBorder" Color="#828790"/>
@@ -86,7 +84,7 @@
             <CheckBox x:Name="cbx_ConnectToAzureAD" Content="Connect to Azure AD PowerShell" Margin="10,24.666,10,0" Grid.ColumnSpan="2" VerticalAlignment="Top"/>
             <CheckBox x:Name="cbx_ConnectToAzureCompliance" Margin="10,44.764,10,0" Content="Connect to Azure Compliance Centre" Grid.ColumnSpan="2" VerticalAlignment="Top"/>
             <CheckBox x:Name="cbx_ConnectToSharepointOnline" Content="Connect to SharePoint Online PowerShell" Margin="10,105.058,10,0" Grid.ColumnSpan="2" VerticalAlignment="Top"/>
-            <CheckBox x:Name="cbx_ConnectToExchangeOnline" Content="Connect to Exchange Online PowerShell" Margin="10,64.862,10,0" d:LayoutOverrides="Height" Grid.ColumnSpan="2" VerticalAlignment="Top"/>
+            <CheckBox x:Name="cbx_ConnectToExchangeOnline" Content="Connect to Exchange Online PowerShell" Margin="10,64.862,10,0" Grid.ColumnSpan="2" VerticalAlignment="Top"/>
             <TextBlock x:Name="txt_TenantServiceOptions" Height="19" Margin="2.579,0.666,57.421,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="SemiBold"><Run Text="Tenant "/><Run Text="Service Connections"/></TextBlock>
             <TextBlock x:Name="txt_TenantConnectToAzureADChanged" Height="19" Margin="0,23.666,0,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1"/>
             <TextBlock x:Name="txt_TenantConnectToAzureComplianceChanged" Height="19" Margin="0,43.764,0,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1"/>
