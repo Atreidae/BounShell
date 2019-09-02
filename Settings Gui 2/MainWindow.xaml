@@ -67,7 +67,7 @@
         <TextBlock x:Name="txt_TenantRootDomain" Height="19" Margin="313.223,104,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="SemiBold" HorizontalAlignment="Left" Width="150.777"><Run Text="O"/><Run Text="n"/><Run Text="M"/><Run Text="icrosoft "/><Run Text="sub"/><Run Text="domain"/></TextBlock>
         <TextBox x:Name="tbx_TenantRootDomain" Height="20" Margin="464,102,499.449,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="exampletenant"/>
         <TextBlock x:Name="txt_OnMicrososft_com" Margin="0,102,392.131,0" TextWrapping="Wrap" Height="19" VerticalAlignment="Top" HorizontalAlignment="Right" Width="102.318"><Run Text="."/><Run Text="onmicrosoft.com"/></TextBlock>
-        <CheckBox x:Name="cbx_TenantModernAuth" Content="Requires Modern Auth (Multi Factor)" Height="17" Margin="313.223,129,391.57,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="cbx_TenantModernAuth" Content="Requires Modern Auth (Multi Factor)" Height="17" Margin="319.793,129,405,0" VerticalAlignment="Top"/>
         <TextBlock x:Name="txt_TenantDisplayNameChanged" Height="19" Margin="0,32,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
         <TextBlock x:Name="txt_TenantSignInAddressChanged" Height="19" Margin="0,58,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
         <TextBlock x:Name="txt_TenantPasswordChanged" Height="19" Margin="0,82,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
@@ -88,10 +88,10 @@
             <TextBlock x:Name="txt_TenantServiceOptions" Height="19" Margin="2.579,0.666,57.421,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="SemiBold"><Run Text="Tenant "/><Run Text="Service Connections"/></TextBlock>
             <TextBlock x:Name="txt_TenantConnectToAzureADChanged" Height="19" Margin="0,23.666,0,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1"/>
             <TextBlock x:Name="txt_TenantConnectToAzureComplianceChanged" Height="19" Margin="0,43.764,0,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1"/>
-            <TextBlock x:Name="txt_TenantConnectToExchangeOnlineChanged" Margin="0,63.862,0,64.138" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" VerticalAlignment="Top"/>
-            <TextBlock x:Name="txt_TenantConnecToTeamsChanged" Margin="0,0,0,46.942" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Top" Grid.Column="1"/>
-            <TextBlock x:Name="txt_TenantConnectToSharePointChanged" Margin="0,0,0,26.844" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Top" Grid.Column="1"/>
-            <TextBlock x:Name="txt_TenantConnectToSkypeOnlineChanged" Margin="0,0,0,3.844" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Top" Grid.Column="1"/>
+            <TextBlock x:Name="txt_TenantConnectToExchangeOnlineChanged" Margin="0,67.01,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" VerticalAlignment="Top"/>
+            <TextBlock x:Name="txt_TenantConnectToSharePointChanged" Margin="0,0,0,24.942" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Bottom" Grid.Column="1"/>
+            <TextBlock x:Name="txt_TenantConnectToSkypeOnlineChanged" Margin="0,0,0,5.844" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Bottom" Grid.Column="1"/>
+            <TextBlock x:Name="txt_TenantConnectToTeamsChanged" Margin="0,0,0,42.892" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Bottom" Grid.Column="1"/>
         </Grid>
         <Grid x:Name="grd_BounShellOptions" Margin="310.223,0,378.991,10" Height="92" VerticalAlignment="Bottom">
             <Grid.ColumnDefinitions>
