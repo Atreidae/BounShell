@@ -2720,8 +2720,7 @@ Function Repair-BsInstalledModules
   }
 }
 
-
-Function Import-BsOldWPFGuiElements
+Function Import-BsWPFGuiElements
 {
 
   $function = 'Import-BsWPFGuiElements'
@@ -2798,11 +2797,11 @@ Function Import-BsOldWPFGuiElements
         <TextBox x:Name="tbx_TenantRootDomain" Height="20" Margin="464,102,499.449,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="exampletenant"/>
         <TextBlock x:Name="txt_OnMicrososft_com" Margin="0,102,392.131,0" TextWrapping="Wrap" Height="19" VerticalAlignment="Top" HorizontalAlignment="Right" Width="102.318"><Run Text="."/><Run Text="onmicrosoft.com"/></TextBlock>
         <CheckBox x:Name="cbx_TenantModernAuth" Content="Requires Modern Auth (Multi Factor)" Height="17" Margin="319.793,129,405,0" VerticalAlignment="Top"/>
-        <TextBlock x:Name="txt_TenantDisplayNameChanged" Height="19" Margin="0,32,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
-        <TextBlock x:Name="txt_TenantSignInAddressChanged" Height="19" Margin="0,58,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
-        <TextBlock x:Name="txt_TenantPasswordChanged" Height="19" Margin="0,82,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
-        <TextBlock x:Name="txt_TenantRootDomainChanged" Height="19" Margin="0,106,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
-        <TextBlock x:Name="txt_TenantModernAuthChanged" Height="19" Margin="0,127,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red"/>
+        <TextBlock x:Name="txt_TenantDisplayNameChanged" Height="19" Margin="0,32,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Visibility="Hidden"/>
+        <TextBlock x:Name="txt_TenantSignInAddressChanged" Height="19" Margin="0,58,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Visibility="Hidden"/>
+        <TextBlock x:Name="txt_TenantPasswordChanged" Height="19" Margin="0,82,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Visibility="Hidden"/>
+        <TextBlock x:Name="txt_TenantRootDomainChanged" Height="19" Margin="0,106,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Visibility="Hidden"/>
+        <TextBlock x:Name="txt_TenantModernAuthChanged" Height="19" Margin="0,127,378.991,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Visibility="Hidden"/>
         <Separator Height="14" Margin="310.223,151,378.991,0" VerticalAlignment="Top"/>
         <Grid x:Name="grd_ConnectionOptions" Margin="310.223,165,378.991,107">
             <Grid.ColumnDefinitions>
@@ -2816,12 +2815,12 @@ Function Import-BsOldWPFGuiElements
             <CheckBox x:Name="cbx_ConnectToSharepointOnline" Content="Connect to SharePoint Online PowerShell" Margin="10,105.058,10,0" Grid.ColumnSpan="2" VerticalAlignment="Top"/>
             <CheckBox x:Name="cbx_ConnectToExchangeOnline" Content="Connect to Exchange Online PowerShell" Margin="10,64.862,10,0" Grid.ColumnSpan="2" VerticalAlignment="Top"/>
             <TextBlock x:Name="txt_TenantServiceOptions" Height="19" Margin="2.579,0.666,57.421,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="SemiBold"><Run Text="Tenant "/><Run Text="Service Connections"/></TextBlock>
-            <TextBlock x:Name="txt_TenantConnectToAzureADChanged" Height="19" Margin="0,23.666,0,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1"/>
-            <TextBlock x:Name="txt_TenantConnectToAzureComplianceChanged" Height="19" Margin="0,43.764,0,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1"/>
-            <TextBlock x:Name="txt_TenantConnectToExchangeOnlineChanged" Margin="0,63.862,0,64.138" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" VerticalAlignment="Top"/>
-            <TextBlock x:Name="txt_TenantConnecToTeamsChanged" Margin="0,0,0,46.942" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Top" Grid.Column="1"/>
-            <TextBlock x:Name="txt_TenantConnectToSharePointChanged" Margin="0,0,0,26.844" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Top" Grid.Column="1"/>
-            <TextBlock x:Name="txt_TenantConnectToSkypeOnlineChanged" Margin="0,0,0,3.844" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Top" Grid.Column="1"/>
+            <TextBlock x:Name="txt_TenantConnectToAzureADChanged" Height="19" Margin="0,23.666,0,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Visibility="Hidden"/>
+            <TextBlock x:Name="txt_TenantConnectToAzureComplianceChanged" Height="19" Margin="0,43.764,0,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Visibility="Hidden"/>
+            <TextBlock x:Name="txt_TenantConnectToExchangeOnlineChanged" Margin="0,67.01,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" VerticalAlignment="Top" Visibility="Hidden"/>
+            <TextBlock x:Name="txt_TenantConnectToSharePointChanged" Margin="0,0,0,24.942" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Bottom" Grid.Column="1" Visibility="Hidden"/>
+            <TextBlock x:Name="txt_TenantConnectToSkypeOnlineChanged" Margin="0,0,0,5.844" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Bottom" Grid.Column="1" Visibility="Hidden"/>
+            <TextBlock x:Name="txt_TenantConnectToTeamsChanged" Margin="0,0,0,42.892" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Bottom" Grid.Column="1" Visibility="Hidden"/>
         </Grid>
         <Grid x:Name="grd_BounShellOptions" Margin="310.223,0,378.991,10" Height="92" VerticalAlignment="Bottom">
             <Grid.ColumnDefinitions>
@@ -2833,9 +2832,9 @@ Function Import-BsOldWPFGuiElements
             <CheckBox x:Name="cbx_BounShellCheckForUpdates" Content="Check for BounShell updates" Margin="10,25,10,0" Grid.ColumnSpan="2" VerticalAlignment="Top" IsChecked="True"/>
             <CheckBox x:Name="cbx_BounShellEnableModernAuthClipboard" Content="Enable Modern Auth clipboard integration" Margin="10,65.196,-58.648,0" VerticalAlignment="Top" IsChecked="True"/>
             <TextBlock x:Name="txt_BounShellModernAuthLink" Margin="63.648,0,27.639,11.844" TextWrapping="Wrap" Grid.Column="1" Foreground="Blue" TextDecorations="Underline" VerticalAlignment="Bottom"><Run Text="Learn more."/><Run Text=".."/></TextBlock>
-            <TextBlock x:Name="txt_BounShellCheckForPowerShellUpdatesChanged" Margin="0,24,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Top" Grid.Column="1"/>
-            <TextBlock x:Name="txt_BounShellCheckForUpdatesChanged" Margin="0,0,0,25.754" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="19" VerticalAlignment="Bottom"/>
-            <TextBlock x:Name="txt_BounShellEnableModernAuthClipboardChanged" Margin="0,0,0,5.656" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="19" VerticalAlignment="Bottom"/>
+            <TextBlock x:Name="txt_BounShellCheckForPowerShellUpdatesChanged" Margin="0,24,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Top" Grid.Column="1" Visibility="Hidden"/>
+            <TextBlock x:Name="txt_BounShellCheckForUpdatesChanged" Margin="0,0,0,25.754" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="19" VerticalAlignment="Bottom" Visibility="Hidden"/>
+            <TextBlock x:Name="txt_BounShellEnableModernAuthClipboardChanged" Margin="0,0,0,5.656" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="19" VerticalAlignment="Bottom" Visibility="Hidden"/>
         </Grid>
         <Separator Margin="507.009,197,165.991,199" RenderTransformOrigin="0.5,0.5">
             <Separator.RenderTransform>
@@ -2847,7 +2846,7 @@ Function Import-BsOldWPFGuiElements
                 </TransformGroup>
             </Separator.RenderTransform>
         </Separator>
-        <Grid x:Name="grd_SkypeOptions" Margin="0,4.05,10,0" HorizontalAlignment="Right" Width="354.777" Height="136.336" VerticalAlignment="Top">
+        <Grid x:Name="grd_SkypeOptions" Margin="0,4.05,10,0" HorizontalAlignment="Right" Width="354.777" Height="136.336" VerticalAlignment="Top" IsEnabled="False">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="105*"/>
                 <ColumnDefinition Width="94*"/>
@@ -2860,11 +2859,11 @@ Function Import-BsOldWPFGuiElements
             <TextBlock x:Name="txt_SkypeConnectionFix" Margin="10,62.335,20.139,55.001" TextWrapping="Wrap" FontWeight="SemiBold" Grid.ColumnSpan="2"><Run Text="BPOS / renamed "/><Run Text="/ hybrid "/><Run Text="tenant"/><Run Text=" and "/><Run Text="delegated admin"/><Run Text=" "/><Run Text="workarounds"/></TextBlock>
             <TextBox x:Name="tbx_SkypeDiscoveryUri" Margin="0,0,15.009,31" TextWrapping="Wrap" Text="fabrikam.onmicrosoft.com" Grid.Column="1" Height="21.001" VerticalAlignment="Bottom"/>
             <TextBox x:Name="tbx_SkypeAdminDomain" Margin="0,0,15.009,10" TextWrapping="Wrap" Height="20" VerticalAlignment="Bottom" Text="fabrikam.com" Grid.Column="1"/>
-            <TextBlock x:Name="txt_SkypeDiscoveryURIChanged" Margin="0,0,0,30" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Bottom" RenderTransformOrigin="0.001,-2.169"/>
-            <TextBlock x:Name="txt_SkypeAdminDomainChanged" Margin="0,0,0,11" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Bottom" Grid.Column="1"/>
-            <TextBlock x:Name="txt_SkypeAllowReconnectChanged" Margin="0,45.335,-0.009,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top" RenderTransformOrigin="0.001,-2.169"/>
+            <TextBlock x:Name="txt_SkypeDiscoveryURIChanged" Margin="0,0,0,30" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Bottom" RenderTransformOrigin="0.001,-2.169" Visibility="Hidden"/>
+            <TextBlock x:Name="txt_SkypeAdminDomainChanged" Margin="0,0,0,11" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Bottom" Grid.Column="1" Visibility="Hidden"/>
+            <TextBlock x:Name="txt_SkypeAllowReconnectChanged" Margin="0,45.335,-0.009,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top" RenderTransformOrigin="0.001,-2.169" Visibility="Hidden"/>
         </Grid>
-        <Grid x:Name="grd_AzureADOptions" Margin="0,135,10,0" HorizontalAlignment="Right" Width="354.777" Height="52.336" VerticalAlignment="Top">
+        <Grid x:Name="grd_AzureADOptions" Margin="0,135,10,0" HorizontalAlignment="Right" Width="354.777" Height="52.336" VerticalAlignment="Top" IsEnabled="False">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="105*"/>
                 <ColumnDefinition Width="94*"/>
@@ -2872,9 +2871,9 @@ Function Import-BsOldWPFGuiElements
             <TextBlock x:Name="txt_AzureADTitle" Height="19" Margin="10,6.335,15.009,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Grid.ColumnSpan="2" Foreground="#FFFF9623" Background="Black"><Run Text=" "/><Run Text="■ "/><Run Text="Azure AD"/></TextBlock>
             <CheckBox x:Name="cbx_AzureADEnviromentName" Content="Azure Environment Name" Margin="10,27.335,10,0" Height="18.001" VerticalAlignment="Top"/>
             <TextBox x:Name="tbx_AzureADEnviromentName" Margin="0,25.335,15.009,0" TextWrapping="Wrap" Text="AzureCloud" Grid.Column="1" Height="21.001" VerticalAlignment="Top"/>
-            <TextBlock x:Name="txt_AzureADEnviromentNameChanged" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top"/>
+            <TextBlock x:Name="txt_AzureADEnviromentNameChanged" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top" Visibility="Hidden"/>
         </Grid>
-        <Grid x:Name="grd_AzureComplianceOptions" Margin="0,182.336,10,184.328" HorizontalAlignment="Right" Width="354.777">
+        <Grid x:Name="grd_AzureComplianceOptions" Margin="0,182.336,10,184.328" HorizontalAlignment="Right" Width="354.777" IsEnabled="False">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
@@ -2882,9 +2881,9 @@ Function Import-BsOldWPFGuiElements
             <TextBlock x:Name="txt_AzureComplianceTitle" Height="19" Margin="10,6.335,15.009,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Grid.ColumnSpan="2" Foreground="#FF29FCFF" Background="Black"><Run Text=" "/><Run Text="■ "/><Run Text="Azure "/><Run Text="Compliance"/></TextBlock>
             <CheckBox x:Name="cbx_AzureComplianceURI" Content="Connection Uri" Margin="10,27.335,10,0" Height="18.001" VerticalAlignment="Top"/>
             <TextBox x:Name="tbx_AzureComplianceURI" Margin="0,25.335,15.009,0" Text="https://ps.compliance.protection.outlook.com/powershell-liveid/" Grid.Column="1" Height="21.001" VerticalAlignment="Top" MaxLines="1"/>
-            <TextBlock x:Name="txt_AzureComplianceURIChanged" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top"/>
+            <TextBlock x:Name="txt_AzureComplianceURIChanged" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top" Visibility="Hidden"/>
         </Grid>
-        <Grid x:Name="grd_ExchangeOnlineOptions" Margin="0,0,10,131.992" HorizontalAlignment="Right" Width="354.777" Height="52.336" VerticalAlignment="Bottom">
+        <Grid x:Name="grd_ExchangeOnlineOptions" Margin="0,0,10,131.992" HorizontalAlignment="Right" Width="354.777" Height="52.336" VerticalAlignment="Bottom" IsEnabled="False">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
@@ -2892,9 +2891,9 @@ Function Import-BsOldWPFGuiElements
             <TextBlock x:Name="txt_ExchangeOnlineTitle" Height="19" Margin="10,6.335,15.009,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Grid.ColumnSpan="2" Foreground="#FFFA9EDA" Background="Black"><Run Text=" "/><Run Text="■ "/><Run Text="Exchange Online"/><LineBreak/><Run/></TextBlock>
             <CheckBox x:Name="cbx_ExchangeOnlineURI" Content="Connection Uri" Margin="10,27.335,10,0" Height="18.001" VerticalAlignment="Top"/>
             <TextBox x:Name="tbx_ExchangeOnlineURI" Margin="0,25.335,15.009,0" Text="https://outlook.office365.com/powershell-liveid/" Grid.Column="1" Height="21.001" VerticalAlignment="Top" MaxLines="1"/>
-            <TextBlock x:Name="txt_ExchangeOnlineURIChanged" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top"/>
+            <TextBlock x:Name="txt_ExchangeOnlineURIChanged" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top" Visibility="Hidden"/>
         </Grid>
-        <Grid x:Name="grd_TeamsOptions" Margin="0,0,10,79.656" HorizontalAlignment="Right" Width="354.777" Height="52.336" VerticalAlignment="Bottom">
+        <Grid x:Name="grd_TeamsOptions" Margin="0,0,10,79.656" HorizontalAlignment="Right" Width="354.777" Height="52.336" VerticalAlignment="Bottom" IsEnabled="False">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
@@ -2902,9 +2901,9 @@ Function Import-BsOldWPFGuiElements
             <TextBlock x:Name="txt_TeamsTitle" Height="19" Margin="10,6.335,15.009,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Grid.ColumnSpan="2" Foreground="White" Background="Black"><Run Text=" "/><Run Text="■"/><Run Text=" Microsoft Teams"/></TextBlock>
             <CheckBox x:Name="cbx_TeamsEnviroment" Content="Teams Environment Name" Margin="10,27.335,10,0" Height="18.001" VerticalAlignment="Top"/>
             <TextBox x:Name="tbx_TeamsEnviroment" Margin="10,25.335,15.009,0" Text="TeamsGCCH" Grid.Column="1" Height="21.001" VerticalAlignment="Top" MaxLines="1"/>
-            <TextBlock x:Name="txt_TeamsEnviromentChanged" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top"/>
+            <TextBlock x:Name="txt_TeamsEnviromentChanged" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top" Visibility="Hidden"/>
         </Grid>
-        <Grid x:Name="grd_SharePointOptions" Margin="0,0,10,11" HorizontalAlignment="Right" Width="354.777" Height="68.656" VerticalAlignment="Bottom">
+        <Grid x:Name="grd_SharePointOptions" Margin="0,0,10,11" HorizontalAlignment="Right" Width="354.777" Height="68.656" VerticalAlignment="Bottom" IsEnabled="False">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
@@ -2912,38 +2911,44 @@ Function Import-BsOldWPFGuiElements
             <TextBlock x:Name="txt_SharepointTitle" Height="19" Margin="10,6.335,15.009,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Grid.ColumnSpan="2" Foreground="#FFF9FF81" Background="Black"><Run Text=" "/><Run Text="■"/><Run Text=" "/><Run Text="SharePoint Online"/></TextBlock>
             <CheckBox x:Name="cbx_SharepointURL" Content="URL" Margin="10,27.335,10,0" Height="18.001" VerticalAlignment="Top"/>
             <TextBox x:Name="tbx_SharepointURL" Margin="10,25.335,15.009,0" Text="https://contoso-admin.sharepoint.com" Grid.Column="1" Height="21.001" VerticalAlignment="Top" MaxLines="1"/>
-            <TextBlock x:Name="txt_SharepointURLChanged" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top"/>
+            <TextBlock x:Name="txt_SharepointURLChanged" Margin="0,25.335,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top" Visibility="Hidden"/>
             <CheckBox x:Name="cbx_SharepointRegion" Content="Region" Margin="10,47.336,10,0" Height="18.001" VerticalAlignment="Top"/>
             <TextBox x:Name="tbx_SharepointRegion" Margin="10,45.336,15.009,0" Text="Default" Grid.Column="1" Height="21.001" VerticalAlignment="Top" MaxLines="1"/>
-            <TextBlock x:Name="txt_SharepointRegionChanged" Margin="0,45.336,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top"/>
+            <TextBlock x:Name="txt_SharepointRegionChanged" Margin="0,45.336,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" Height="20.001" VerticalAlignment="Top" Visibility="Hidden"/>
         </Grid>
     </Grid>
 </Window>
 
+
 '@ 
+
+
+  
+
+
     
   $inputXML = $inputXML -replace 'mc:Ignorable="d"','' -replace "x:N",'N' -replace '^<Win.*', '<Window'
   [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
   [xml]$XAML = $inputXML
   #Read XAML
     
-      $reader=(New-Object System.Xml.XmlNodeReader $xaml) 
-    try{$global:WpfForm=[Windows.Markup.XamlReader]::Load( $reader )}
+  $reader=(New-Object System.Xml.XmlNodeReader $xaml) 
+  try{$global:SettingsWpfWindow=[Windows.Markup.XamlReader]::Load( $reader )}
   catch [System.Management.Automation.MethodInvocationException] {
-      Write-Warning "We ran into a problem with the XAML code.  Check the syntax for this control..."
-      write-host $error[0].Exception.Message -ForegroundColor Red
-      if ($error[0].Exception.Message -like "*button*"){
-          write-warning "Ensure your &lt;button in the `$inputXML does NOT have a Click=ButtonClick property.  PS can't handle this`n`n`n`n"}
+    Write-Warning "We ran into a problem with the XAML code.  Check the syntax for this control..."
+    write-host $error[0].Exception.Message -ForegroundColor Red
+    if ($error[0].Exception.Message -like "*button*"){
+    write-warning "Ensure your &lt;button in the `$inputXML does NOT have a Click=ButtonClick property.  PS can't handle this`n`n`n`n"}
   }
   catch{#if it broke some other way 
-      Write-Host "Unable to load Windows.Markup.XamlReader. Double-check syntax and ensure .net is installed."
-          }
+    Write-Host "Unable to load Windows.Markup.XamlReader. Double-check syntax and ensure .net is installed."
+  }
     
   #===========================================================================
   # Store Form Objects In PowerShell
   #===========================================================================
     
-  $xaml.SelectNodes("//*[@Name]") | %{Set-Variable -Name "WPF$($_.Name)" -Scope Global -Value $global:WpfForm.FindName($_.Name)}
+  $xaml.SelectNodes("//*[@Name]") | %{Set-Variable -Name "WPF$($_.Name)" -Scope Global -Value $global:SettingsWpfWindow.FindName($_.Name)}
     
   Function Get-FormVariables{
     get-variable WPF*
@@ -2953,18 +2958,87 @@ Function Import-BsOldWPFGuiElements
   
 }
 
-Function Import-BsWpfGuiElements
+Function Import-BsWpfGuiFunctions 
 {
-$Global:syncHash = [hashtable]::Synchronized(@{})
-$newRunspace =[runspacefactory]::CreateRunspace()
-$newRunspace.ApartmentState = "STA"
-$newRunspace.ThreadOptions = "ReuseThread"
-$newRunspace.Open()
-$newRunspace.SessionStateProxy.SetVariable("syncHash",$syncHash)
+
+  $function = 'Import-BsWPFGuiElements'
+  Write-Log -component $function -Message "Called $function" -severity 1 
+
+  #region ServiceToggles
+  
+  #Azure AD Toggle
+  $WPFcbx_ConnectToAzureAD.add_Click({
+      If ($WPFcbx_ConnectoAzureAD.Ischecked)
+        {$WPFgrd_AzureADOptions.IsEnabled = $True}
+        Else
+        {$WPFgrd_AzureADOptions.IsEnabled = $False}
+      $WPFtxt_TenantConnectToAzureADChanged.Visibility = "Visible"
+    
+  })
+  #Azure Compliance Toggle
+  $WPFcbx_ConnectToAzureCompliance.add_Click({
+      If ($WPFcbx_ConnectToAzureCompliance.Ischecked)
+        {$WPFgrd_AzureComplianceOptions.IsEnabled = $True}
+        Else
+        {$WPFgrd_AzureComplianceOptions.IsEnabled = $False}
+      $WPFtxt_TenantConnectToAzureComplianceChanged.Visibility = "Visible"
+    
+  })
+  #Exchange Online Toggle
+  $WPFcbx_ConnectToExchangeOnline.add_Click({
+      If ($WPFcbx_ConnectToExchangeOnline.Ischecked)
+        {$WPFgrd_ExchangeOnlineOptions.IsEnabled = $True}
+        Else
+        {$WPFgrd_ExchangeOnlineOptions.IsEnabled = $False}
+      $WPFtxt_TenantConnectToExchangeOnlineChanged.Visibility = "Visible"
+    
+  })
+  
+  #Teams Toggle
+  $WPFcbx_ConnectToTeams.add_Click({
+      If ($WPFcbx_ConnectToTeams.Ischecked)
+        {$WPFgrd_TeamsOptions.IsEnabled = $True}
+        Else
+        {$WPFgrd_TeamsOptions.IsEnabled = $False}
+      $WPFtxt_TenantConnectToTeamsChanged.Visibility = "Visible"
+    
+  })
+  
+  #Sharepoint Toggle
+  $WPFcbx_ConnectToSharepointOnline.add_Click({
+      If ($WPFcbx_ConnectToSharepointOnline.Ischecked)
+        {$WPFgrd_SharePointOptions.IsEnabled = $True}
+        Else
+        {$WPFgrd_SharePointOptions.IsEnabled = $False}
+      $WPFtxt_TenantConnectToSharePointChanged.Visibility = "Visible"
+    
+  })
+  
+  #Skype Online Toggle
+  $WPFcbx_ConnectToSkype.add_Click({
+      If ($WPFcbx_ConnectToSkype.Ischecked)
+        {$WPFgrd_SkypeOptions.IsEnabled = $True}
+        Else
+        {$WPFgrd_SkypeOptions.IsEnabled = $False}
+      $WPFtxt_TenantConnectToSkypeOnlineChanged.Visibility = "Visible"
+    
+  })
+  #endregion ServiceToggles 
+}
+
+Function Import-BsMultiThreadedWpfGuiElements
+{
+  $Global:syncHash = [hashtable]::Synchronized(@{})
+  $newRunspace =[runspacefactory]::CreateRunspace()
+  $newRunspace.ApartmentState = "STA"
+  $newRunspace.ThreadOptions = "ReuseThread"
+  $newRunspace.Open()
+  $newRunspace.SessionStateProxy.SetVariable("syncHash",$syncHash)
 
 
-$global:psCmd = [PowerShell]::Create().AddScript({
-    [xml]$xaml = @"
+  $global:psCmd = [PowerShell]::Create().AddScript({
+      [xml]$xaml = @'
+
 <Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -3055,10 +3129,10 @@ $global:psCmd = [PowerShell]::Create().AddScript({
             <TextBlock x:Name="txt_TenantServiceOptions" Height="19" Margin="2.579,0.666,57.421,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="SemiBold"><Run Text="Tenant "/><Run Text="Service Connections"/></TextBlock>
             <TextBlock x:Name="txt_TenantConnectToAzureADChanged" Height="19" Margin="0,23.666,0,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1"/>
             <TextBlock x:Name="txt_TenantConnectToAzureComplianceChanged" Height="19" Margin="0,43.764,0,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1"/>
-            <TextBlock x:Name="txt_TenantConnectToExchangeOnlineChanged" Margin="0,63.862,0,64.138" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" VerticalAlignment="Top"/>
-            <TextBlock x:Name="txt_TenantConnecToTeamsChanged" Margin="0,0,0,46.942" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Top" Grid.Column="1"/>
-            <TextBlock x:Name="txt_TenantConnectToSharePointChanged" Margin="0,0,0,26.844" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Top" Grid.Column="1"/>
-            <TextBlock x:Name="txt_TenantConnectToSkypeOnlineChanged" Margin="0,0,0,3.844" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Top" Grid.Column="1"/>
+            <TextBlock x:Name="txt_TenantConnectToExchangeOnlineChanged" Margin="0,67.01,0,0" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Grid.Column="1" VerticalAlignment="Top"/>
+            <TextBlock x:Name="txt_TenantConnectToSharePointChanged" Margin="0,0,0,24.942" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Bottom" Grid.Column="1"/>
+            <TextBlock x:Name="txt_TenantConnectToSkypeOnlineChanged" Margin="0,0,0,5.844" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Bottom" Grid.Column="1"/>
+            <TextBlock x:Name="txt_TenantConnectToTeamsChanged" Margin="0,0,0,42.892" TextWrapping="Wrap" Text="*" HorizontalAlignment="Right" Width="10.009" FontWeight="Bold" Foreground="Red" Height="19" VerticalAlignment="Bottom" Grid.Column="1"/>
         </Grid>
         <Grid x:Name="grd_BounShellOptions" Margin="310.223,0,378.991,10" Height="92" VerticalAlignment="Bottom">
             <Grid.ColumnDefinitions>
@@ -3157,185 +3231,197 @@ $global:psCmd = [PowerShell]::Create().AddScript({
     </Grid>
 </Window>
 
-"@
+
+'@
+      function Convert-XAMLtoWindow
+      {
+        param
+        (
+          [Parameter(Mandatory=$true)]
+          [string]
+          $XAML
+        )
+  
+        Add-Type -AssemblyName PresentationFramework
+  
+        $reader = [XML.XMLReader]::Create([IO.StringReader]$XAML)
+        $result = [Windows.Markup.XAMLReader]::Load($reader)
+        $reader.Close()
+        $reader = [XML.XMLReader]::Create([IO.StringReader]$XAML)
+        while ($reader.Read())
+        {
+          $name=$reader.GetAttribute('Name')
+          if (!$name) {$name=$reader.GetAttribute('x:Name')}
+          if($name)
+          {$result | Add-Member NoteProperty -Name $name -Value $result.FindName($name) -Force}
+        }
+        $reader.Close()
+        $result
+      }
 
 
-    $reader=(New-Object System.Xml.XmlNodeReader $xaml)
-    $syncHash.Window=[Windows.Markup.XamlReader]::Load( $reader )
+      function Show-WPFWindow
+      {
+        param
+        (
+          [Parameter(Mandatory)]
+          [Windows.Window]
+          $global:Window
+        )
+  
+        $result = $null
+        $null = $Global:window.Dispatcher.InvokeAsync{
+          $result = $Global:window.ShowDialog()
+          Set-Variable -Name result -Value $result -Scope 1
+        }.Wait()
+        $result
+      }
+
+      $Global:window = Convert-XAMLtoWindow -XAML $xaml
+
+
+
+      Show-WPFWindow -Window $global:window
+
+
+      $reader=(New-Object System.Xml.XmlNodeReader $xaml)
+      $Global:syncHash.Window=[Windows.Markup.XamlReader]::Load( $reader )
     
-    [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
-    [xml]$XAML = $xaml
-        $xaml.SelectNodes("//*[@*[contains(translate(name(.),'n','N'),'Name')]]") | %{
+      [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
+      [xml]$XAML = $xaml
+      $xaml.SelectNodes("//*[@*[contains(translate(name(.),'n','N'),'Name')]]") | %{
         #Find all of the form types and add them as members to the synchash
-        $syncHash.Add($_.Name,$syncHash.Window.FindName($_.Name) )
+        $Global:syncHash.Add($_.Name,$Global:syncHash.Window.FindName($_.Name) )
 
-    }
+      }
 
-    $Script:JobCleanup = [hashtable]::Synchronized(@{})
-    $Script:Jobs = [system.collections.arraylist]::Synchronized((New-Object System.Collections.ArrayList))
+      $Script:JobCleanup = [hashtable]::Synchronized(@{})
+      $Script:Jobs = [system.collections.arraylist]::Synchronized((New-Object System.Collections.ArrayList))
 
-    #region Background runspace to clean up jobs
-    $jobCleanup.Flag = $True
-    $newRunspace =[runspacefactory]::CreateRunspace()
-    $newRunspace.ApartmentState = "STA"
-    $newRunspace.ThreadOptions = "ReuseThread"          
-    $newRunspace.Open()        
-    $newRunspace.SessionStateProxy.SetVariable("jobCleanup",$jobCleanup)     
-    $newRunspace.SessionStateProxy.SetVariable("jobs",$jobs) 
-    $jobCleanup.PowerShell = [PowerShell]::Create().AddScript({
-        #Routine to handle completed runspaces
-        Do {    
+      #region Background runspace to clean up jobs
+      $jobCleanup.Flag = $True
+      $newRunspace =[runspacefactory]::CreateRunspace()
+      $newRunspace.ApartmentState = "STA"
+      $newRunspace.ThreadOptions = "ReuseThread"          
+      $newRunspace.Open()        
+      $newRunspace.SessionStateProxy.SetVariable("jobCleanup",$jobCleanup)     
+      $newRunspace.SessionStateProxy.SetVariable("jobs",$jobs) 
+      $jobCleanup.PowerShell = [PowerShell]::Create().AddScript({
+          #Routine to handle completed runspaces
+          Do {    
             Foreach($runspace in $jobs) {            
-                If ($runspace.Runspace.isCompleted) {
-                    [void]$runspace.powershell.EndInvoke($runspace.Runspace)
-                    $runspace.powershell.dispose()
-                    $runspace.Runspace = $null
-                    $runspace.powershell = $null               
-                } 
+              If ($runspace.Runspace.isCompleted) {
+                [void]$runspace.powershell.EndInvoke($runspace.Runspace)
+                $runspace.powershell.dispose()
+                $runspace.Runspace = $null
+                $runspace.powershell = $null               
+              } 
             }
             #Clean out unused runspace jobs
             $temphash = $jobs.clone()
             $temphash | Where {
-                $_.runspace -eq $Null
+              $_.runspace -eq $Null
             } | ForEach {
-                $jobs.remove($_)
+              $jobs.remove($_)
             }        
             Start-Sleep -Seconds 1     
-        } while ($jobCleanup.Flag)
-    })
-    $jobCleanup.PowerShell.Runspace = $newRunspace
-    $jobCleanup.Thread = $jobCleanup.PowerShell.BeginInvoke()  
-    #endregion Background runspace to clean up jobs
+          } while ($jobCleanup.Flag)
+      })
+      $jobCleanup.PowerShell.Runspace = $newRunspace
+      $jobCleanup.Thread = $jobCleanup.PowerShell.BeginInvoke()  
+      #endregion Background runspace to clean up job
+      
 
-    $syncHash.button.Add_Click({
-        #Start-Job -Name Sleeping -ScriptBlock {start-sleep 5}
-        #while ((Get-Job Sleeping).State -eq 'Running'){
-            $x+= "."
-        #region Boe's Additions
-        $newRunspace =[runspacefactory]::CreateRunspace()
-        $newRunspace.ApartmentState = "STA"
-        $newRunspace.ThreadOptions = "ReuseThread"          
-        $newRunspace.Open()
-        $newRunspace.SessionStateProxy.SetVariable("SyncHash",$SyncHash) 
-        $PowerShell = [PowerShell]::Create().AddScript({
-Function Update-BsGuiWindow {
-        Param (
-            $Control,
-            $Property,
-            $Value,
-            [switch]$AppendContent
-        )
+      #region Window Close 
+      $Global:syncHash.Window.Add_Closed({
+          Write-Verbose 'Halt runspace cleanup job processing'
+          $jobCleanup.Flag = $False
 
-        # This is kind of a hack, there may be a better way to do this
-        If ($Property -eq "Close") {
-            $syncHash.Window.Dispatcher.invoke([action]{$syncHash.Window.Close()},"Normal")
-            Return
-        }
-
-        # This updates the control based on the parameters passed to the function
-        $syncHash.$Control.Dispatcher.Invoke([action]{
-            # This bit is only really meaningful for the TextBox control, which might be useful for logging progress steps
-            If ($PSBoundParameters['AppendContent']) {
-                $syncHash.$Control.AppendText($Value)
-            } Else {
-                $syncHash.$Control.$Property = $Value
-            }
-        }, "Normal")
-    }                        
-
-        })
-        $PowerShell.Runspace = $newRunspace
-        [void]$Jobs.Add((
-            [pscustomobject]@{
-                PowerShell = $PowerShell
-                Runspace = $PowerShell.BeginInvoke()
-            }
-        ))
-    })
-
-    #region Window Close 
-    $syncHash.Window.Add_Closed({
-        Write-Verbose 'Halt runspace cleanup job processing'
-        $jobCleanup.Flag = $False
-
-        #Stop all runspaces
-        $jobCleanup.PowerShell.Dispose()      
-    })
-    #endregion Window Close 
-    #endregion Boe's Additions
-
-    #$x.Host.Runspace.Events.GenerateEvent( "TestClicked", $x.test, $null, "test event")
-
-    #$syncHash.Window.Activate()
-    $syncHash.Window.ShowDialog() | Out-Null
-    $syncHash.Error = $Error
-})
-$global:psCmd.Runspace = $newRunspace
-
-
-1..5 | %{ write-host "!!!!!!!!!!!!!!!!!!"}
-Write-host "to run display your UI, run:  " -NoNewline
-write-host -foregroundcolor Green '$data = $global:psCmd.BeginInvoke()'
-  
+          #Stop all runspaces
+          $jobCleanup.PowerShell.Dispose()      
+      })
+      
+      $Global:syncHash.Window.ShowDialog() | Out-Null
+      $Global:syncHash.Error = $Error
+  })
+  $global:psCmd.Runspace = $newRunspace
+ 
 }
-Function Import-BsWpfGuiFunctions 
+Function Import-BsMultiThreadedWpfGuiFunctions 
 {
-
-  #todo, this is shit. fix
-  #Gui Cancel button
-  $Global:btn_CancelConfig_Click = 
+  $Global:cbx_ConnectToTeams_Click = 
   {
     Read-BsConfigFile
     Hide-BsGuiElements
   }
 
-  #Gui Save Config Button
-  $Global:Btn_SaveConfig_Click = 
-  {
-    $Global:btn_CancelConfig.Text = [System.String]'Close'
-    Write-BsConfigFile
-    If ($PSISE)
-    {
-      Update-BsAddonMenu
-    }
-  }
+  $Global:syncHash.cbx_ConnectToTeams.add_checked({
+      Write-output "foo"
+      Update-BsGuiWindow -Control cbx_ConnectToAzureAD -Property IsChecked -Value $true
+  })
 
-  #Gui Set Defaults Button
-  $Global:Btn_Default_Click = 
-  {
-    Import-BsDefaultConfig
-    If ($PSISE)
-    {
-      Update-BsAddonMenu
-    }
-  }
+   
+}
 
-  #Gui Button to Reload Config
-  $Global:Btn_ConfigReload_Click = 
-  {
-    Read-BsConfigFile
-    If ($PSISE)
-    {
-      Update-BsAddonMenu
-    }
-  }
-  #Gui link object to open a browser for more info on the modern auth clipboard
-  $Global:cliplabel_click = 
-  {
-    Start-Process -FilePath 'https://UcMadScientist.com/BounShell/'
-  }
+Function Show-BsMultiThreadWPFGuiElements
+{
+  #$global:WpfForm.ShowDialog() | out-null
+  $data = $global:psCmd.BeginInvoke()
+  
+  Update-BsGuiWindow -Control cbx_ConnectToAzureAD -Property IsChecked -Value $false
+  Update-BsGuiWindow -Control cbx_ConnectToAzureAD -Property IsChecked -Value $false
+  
+  $global:synchash.tbx_TenantRootDomain.ToString()
+  $global:synchash.tbx_TenantRootDomain.ToString()
+  
+  
 }
 
 Function Show-BsWPFGuiElements
 {
-  #$global:WpfForm.ShowDialog() | out-null
-  $data = $global:psCmd.BeginInvoke()
+  $global:SettingsWpfWindow.ShowDialog() | out-null
+  #$data = $global:psCmd.BeginInvoke()
+  
+  #Update-BsGuiWindow -Control cbx_ConnectToAzureAD -Property IsChecked -Value $false
+  #Update-BsGuiWindow -Control cbx_ConnectToAzureAD -Property IsChecked -Value $false
+  
+  #$global:synchash.tbx_TenantRootDomain.ToString()
+  #$global:synchash.tbx_TenantRootDomain.ToString()
+  
+  
 }
 
 Function Hide-BsWPFGuiElements
 {
 
+
+
 }
+
+Function Update-BsGuiWindow {
+  Param (
+    $Control,
+    $Property,
+    $Value,
+    [switch]$AppendContent
+  )
+
+  # This is kind of a hack, there may be a better way to do this
+  If ($Property -eq "Close") {
+    $syncHash.Window.Dispatcher.invoke([action]{$syncHash.Window.Close()},"Normal")
+    Return
+  }
+
+  # This updates the control based on the parameters passed to the function
+  $syncHash.$Control.Dispatcher.Invoke([action]{
+      # This bit is only really meaningful for the TextBox control, which might be useful for logging progress steps
+      If ($PSBoundParameters['AppendContent']) {
+        $syncHash.$Control.AppendText($Value)
+      } Else {
+        $syncHash.$Control.$Property = $Value
+      }
+  }, "Normal")
+}       
 #now we export the relevant stuff
 
 Export-ModuleMember -Function Read-BsConfigFile
@@ -3356,4 +3442,7 @@ Export-ModuleMember -Function Import-BsWpfGuiElements
 Export-ModuleMember -Function Import-BsWpfGuiFunctions
 Export-ModuleMember -Function Show-BsWpfGuiElements
 Export-ModuleMember -Function Hide-BsWpfGuiElements
+Export-ModuleMember -Function Update-BsGuiWindow
+
+
 
