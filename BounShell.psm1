@@ -9,12 +9,20 @@
     
     .NOTES
 
-    Version                : 0.6.6
+    Version                : 0.7
     Date                   : 24/08/2019
     Lync Version           : Tested against Skype4B 2015
     Author                 : James Arber
     Header stolen from     : Greig Sheridan who stole it from Pat Richard's amazing "Get-CsConnections.ps1"
     Special Thanks to      : My Beta Testers. Greig Sheridan, Pat Richard and Justin O'Meara
+
+    :v0.7.0: Public Beta 2
+    New XAML based GUI
+    New tenant specific settings options for things like Sharepoint URL and region settings
+    New Changed settings tracking in GUI
+    
+
+    New EasterEgg!
     
     :v0.6.6: Public Beta BugFix
     Added Reconnect flag to CSOnline session to resolve ISE crash
