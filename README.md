@@ -1,7 +1,7 @@
 # BounShell
 
-Bounshell is a tool to allow Office365 Administrators to login to multiple Office365 Tenants and Services simply and easily
-For detailed infomation, see https://www.UcMadScientist.com/BounShell/
+BounShell is a tool to allow Office365 Administrators to login to multiple Office365 Tenants and Services simply and easily.
+For detailed information, see https://www.UcMadScientist.com/BounShell/
 
 
 ## Installation
@@ -13,18 +13,18 @@ Use NuGet to automatically install it from the PowerShell gallery
 
 
 ### Method Two 
-Grab the code from GitHub and install it in your modules folder: (C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules or C:\Program Files\WindowsPowerShell\Modules by default)
+Grab the code from GitHub and install it in your modules folder: (C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules or C:\Program Files\WindowsPowerShell\Modules by default).
 
 <a href="https://github.com/Atreidae/BounShell">https://github.com/Atreidae/BounShell</a>
 
 ### Install required modules
 This is no longer required as of beta 0.6.4, BounShell will automatically prompt to install required modules when updating usernames.
-Pre beta 0.6.4 modules werent automatially installed so you can install them manually with the following code
+Pre beta 0.6.4 modules weren't automatically installed so you can install them manually with the following code.
 
 ```PowerShell
 #Install the modules
 Install-Module -name MSOnline, MicrosoftTeams, Microsoft.Online.SharePoint.PowerShell, ExchangeOnlineShell, AADRM
-#You should also run update-module to update anything thats already installed
+#You should also run update-module to update anything that's already installed
 Update-Module -name MSOnline, MicrosoftTeams, Microsoft.Online.SharePoint.PowerShell, ExchangeOnlineShell, AADRM
 ```
 
@@ -44,15 +44,15 @@ $env:PSModulePath = $env:PSModulePath + ";c:\github\"
 ```
 
 ## Initial Setup.
-ATM this tool is mainly designed for the ISE and thus all of it's configuration takes place there.
-Start up the ISE and run **Start-BounShell** this will load the module into memory and add the options to the Add-Ons menu
+ATM this tool is mainly designed for the ISE and thus all of its configuration takes place there.
+Start up the ISE and run **Start-BounShell** this will load the module into memory and add the options to the Add-Ons menu.
 Now in the ISE Add-Ons menu navigate to BounShell > Settings...
 
-If you dont want to use the ISE, you can run **Show-BsGuiElements** to show the same menu
+If you dont want to use the ISE, you can run **Show-BsGuiElements** to show the same menu.
 
-Fill in the details for your tenants as appropriate hit **Save Config** and close the window.
+Fill in the details for your tenants as appropriate, hit **Save Config** and close the window.
 
-You can now connect to any of the specified tenants by navigating to the Add-On's menu > BounShell > Tenant Name
+You can now connect to any of the specified tenants by navigating to the Add-Ons menu > BounShell > Tenant Name.
 
 Not using the ISE? Run **Connect-BsO365Tenant** and choose a tenant to connect to.
 
@@ -61,12 +61,12 @@ I've implemented a basic form of dealing with Modern Auth. When you attempt to c
 Paste this again using **Ctrl+V** and BounShell will clean the password out of the clipboard for you.
 
 ## Known Issues
-High DPI scaling causes issues with the GUI elements for login credentials. I'm probably going to re-write the whole gui in WPF
-I've had reports that running **Show-BsGuiElements** in PowerShell instead of the ISE works well. (Thanks Sean)
+High DPI scaling causes issues with the GUI elements for login credentials. I'm probably going to re-write the whole gui in WPF.
+I've had reports that running **Show-BsGuiElements** in PowerShell instead of the ISE works well. (Thanks Sean.)
 
 Pasting too quickly with Modern Auth causes the username to not be pasted.
 
-Modern Auth will prompt multiple times for login creds when connecting to a tenant. Looking at ways to cache a token
+Modern Auth will prompt multiple times for login creds when connecting to a tenant. Looking at ways to cache a token.
 
 ## Fork me!
 BounShell is free, open source and licensed under the MIT Licence. Feel free to view the source, fork it, raise issues and submit your improvements via pull requests. You can find on Github:
