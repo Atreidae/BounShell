@@ -1,7 +1,7 @@
 ﻿<#
     .SYNOPSIS
 
-    This is a tool to help users manage multiple office 365 tenants
+    This is a tool to help users manage multiple Office 365 tenants
 
     .DESCRIPTION
 
@@ -223,12 +223,12 @@ Function Write-Log
     {
       "Info: $Date $Message"| Write-Host -ForegroundColor Green
     }
-    #If the log entry has a severity of 3 assume its a warning and write it to write-warning
+    #If the log entry has a severity of 3 assume it's a warning and write it to write-warning
     if ($Severity -eq 3) 
     {
       "$Date $Message"| Write-Warning
     }
-    #If the log entry has a severity of 4 or higher, assume its an error and display an error message (Note, critical errors are caught by throw statements so may not appear here)
+    #If the log entry has a severity of 4 or higher, assume it's an error and display an error message (Note, critical errors are caught by throw statements so may not appear here)
     if ($Severity -ge 4) 
     {
       "$Date $Message"| Write-Error
@@ -290,7 +290,7 @@ Function Get-ScriptUpdate
   If ($GitHubScriptVersion.Content.length -eq 0) 
   {
     #Empty data, throw an error
-    Write-Log -component $function -Message 'Error checking for new version. You can check manualy here' -severity 3
+    Write-Log -component $function -Message 'Error checking for new version. You can check manually here' -severity 3
     Write-Log -component $function -Message $BlogPost -severity 1 #Todo Update URL
     Write-Log -component $function -Message 'Pausing for 5 seconds' -severity 1
     Start-Sleep -Seconds 5
@@ -335,7 +335,7 @@ Function Get-ScriptUpdate
     If($Needupdate)
     {
       $yes = New-Object -TypeName System.Management.Automation.Host.ChoiceDescription -ArgumentList '&Yes', `
-      'Updates the installed PowerShell Module'
+      'Update the installed PowerShell Module'
 
       $no = New-Object -TypeName System.Management.Automation.Host.ChoiceDescription -ArgumentList '&No', `
       'No thanks.'
@@ -364,7 +364,7 @@ Function Get-ScriptUpdate
       }
     }
     
-    #We alreday have the lastest version
+    #We already have the latest version
     Else
     {
       Write-Log -component $function -Message 'Script is upto date' -severity 1
@@ -404,7 +404,7 @@ Function Upgrade-BsConfigFile
   Catch 
   {
     Write-Log -component $function -Message 'Error writing Config Backup file' -severity 4
-    Write-Log -component $function -Message "Sorry, something went wrong here and I couldnt backup your BounShell config. Please check permissions to create $ENV:UserProfile\BounShell-backup-$ShrtDate.xml" -severity 3
+    Write-Log -component $function -Message "Sorry, something went wrong here and I couldn't backup your BounShell config. Please check permissions to create $ENV:UserProfile\BounShell-backup-$ShrtDate.xml" -severity 3
     Throw 'Bad File Operation, Abort Script'
   }
  
@@ -522,7 +522,7 @@ Function Read-BsConfigFile
     
   Catch
   {
-    #For some reason we ran into an issue updating variables, throw and error and revert to defaults
+    #For some reason we ran into an issue updating variables, throw an error and revert to defaults
     Write-Log -component $function -Message 'Error reading Config or updating GUI, Loading Defaults' -severity 3
     Import-BsDefaultConfig
   }
@@ -929,14 +929,14 @@ Function Invoke-BsNewTenantTab
     Catch
     {
       #Something went wrong opening a new tab, probably already a tab with that name open
-      Write-Log -component $function -Message 'Failed to open new tab, Is there already a connection open to that tenant?' -severity 3
+      Write-Log -component $function -Message 'Failed to open new tab. Is there already a connection open to that tenant?' -severity 3
     }
   }
   
   Else
   {
     #Tabname is "undefined", user clicked a tenant thats not confgured yey
-    Write-Log -component $function -Message "Sorry, I cant find a config for Tenant $Tenant" -severity 3
+    Write-Log -component $function -Message "Sorry, I can't find a config for Tenant $Tenant" -severity 3
   }
 }
 
@@ -988,10 +988,10 @@ Function Connect-BsO365Tenant
   #Check to see if we are running in the ISE
   If ($PSISE)
   {  
-    #Clean up any stale sessions (we shouldnt have any, but whatever)
+    #Clean up any stale sessions (we shouldn't have any, but whatever)
     Get-PSSession | Remove-PSSession
   }
-  #load the gui stuff for configuration #todo, put  check here and only load it if its not loaded.
+  #load the gui stuff for configuration #todo, put check here and only load it if it's not loaded.
   Import-BsGuiElements
 
   #Import the Config file so we have data  
@@ -1019,7 +1019,7 @@ Function Connect-BsO365Tenant
     $Tenants += ($global:Config.Tenant10.DisplayName)
 
 
-    #First figure out the maximum width of the items name (for the tabular menu):
+    #First figure out the maximum width of the item's name (for the tabular menu):
     $width = 0
     foreach ($Tenant in ($Tenants)) 
     {
@@ -1064,12 +1064,12 @@ Function Connect-BsO365Tenant
   if ($global:Config.ModernAuthClipboardEnabled -eq $true)
   {
     [bool]$NoPassword = $true
-    Write-Log -component $function -Message "Modern Auth Password intergration enabled" -severity 2
+    Write-Log -component $function -Message "Modern Auth Password integration enabled" -severity 2
   }
   Else
   {
     [bool]$NoPassword = $False
-    Write-Log -component $function -Message "Modern Auth Password intergration disabled" -severity 2
+    Write-Log -component $function -Message "Modern Auth Password integration disabled" -severity 2
   }
 
   #change config based on tenant
@@ -1092,7 +1092,7 @@ Function Connect-BsO365Tenant
       {
         #Not using modern auth
         $global:StoredPsCred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($global:Config.Tenant1.SignInAddress, $global:Config.Tenant1.Credential)
-        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Grieg!
+        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Greig!
       }
       Else
       {
@@ -1121,7 +1121,7 @@ Function Connect-BsO365Tenant
       {
         #Not using modern auth
         $global:StoredPsCred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($global:Config.Tenant2.SignInAddress, $global:Config.Tenant2.Credential)
-        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Grieg!
+        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Greig!
       }
       Else
       {
@@ -1149,7 +1149,7 @@ Function Connect-BsO365Tenant
       {
         #Not using modern auth
         $global:StoredPsCred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($global:Config.Tenant3.SignInAddress, $global:Config.Tenant3.Credential)
-        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Grieg!
+        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Greig!
       }
       Else
       {
@@ -1177,7 +1177,7 @@ Function Connect-BsO365Tenant
       {
         #Not using modern auth
         $global:StoredPsCred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($global:Config.Tenant4.SignInAddress, $global:Config.Tenant4.Credential)
-        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Grieg!
+        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Greig!
       }
       Else
       {
@@ -1205,7 +1205,7 @@ Function Connect-BsO365Tenant
       {
         #Not using modern auth
         $global:StoredPsCred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($global:Config.Tenant5.SignInAddress, $global:Config.Tenant5.Credential)
-        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Grieg!
+        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Greig!
       }
       Else
       {
@@ -1233,7 +1233,7 @@ Function Connect-BsO365Tenant
       {
         #Not using modern auth
         $global:StoredPsCred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($global:Config.Tenant6.SignInAddress, $global:Config.Tenant6.Credential)
-        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Grieg!
+        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Greig!
       }
       Else
       {
@@ -1261,7 +1261,7 @@ Function Connect-BsO365Tenant
       {
         #Not using modern auth
         $global:StoredPsCred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($global:Config.Tenant7.SignInAddress, $global:Config.Tenant7.Credential)
-        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Grieg!
+        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Greig!
       }
       Else
       {
@@ -1289,7 +1289,7 @@ Function Connect-BsO365Tenant
       {
         #Not using modern auth
         $global:StoredPsCred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($global:Config.Tenant8.SignInAddress, $global:Config.Tenant8.Credential)
-        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Grieg!
+        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Greig!
       }
       Else
       {
@@ -1318,7 +1318,7 @@ Function Connect-BsO365Tenant
       {
         #Not using modern auth
         $global:StoredPsCred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($global:Config.Tenant9.SignInAddress, $global:Config.Tenant9.Credential)
-        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Grieg!
+        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Greig!
       }
       Else
       {
@@ -1346,7 +1346,7 @@ Function Connect-BsO365Tenant
       {
         #Not using modern auth
         $global:StoredPsCred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($global:Config.Tenant10.SignInAddress, $global:Config.Tenant10.Credential)
-        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Grieg!
+        ($global:StoredPsCred).Password.MakeReadOnly() #Thanks for spotting this Greig!
       }
       Else
       {
@@ -1357,7 +1357,7 @@ Function Connect-BsO365Tenant
         $ModernAuthUsername = $global:Config.Tenant10.SignInAddress
       }
     }
-    11 #Tenant 11 should never happen. this is refactoring for 0.3 config file with array support, its here for testing.
+    11 #Tenant 11 should never happen. This is refactoring for 0.3 config file with array support, it's here for testing.
     {
       #Set Connection flags
       [bool]$ConnectToTeams = $global:Config.Tenant[$Tenant].ConnectToTeams
@@ -1390,7 +1390,7 @@ Function Connect-BsO365Tenant
   #check to see if the Modern Auth flag has been set and use the appropriate connection method
   If ($ModernAuth) 
   {
-    # We are using Modern Auth, Check to see if the user accepted the warning. if not. Prompt them
+    # We are using Modern Auth, Check to see if the user accepted the warning. If not, prompt them
     If ($global:Config.ModernAuthWarningAccepted -eq $false) 
     { 
 
@@ -1398,8 +1398,8 @@ Function Connect-BsO365Tenant
       #We should only warn them if the feature is actually on.
       If ($global:Config.ModernAuthClipboardEnabled = $true)
       {
-        Write-Log -Message 'User hasnt accepted the Modern Auth disclaimer, prompt' -Severity 1 -Component $function
-        Write-Host -Object 'Modern Auth Clipboard intergration is currently enabled'
+        Write-Log -Message "User hasn't accepted the Modern Auth disclaimer prompt" -Severity 1 -Component $function
+        Write-Host -Object 'Modern Auth Clipboard integration is currently enabled'
         Write-Host -Object 'Your Username and password will be placed into the clipboard to facilitate login'
         Write-Host -Object 'You can disable this feature in Add-ons > BounShell > Settings'
         Write-Host -Object 'More information on this is available at https://UcMadScientist.com/BounShell/'
@@ -1430,16 +1430,16 @@ Function Connect-BsO365Tenant
     {     
       Write-Host -Object 'Your Username has been copied to the clipboard'
       Write-Host -Object 'You can paste it into the Modern Auth Window using CTRL+V to speed up the sign in process,'
-      Write-Host -Object 'then paste your password using CTRL+V and sign in'
-      Write-Host -Object 'Upon pasting this, BounShell will clear the clipboard and overwrite the memory just incase.'
+      Write-Host -Object 'then paste your password using CTRL+V and sign in.'
+      Write-Host -Object 'Upon pasting this, BounShell will clear the clipboard and overwrite the memory just in case.'
     }
     Else
     {
       Write-Host -Object 'Your Username has been copied to the clipboard'
-      Write-Host -Object 'You can paste it into the Modern Auth Window using CTRL+V to speed up the sign in process'
-      Write-Host -Object 'You will need to enter your password manually. You can enable password support in settings'
+      Write-Host -Object 'You can paste it into the Modern Auth Window using CTRL+V to speed up the sign in process.'
+      Write-Host -Object 'You will need to enter your password manually. You can enable password support in Settings.'
     }
-    #As we are dealing with modern auth we need to convert the password back to an insecure string do that here
+    #As we are dealing with modern auth we need to convert the password back to an unsecure string do that here
     $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($ModernAuthPassword)
     $UnsecurePassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
     
@@ -1448,10 +1448,10 @@ Function Connect-BsO365Tenant
     {
       Try
       {
-        # So Now we need to kick off a new window that waits for the clipboard events
+        # So now we need to kick off a new window that waits for the clipboard events
         Write-Log -Message 'Connecting to Microsoft Teams' -Severity 2 -Component $function
         #Create a script block with the expanded variables
-        if ($global:Config.ModernAuthClipboardEnabled -eq $true) #workaround a bug where PowerShell convers the bool to a string and cant convert back
+        if ($global:Config.ModernAuthClipboardEnabled -eq $true) #workaround a bug where PowerShell converts the bool to a string and can't convert back
         {
           [String]$cmd = "Watch-BsCredentials -ModernAuthUsername $ModernAuthUsername -UnsecurePassword $UnsecurePassword -NoPassword"
         }
@@ -1462,9 +1462,9 @@ Function Connect-BsO365Tenant
         [ScriptBlock]$sb = [ScriptBlock]::Create($cmd) 
         
         #and now call it
-        Start-Process powershell $sb
+        Start-Process PowerShell $sb
 
-        #Sleep for a few seconds to let the powershell window pop and fill the clipboard.
+        #Sleep for a few seconds to let the PowerShell window pop and fill the clipboard.
         Start-Sleep -Seconds 3
         
         #Now we can invoke the session
@@ -1488,7 +1488,7 @@ Function Connect-BsO365Tenant
         Write-Log -Message 'Connecting to Exchange Online' -Severity 2 -Component $function
         #So Now we need to kick off a new window that waits for the clipboard events
         #Create a script block with the expanded variables
-        if ($global:Config.ModernAuthClipboardEnabled -eq $true) #workaround a bug where PowerShell convers the bool to a string and cant convert back
+        if ($global:Config.ModernAuthClipboardEnabled -eq $true) #workaround a bug where PowerShell converts the bool to a string and can't convert back
         {
           [String]$cmd = "Watch-BsCredentials -ModernAuthUsername $ModernAuthUsername -UnsecurePassword $UnsecurePassword -NoPassword"
         }
@@ -1499,9 +1499,9 @@ Function Connect-BsO365Tenant
         [ScriptBlock]$sb = [ScriptBlock]::Create($cmd) 
         
         #and now call it
-        Start-Process powershell $sb
+        Start-Process PowerShell $sb
 
-        #Sleep for a few seconds to let the powershell window pop and fill the clipboard.
+        #Sleep for a few seconds to let the PowerShell window pop and fill the clipboard.
         Start-Sleep -Seconds 3
 
         #Now we invoke the session
@@ -1530,7 +1530,7 @@ Function Connect-BsO365Tenant
         Write-Log -Message 'Connecting to Skype4B Online' -Severity 2 -Component $function
         #So Now we need to kick off a new window that waits for the clipboard events
         #Create a script block with the expanded variables
-        if ($global:Config.ModernAuthClipboardEnabled -eq $true) #workaround a bug where PowerShell convers the bool to a string and cant convert back
+        if ($global:Config.ModernAuthClipboardEnabled -eq $true) #workaround a bug where PowerShell converts the bool to a string and can't convert back
         {
           [String]$cmd = "Watch-BsCredentials -ModernAuthUsername $ModernAuthUsername -UnsecurePassword $UnsecurePassword -NoPassword"
         }
@@ -1541,9 +1541,9 @@ Function Connect-BsO365Tenant
         [ScriptBlock]$sb = [ScriptBlock]::Create($cmd) 
         
         #and now call it
-        Start-Process powershell $sb
+        Start-Process PowerShell $sb
 
-        #Sleep for a few seconds to let the powershell window pop and fill the clipboard.
+        #Sleep for a few seconds to let the PowerShell window pop and fill the clipboard.
         Start-Sleep -Seconds 3
 
         #Now we invoke the session
@@ -1554,7 +1554,7 @@ Function Connect-BsO365Tenant
       } 
       Catch
       {
-        #We had an issues connecting to Skype
+        #We had an issue connecting to Skype
         $ErrorMessage = $_.Exception.Messag
         Write-Log -Message $ErrorMessage -Severity 3 -Component $function 
         Write-Log -Message 'Error connecting to Skype4B Online' -Severity 3 -Component $function
@@ -1573,7 +1573,7 @@ Function Connect-BsO365Tenant
         
         #So Now we need to kick off a new window that waits for the clipboard events
         #Create a script block with the expanded variables
-        if ($global:Config.ModernAuthClipboardEnabled -eq $true) #workaround a bug where PowerShell convers the bool to a string and cant convert back
+        if ($global:Config.ModernAuthClipboardEnabled -eq $true) #workaround a bug where PowerShell converts the bool to a string and can't convert back
         {
           [String]$cmd = "Watch-BsCredentials -ModernAuthUsername $ModernAuthUsername -UnsecurePassword $UnsecurePassword -NoPassword"
         }
@@ -1584,9 +1584,9 @@ Function Connect-BsO365Tenant
         [ScriptBlock]$sb = [ScriptBlock]::Create($cmd) 
         
         #and now call it
-        Start-Process powershell $sb
+        Start-Process PowerShell $sb
 
-        #Sleep for a few seconds to let the powershell window pop and fill the clipboard.
+        #Sleep for a few seconds to let the PowerShell window pop and fill the clipboard.
         Start-Sleep -Seconds 3
 
         #Now we invoke the session
@@ -1615,7 +1615,7 @@ Function Connect-BsO365Tenant
         Write-Log -Message 'Connecting to Azure AD' -Severity 2 -Component $function
         #So Now we need to kick off a new window that waits for the clipboard events
         #Create a script block with the expanded variables
-        if ($global:Config.ModernAuthClipboardEnabled -eq $true) #workaround a bug where PowerShell convers the bool to a string and cant convert back
+        if ($global:Config.ModernAuthClipboardEnabled -eq $true) #workaround a bug where PowerShell converts the bool to a string and can't convert back
         {
           [String]$cmd = "Watch-BsCredentials -ModernAuthUsername $ModernAuthUsername -UnsecurePassword $UnsecurePassword -NoPassword"
         }
@@ -1626,9 +1626,9 @@ Function Connect-BsO365Tenant
         [ScriptBlock]$sb = [ScriptBlock]::Create($cmd) 
         
         #and now call it
-        Start-Process powershell $sb
+        Start-Process PowerShell $sb
 
-        #Sleep for a few seconds to let the powershell window pop and fill the clipboard.
+        #Sleep for a few seconds to let the PowerShell window pop and fill the clipboard.
         Start-Sleep -Seconds 3
 
         #Now we invoke the session
@@ -1650,14 +1650,14 @@ Function Connect-BsO365Tenant
     #Check for the 365 Compliance Centre flag
     If ($ConnectToCompliance)
     {
-      #Flag is set, connect to Compiance Centre
+      #Flag is set, connect to Compliance Centre
       Try
       {
         Write-Log -Message 'Connecting to Office 365 Security and Compliance Centre' -Severity 2 -Component $function
 
         #So Now we need to kick off a new window that waits for the clipboard events
         #Create a script block with the expanded variables
-        if ($global:Config.ModernAuthClipboardEnabled -eq $true) #workaround a bug where PowerShell convers the bool to a string and cant convert back
+        if ($global:Config.ModernAuthClipboardEnabled -eq $true) #workaround a bug where PowerShell converts the bool to a string and can't convert back
         {
           [String]$cmd = "Watch-BsCredentials -ModernAuthUsername $ModernAuthUsername -UnsecurePassword $UnsecurePassword -NoPassword"
         }
@@ -1668,9 +1668,9 @@ Function Connect-BsO365Tenant
         [ScriptBlock]$sb = [ScriptBlock]::Create($cmd) 
         
         #and now call it
-        Start-Process powershell $sb
+        Start-Process PowerShell $sb
 
-        #Sleep for a few seconds to let the powershell window pop and fill the clipboard.
+        #Sleep for a few seconds to let the PowerShell window pop and fill the clipboard.
         Start-Sleep -Seconds 3
 
         #Now we invoke the session
@@ -1695,7 +1695,7 @@ Function Connect-BsO365Tenant
 
 
   #region NoModern
-  #If the modern auth flag hasnt been set, we can simply connect to the services using secure credentials
+  #If the modern auth flag hasn't been set, we can simply connect to the services using secure credentials
   If (!$ModernAuth) 
 
   {
@@ -1753,7 +1753,7 @@ Function Connect-BsO365Tenant
       } 
       Catch
       {
-        #We had an issues connecting to Skype
+        #We had an issue connecting to Skype
         $ErrorMessage = $_.Exception.Messag
         Write-Log -Message $ErrorMessage -Severity 3 -Component $function 
         Write-Log -Message 'Error connecting to Skype4B Online' -Severity 3 -Component $function
@@ -1832,7 +1832,7 @@ Function Connect-BsO365Tenant
     #Check for the 365 Compliance Centre flag
     If ($ConnectToCompliance)
     {
-      #Flag is set, connect to Compiance Centre
+      #Flag is set, connect to Compliance Centre
       Try
       {
         $pscred = $global:StoredPsCred
@@ -1856,7 +1856,7 @@ Function Connect-BsO365Tenant
 
 Function Update-BsAddonMenu 
 {
-  #Check to see if we are loaded, if we are cleanup after ourselves
+  #Check to see if we are loaded, if we are then cleanup after ourselves
   if (($PSISE.CurrentPowerShellTab.AddOnsMenu.Submenus).displayname -eq '_BounShell') 
   {
     $null = $PSISE.CurrentPowerShellTab.AddOnsMenu.Submenus.remove($Global:isemenuitem)
@@ -1874,7 +1874,7 @@ Function Update-BsAddonMenu
 
   #Now add each Tenant
 
-  #Need to put a for each code in here that adds Tenant 1 through 10
+  #Need to put a 'for each' code loop in here that adds Tenant 1 through 10
   $null = ($Global:isemenuitem.Submenus.add("$($global:Config.Tenant1.DisplayName)",{
         Invoke-BsNewTenantTab -Tabname $global:Config.Tenant1.DisplayName -Tenant 1
   }, 'Ctrl+Alt+1'))
@@ -2011,7 +2011,7 @@ Function Import-BsGuiElements
   $Global:cbx_AutoUpdates.Name = [System.String]'cbx_AutoUpdates'
   $Global:cbx_AutoUpdates.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]183, [System.Int32]17))
   $Global:cbx_AutoUpdates.TabIndex = [System.Int32]75
-  $Global:cbx_AutoUpdates.Text = [System.String]'Automatically Check For Updates'
+  $Global:cbx_AutoUpdates.Text = [System.String]'Automatically Check for Updates'
   $Global:cbx_AutoUpdates.UseVisualStyleBackColor = $true
   $Global:cbx_AutoUpdates.add_CheckedChanged($Global:cbx_NoIntLCD_CheckedChanged_1)
   #
@@ -2090,7 +2090,7 @@ Function Import-BsGuiElements
   #
   $Global:Tenant_Email.AutoSizeMode = [System.Windows.Forms.DataGridViewAutoSizeColumnMode]::AllCells
   $Global:Tenant_Email.Frozen = $true
-  $Global:Tenant_Email.HeaderText = [System.String]'Sign In Address'
+  $Global:Tenant_Email.HeaderText = [System.String]'Sign-In Address'
   $Global:Tenant_Email.Name = [System.String]'Tenant_Email'
   $Global:Tenant_Email.SortMode = [System.Windows.Forms.DataGridViewColumnSortMode]::NotSortable
   $Global:Tenant_Email.Width = [System.Int32]78
@@ -2140,7 +2140,7 @@ Function Import-BsGuiElements
   $Global:cbx_ClipboardAuth.Name = [System.String]'cbx_ClipboardAuth'
   $Global:cbx_ClipboardAuth.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]228, [System.Int32]17))
   $Global:cbx_ClipboardAuth.TabIndex = [System.Int32]78
-  $Global:cbx_ClipboardAuth.Text = [System.String]'Enable Modern Auth Clipboard Intergration'
+  $Global:cbx_ClipboardAuth.Text = [System.String]'Enable Modern Auth Clipboard Integration'
   $Global:cbx_ClipboardAuth.UseVisualStyleBackColor = $true
   #
   #cliplabel
@@ -2151,7 +2151,7 @@ Function Import-BsGuiElements
   $Global:cliplabel.Size = (New-Object -TypeName System.Drawing.Size -ArgumentList @([System.Int32]53, [System.Int32]13))
   $Global:cliplabel.TabIndex = [System.Int32]79
   $Global:cliplabel.TabStop = $true
-  $Global:cliplabel.Text = [System.String]'more info.'
+  $Global:cliplabel.Text = [System.String]'more info'
   $Global:cliplabel.add_Click($Global:cliplabel_click)
   #
   #Global:SettingsForm
@@ -2252,7 +2252,7 @@ Function Hide-BsGuiElements
   If ($global:Config.AutoUpdatesEnabled)
   { 
     #Check for the required modules
-    Write-Log -component $function -Message 'Checking for required modules based on selections, this can take some time.' -severity 2
+    Write-Log -component $function -Message 'Checking for required modules based on selections. This can take some time.' -severity 2
     #Teams Module Check
     if ($global:Config.Tenant1.ConnectToTeams -or $global:Config.Tenant2.ConnectToTeams -or $global:Config.Tenant3.ConnectToTeams -or $global:Config.Tenant4.ConnectToTeams -or $global:Config.Tenant5.ConnectToTeams -or $global:Config.Tenant6.ConnectToTeams -or $global:Config.Tenant7.ConnectToTeams -or $global:Config.Tenant8.ConnectToTeams -or $global:Config.Tenant9.ConnectToTeams -or $global:Config.Tenant10.ConnectToTeams)
     {
@@ -2284,7 +2284,7 @@ Function Hide-BsGuiElements
 Function Start-BounShell
 {
   $function = 'Start-BounShell'
-  #Allows us to seperate all the "onetime" run objects incase we get dot sourced.
+  #Allows us to separate all the "onetime" run objects in case we get dot sourced.
   Write-Log -component $function -Message "Script executed from $PSScriptRoot" -severity 1
   Write-Log -component $function -Message 'Loading BounShell...' -severity 2
 
@@ -2306,10 +2306,10 @@ Function Start-BounShell
     #If there is no config file. Load a default
     Import-BsDefaultConfig
 
-    Write-Log -component $function -Message 'As we didnt find a config file we will assume this is a first run.' -severity 3
-    Write-Log -component $function -Message 'Thus we will remind you that while all care is taken to store your credentials in a safe manner, we cannot be held responsible for any data breaches' -severity 3
-    Write-Log -component $function -Message 'If someone was to get a hold of your BounShell.xml AND your user profile private encryption key its possible to reverse engineer stored credentials' -severity 3
-    Write-Log -component $function -Message 'Seriously, Whilst the password store is encrypted, its not perfect!' -severity 3
+    Write-Log -component $function -Message "As we didn't find a config file we will assume this is a first run." -severity 3
+    Write-Log -component $function -Message 'Thus we will remind you that while all care is taken to store your credentials in a safe manner, we cannot be held responsible for any data breaches.' -severity 3
+    Write-Log -component $function -Message "If someone was to get a hold of your BounShell.xml AND your user profile private encryption key it's possible to reverse-engineer stored credentials." -severity 3
+    Write-Log -component $function -Message "Seriously, whilst the password store is encrypted, it's not perfect!" -severity 3
     Pause
   }
 
@@ -2335,11 +2335,11 @@ Function Start-BounShell
   If(!$PSISE) 
   {   
     Write-Log -component $function -Message 'Could not locate $PSISE Variable' -severity 1
-    Write-Log -component $function -Message 'Launched BounShell without ISE Support, Keyboard Shotcuts will be unavailable' -severity 2
+    Write-Log -component $function -Message 'Launched BounShell without ISE Support, Keyboard Shortcuts will be unavailable' -severity 2
     Write-Host -Object ''
     Write-Log -component $function -Message 'To configure BounShell tenants run Show-BsGuiElements' -severity 2
     Write-Log -component $function -Message 'To connect to a tenant run Connect-BsO365Tenant'  -severity 2
-    Return #Yes I know Return sucks, but I think its better than Throw.
+    Return #Yes I know Return sucks, but I think it's better than Throw.
   }
 }
 
@@ -2428,7 +2428,7 @@ Function Test-BsInstalledModules
     $MultiModules = $Module | Group-Object -Property name -NoElement | Where-Object -Property count -GT -Value 1
 
     $title = "Multiple copies of $ModuleName installed"
-    $Message = "I've detected multiple installs of $ModuleName, Should I remove them and install the latest version?"
+    $Message = "I've detected multiple installs of $ModuleName. Should I remove them and install the latest version?"
     $yes = New-Object -TypeName System.Management.Automation.Host.ChoiceDescription -ArgumentList '&Yes', `
     'Cleans up the installed PowerShell Modules'
 
@@ -2459,7 +2459,7 @@ Function Test-BsInstalledModules
     }
   }
    
-  #If we have one module, check its up to date
+  #If we have one module, check it's up to date
   if($Module.count -eq 1)
   {
     Write-Log -component $function -Message "Found one copy of $ModuleName" -severity 1
@@ -2519,7 +2519,7 @@ Function Test-BsInstalledModules
     }
     Catch 
     {
-      #Todo What the fuck?
+      #Todo What the f**k?
       Write-Warning -Message ('Module {0} was not found in the PSGallery' -f $Module.name)
     }
 
@@ -2586,8 +2586,8 @@ Function Repair-BsInstalledModules
   #Check we are running as admin, we dont want to install modules in the users context
   if (!(([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')))
   {
-    # throw 'Please Note: You are trying to run this script without evalated Administator Priviliges. In order to run this script you will required Powershell running in Administrator Mode'
-    Write-Log -component $function -Message 'Not Running as administrator, invoking new session' -severity 2
+    # throw 'Please Note: You are trying to run this script without elevated Administator Privileges. In order to run this script you will require PowerShell running in Administrator Mode'
+    Write-Log -component $function -Message 'Not running as Administrator, invoking new session' -severity 2
     $newProcess = New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList 'PowerShell'
    
     # Specify the current script path and name as a parameter
