@@ -21,8 +21,7 @@
     New tenant specific settings options for things like Sharepoint URL and region settings
     New Changed settings tracking in GUI
     New Code Signing! (Thanks DigiCert)
-    
-
+    Tried and failed to multithread the GUI process
     New EasterEgg!
     Quick Shoutout To FoxDeploy for getting me back to my XAML GUI roots 
     
@@ -1977,8 +1976,10 @@ Function Update-BsAddonMenu
 
 Function Import-BsGuiElements 
 {
+  Write-Log -component $function -Message 'Old Winforms GUI called, this is bad.' -severity 3
   #First we need to import the Functions so they exist for the GUI items
   Import-BsGuiFunctions
+  
 
   #region Gui
   $null = [System.Reflection.Assembly]::Load('System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a')
@@ -2722,10 +2723,10 @@ Function Repair-BsInstalledModules
 
 Function Import-BsWPFGuiElements
 {
-
+  #WPF handler heavily based of FoxDeploy's work. Go check him out and say I said "Hi!"
   $function = 'Import-BsWPFGuiElements'
   Write-Log -component $function -Message "Called $function" -severity 1 
-
+  Write-Log -component $function -Message "Loading XAML into variable" -severity 1 
   $inputXML = @'
 <Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -2921,36 +2922,35 @@ Function Import-BsWPFGuiElements
 
 
 '@ 
-
-
   
-
-
-    
+  #Clean out stuff PS doesnt support
   $inputXML = $inputXML -replace 'mc:Ignorable="d"','' -replace "x:N",'N' -replace '^<Win.*', '<Window'
+  
+  #Load WPF and format the XAML as XML
+  Write-Log -component $function -Message "Loading WPF and putting XAML into XML" -severity 1 
   [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
   [xml]$XAML = $inputXML
-  #Read XAML
-    
   $reader=(New-Object System.Xml.XmlNodeReader $xaml) 
+  
+  #Call the WPF instance to load the window
+  Write-Log -component $function -Message "Calling WPF" -severity 1 
   try{$global:SettingsWpfWindow=[Windows.Markup.XamlReader]::Load( $reader )}
   catch [System.Management.Automation.MethodInvocationException] {
-    Write-Warning "We ran into a problem with the XAML code.  Check the syntax for this control..."
-    write-host $error[0].Exception.Message -ForegroundColor Red
-    if ($error[0].Exception.Message -like "*button*"){
-    write-warning "Ensure your &lt;button in the `$inputXML does NOT have a Click=ButtonClick property.  PS can't handle this`n`n`n`n"}
+    Write-Log -component $function -Message "Error loading BounShell GUI, likley something wrong with the XAML code" -severity 3
+    Write-Log -component $function -Message $error[0].Exception.Message -severity 2 
   }
   catch{#if it broke some other way 
-    Write-Host "Unable to load Windows.Markup.XamlReader. Double-check syntax and ensure .net is installed."
+    Write-Log -component $function -Message "Error loading BounShell GUI, something I didnt catch!" -severity 3
+    Write-Log -component $function -Message $error[0].Exception.Message -severity 2 
   }
     
-  #===========================================================================
-  # Store Form Objects In PowerShell
-  #===========================================================================
-    
+  #Okay, WPF loaded, now we need to be able to find them in PowerShell
+  Write-Log -component $function -Message "Importing WPF objects into PS variables" -severity 1
   $xaml.SelectNodes("//*[@Name]") | %{Set-Variable -Name "WPF$($_.Name)" -Scope Global -Value $global:SettingsWpfWindow.FindName($_.Name)}
-    
-  Function Get-FormVariables{
+  
+  #todo, remove this.
+  Function Get-FormVariables
+  {
     get-variable WPF*
   }
     
@@ -2960,15 +2960,35 @@ Function Import-BsWPFGuiElements
 
 Function Import-BsWpfGuiFunctions 
 {
-
   $function = 'Import-BsWPFGuiElements'
   Write-Log -component $function -Message "Called $function" -severity 1 
+  
+  #check to see if the form is actually loaded. This doesnt capture if the window is loaded and "closed" and is thus, shit
+  Write-Log -component $function -Message "Checking to see if the form is already loaded" -severity 1 
+  
+  If (Test-Path variable:global:SettingsWpfWindow)
+  {
+    Write-Log -component $function -Message "GUI variable exists" -severity 1 
+  }
+  Else
+  {
+    Write-Log -component $function -Message "GUI variable missing, reloading XAML" -severity 3
+    Import-BSWPFGuiElements
+  }
+  
+  #Stop WPF from unloading the window when the user clicks close
+  
+  $global:SettingsWpfWindow.Add_Closing({
+      $_.Cancel = $true
+      Hide-BsWPFGuiElements
+  })
+
 
   #region ServiceToggles
   
   #Azure AD Toggle
   $WPFcbx_ConnectToAzureAD.add_Click({
-      If ($WPFcbx_ConnectoAzureAD.Ischecked)
+      If ($WPFcbx_ConnectoAzureAD.Ischecked)                                                                                               
         {$WPFgrd_AzureADOptions.IsEnabled = $True}
         Else
         {$WPFgrd_AzureADOptions.IsEnabled = $False}
@@ -3233,56 +3253,6 @@ Function Import-BsMultiThreadedWpfGuiElements
 
 
 '@
-      function Convert-XAMLtoWindow
-      {
-        param
-        (
-          [Parameter(Mandatory=$true)]
-          [string]
-          $XAML
-        )
-  
-        Add-Type -AssemblyName PresentationFramework
-  
-        $reader = [XML.XMLReader]::Create([IO.StringReader]$XAML)
-        $result = [Windows.Markup.XAMLReader]::Load($reader)
-        $reader.Close()
-        $reader = [XML.XMLReader]::Create([IO.StringReader]$XAML)
-        while ($reader.Read())
-        {
-          $name=$reader.GetAttribute('Name')
-          if (!$name) {$name=$reader.GetAttribute('x:Name')}
-          if($name)
-          {$result | Add-Member NoteProperty -Name $name -Value $result.FindName($name) -Force}
-        }
-        $reader.Close()
-        $result
-      }
-
-
-      function Show-WPFWindow
-      {
-        param
-        (
-          [Parameter(Mandatory)]
-          [Windows.Window]
-          $global:Window
-        )
-  
-        $result = $null
-        $null = $Global:window.Dispatcher.InvokeAsync{
-          $result = $Global:window.ShowDialog()
-          Set-Variable -Name result -Value $result -Scope 1
-        }.Wait()
-        $result
-      }
-
-      $Global:window = Convert-XAMLtoWindow -XAML $xaml
-
-
-
-      Show-WPFWindow -Window $global:window
-
 
       $reader=(New-Object System.Xml.XmlNodeReader $xaml)
       $Global:syncHash.Window=[Windows.Markup.XamlReader]::Load( $reader )
@@ -3379,24 +3349,53 @@ Function Show-BsMultiThreadWPFGuiElements
 
 Function Show-BsWPFGuiElements
 {
+  #Thread will stick here until the user closes the window. Sucks but it works
+  Write-Log -component $function -Message "Opening WPF Settings Window"
   $global:SettingsWpfWindow.ShowDialog() | out-null
-  #$data = $global:psCmd.BeginInvoke()
-  
-  #Update-BsGuiWindow -Control cbx_ConnectToAzureAD -Property IsChecked -Value $false
-  #Update-BsGuiWindow -Control cbx_ConnectToAzureAD -Property IsChecked -Value $false
-  
-  #$global:synchash.tbx_TenantRootDomain.ToString()
-  #$global:synchash.tbx_TenantRootDomain.ToString()
-  
+  #Write-Log -component $function -Message "WPF Window closed, reloading elements"
+  #I'm going to be honest, as I'm not Multithreading we are doing some cheating to make things "Work" after the user closes the WPF window.
+  #Import-BsWpfGuiElements
+  #Import-BsWpfGuiFunctions
   
 }
-
 Function Hide-BsWPFGuiElements
 {
+  Write-Log -component $function -Message "User closed WPF window, Checking for updates"
+  $global:SettingsWpfWindow.Hide()
+  
+  If ($global:Config.AutoUpdatesEnabled)
+  { 
+    #Check for the required modules
+    Write-Log -component $function -Message 'Checking for required modules based on selections, this can take some time.' -severity 2
+    #Teams Module Check
+    if ($global:Config.Tenant1.ConnectToTeams -or $global:Config.Tenant2.ConnectToTeams -or $global:Config.Tenant3.ConnectToTeams -or $global:Config.Tenant4.ConnectToTeams -or $global:Config.Tenant5.ConnectToTeams -or $global:Config.Tenant6.ConnectToTeams -or $global:Config.Tenant7.ConnectToTeams -or $global:Config.Tenant8.ConnectToTeams -or $global:Config.Tenant9.ConnectToTeams -or $global:Config.Tenant10.ConnectToTeams)
+    {
+      Test-BsInstalledModules -ModuleName $TestedTeamsModule -ModuleVersion $TestedTeamsModuleVer
+    }
 
-
-
-}
+    #Exchange Module Check
+    if ($global:Config.Tenant1.ConnectToExchange -or $global:Config.Tenant2.ConnectToExchange -or $global:Config.Tenant3.ConnectToExchange -or $global:Config.Tenant4.ConnectToExchange -or $global:Config.Tenant5.ConnectToExchange -or $global:Config.Tenant6.ConnectToExchange -or $global:Config.Tenant7.ConnectToExchange -or $global:Config.Tenant8.ConnectToExchange -or $global:Config.Tenant9.ConnectToExchange -or $global:Config.Tenant10.ConnectToExchange)
+    {
+      Test-BsInstalledModules -ModuleName $TestedExchangeModule -ModuleVersion $TestedExchangeModuleVer
+    }
+    
+    #MsOnline Module Check
+    if ($global:Config.Tenant1.ConnectToAzureAD -or $global:Config.Tenant2.ConnectToAzureAD -or $global:Config.Tenant3.ConnectToAzureAD -or $global:Config.Tenant4.ConnectToAzureAD -or $global:Config.Tenant5.ConnectToAzureAD -or $global:Config.Tenant6.ConnectToAzureAD -or $global:Config.Tenant7.ConnectToAzureAD -or $global:Config.Tenant8.ConnectToAzureAD -or $global:Config.Tenant9.ConnectToAzureAD -or $global:Config.Tenant10.ConnectToAzureAD)
+    {
+      Test-BsInstalledModules -ModuleName $TestedMSOnlineModule -ModuleVersion $TestedMSOnlineModuleVer
+    }
+    
+    #Skype4B Module Check
+    if ($global:Config.Tenant1.ConnectToSkype -or $global:Config.Tenant2.ConnectToSkype -or $global:Config.Tenant3.ConnectToSkype -or $global:Config.Tenant4.ConnectToSkype -or $global:Config.Tenant5.ConnectToSkype -or $global:Config.Tenant6.ConnectToSkype -or $global:Config.Tenant7.ConnectToSkype -or $global:Config.Tenant8.ConnectToSkype -or $global:Config.Tenant9.ConnectToSkype -or $global:Config.Tenant10.ConnectToSkype)
+    {
+      Test-BsInstalledModules -ModuleName $TestedSkype4BOModule -ModuleVersion $TestedSkype4BOModuleVer
+    }
+    
+    Write-Log -component $function -Message 'Module check complete' -severity 2
+  }
+  
+ }
+ 
 
 Function Update-BsGuiWindow {
   Param (
