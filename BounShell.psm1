@@ -1,7 +1,7 @@
 ﻿<#
     .SYNOPSIS
 
-    This is a tool to help users manage multiple office 365 tenants
+    This is a tool to help users manage multiple Office 365 tenants
 
     .DESCRIPTION
 
@@ -223,12 +223,12 @@ Function Write-Log
     {
       "Info: $Date $Message"| Write-Host -ForegroundColor Green
     }
-    #If the log entry has a severity of 3 assume its a warning and write it to write-warning
+    #If the log entry has a severity of 3 assume it's a warning and write it to write-warning
     if ($Severity -eq 3) 
     {
       "$Date $Message"| Write-Warning
     }
-    #If the log entry has a severity of 4 or higher, assume its an error and display an error message (Note, critical errors are caught by throw statements so may not appear here)
+    #If the log entry has a severity of 4 or higher, assume it's an error and display an error message (Note, critical errors are caught by throw statements so may not appear here)
     if ($Severity -ge 4) 
     {
       "$Date $Message"| Write-Error
@@ -290,7 +290,7 @@ Function Get-ScriptUpdate
   If ($GitHubScriptVersion.Content.length -eq 0) 
   {
     #Empty data, throw an error
-    Write-Log -component $function -Message 'Error checking for new version. You can check manualy here' -severity 3
+    Write-Log -component $function -Message 'Error checking for new version. You can check manually here' -severity 3
     Write-Log -component $function -Message $BlogPost -severity 1 #Todo Update URL
     Write-Log -component $function -Message 'Pausing for 5 seconds' -severity 1
     Start-Sleep -Seconds 5
@@ -335,7 +335,7 @@ Function Get-ScriptUpdate
     If($Needupdate)
     {
       $yes = New-Object -TypeName System.Management.Automation.Host.ChoiceDescription -ArgumentList '&Yes', `
-      'Updates the installed PowerShell Module'
+      'Update the installed PowerShell Module'
 
       $no = New-Object -TypeName System.Management.Automation.Host.ChoiceDescription -ArgumentList '&No', `
       'No thanks.'
@@ -364,7 +364,7 @@ Function Get-ScriptUpdate
       }
     }
     
-    #We alreday have the lastest version
+    #We already have the latest version
     Else
     {
       Write-Log -component $function -Message 'Script is upto date' -severity 1
@@ -404,7 +404,7 @@ Function Upgrade-BsConfigFile
   Catch 
   {
     Write-Log -component $function -Message 'Error writing Config Backup file' -severity 4
-    Write-Log -component $function -Message "Sorry, something went wrong here and I couldnt backup your BounShell config. Please check permissions to create $ENV:UserProfile\BounShell-backup-$ShrtDate.xml" -severity 3
+    Write-Log -component $function -Message "Sorry, something went wrong here and I couldn't backup your BounShell config. Please check permissions to create $ENV:UserProfile\BounShell-backup-$ShrtDate.xml" -severity 3
     Throw 'Bad File Operation, Abort Script'
   }
  
@@ -522,7 +522,7 @@ Function Read-BsConfigFile
     
   Catch
   {
-    #For some reason we ran into an issue updating variables, throw and error and revert to defaults
+    #For some reason we ran into an issue updating variables, throw an error and revert to defaults
     Write-Log -component $function -Message 'Error reading Config or updating GUI, Loading Defaults' -severity 3
     Import-BsDefaultConfig
   }
