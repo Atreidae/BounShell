@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>BounShell</id>
+    <version>0.6.4</version>
+    <authors>James Arber</authors>
+    <owners>UcMadScientist</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+    <projectUrl>https://www.ucmadscientist.com/bounshell</projectUrl>
+    <description>A tool to allow Office365 admins to connect to mutiple services and tenants simply and easily using saved credentials</description>
+    <releaseNotes>PowerShell package management, (installs, updates and removes old versions of required modules)
+    AutoUpdate's moves to package management
+    Fixed AzureAD module deleting credentials out of unrelated variables
+    Refractoring to support more than 10 tenants (internal testing only)
+    Fixed the Autoupdate and Modern Auth checkboxes not saving to the config file
+    Improved Modern Auth clipboard behaviour
+    Fixed up alot of formatting and readibility issues with ISE Steroids</releaseNotes>
+    <copyright>(c) 2019 James Arber. All rights reserved.</copyright>
+    <tags>Office365 Microsoft365 SkypeOnline ExchangeOnline AzureAD MicrosoftTeams PSModule PSIncludes_Function PSFunction_Read-BsConfigFile PSFunction_Write-BsConfigFile PSFunction_Import-BsDefaultConfig PSFunction_Invoke-BsNewTenantTab PSFunction_Connect-BsO365Tenant PSFunction_Update-BsAddonMenu PSFunction_Import-BsGuiElements PSFunction_Import-BsGuiFunctions PSFunction_Show-BsGuiElements PSFunction_Hide-BsGuiElements PSFunction_Start-BounShell PSFunction_Watch-BsCredentials PSFunction_Test-BsInstalledModules PSFunction_Repair-BsInstalledModules PSCommand_Read-BsConfigFile PSCommand_Write-BsConfigFile PSCommand_Import-BsDefaultConfig PSCommand_Invoke-BsNewTenantTab PSCommand_Connect-BsO365Tenant PSCommand_Update-BsAddonMenu PSCommand_Import-BsGuiElements PSCommand_Import-BsGuiFunctions PSCommand_Show-BsGuiElements PSCommand_Hide-BsGuiElements PSCommand_Start-BounShell PSCommand_Watch-BsCredentials PSCommand_Test-BsInstalledModules PSCommand_Repair-BsInstalledModules</tags>
+  </metadata>
+  <files>
+        <file src="bin\Debug\*.dll" target="lib" />
+  </files>
+</package>

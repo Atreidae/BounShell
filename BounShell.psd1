@@ -12,7 +12,7 @@
 RootModule = 'BounShell.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.6.3'
+ModuleVersion = '0.6.5'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -95,7 +95,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-         Tags = @("Office365","Microsoft365","SkypeOnline","ExchangeOnline","AzureAD","MicrosoftTeams")
+         Tags = @("Office365","Microsoft365","SkypeOnline","ExchangeOnline","AzureAD","MicrosoftTeams","PSEdition_Desktop","Windows")
 
         # A URL to the license for this module.
          LicenseUri = 'http://opensource.org/licenses/MIT'
@@ -107,15 +107,9 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'Enabled Modern Auth Support
-        Formating changes
-        Broke up alot of my one-liners to make it easier for others to read/ understand the flow
-        Updated error messages
-        Better code comments
-        Fixed an issue with the Compliance Portal code
-        Added Module checker and installer based off Andrew Prices "Detect-MicrosoftTeams-Version" http://www.blogabout.cloud/2018/09/240/
-        Now Gluten Free
-        Finally stopped feature creep'
+        ReleaseNotes = "Quick bugfix whilst I get 0.7 with it's new GUI ready.
+        Added fix to Skype Online sessions with modern auth.
+        No longer hangs the ISE trying to display a window for reconnection"
 
     } # End of PSData hashtable
 
