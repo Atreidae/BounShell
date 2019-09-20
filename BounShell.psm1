@@ -2475,7 +2475,7 @@ Function Test-BsInstalledModules
   param
   (
     [Parameter(Mandatory)] [string]$ModuleName,
-    [Parameter(Mandatory)] [string]$ModuleVersion
+    [Parameter] [string]$ModuleVersion
   )
   [string]$function = 'Test-BsInstalledModules'
   Write-Log -component $function -Message "Called to check $ModuleName" -severity 1
@@ -2657,10 +2657,14 @@ Function Repair-BsInstalledModules
   {
     # throw 'Please Note: You are trying to run this script without elevated Administator Privileges. In order to run this script you will require PowerShell running in Administrator Mode'
     Write-Log -component $function -Message 'Not running as Administrator, invoking new session' -severity 2
+    Write-Log -component $function -Message 'You must close all tabs and restart the ISE once this process completes!' -severity 3
     $newProcess = New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList 'PowerShell'
    
     # Specify the current script path and name as a parameter
-    $newProcess.Arguments = "Repair-BsInstalledModules -modulename $ModuleName -operation $Operation"
+    
+    #Old non multi session friendly version
+    #$newProcess.Arguments = "Repair-BsInstalledModules -modulename $ModuleName -operation $Operation"
+    $newProcess.Arguments = "Test-BsInstalledModules -modulename $ModuleName"
    
     # Indicate that the process should be elevated
     $newProcess.Verb = 'runas'
