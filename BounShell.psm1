@@ -100,6 +100,10 @@
     Boe Prox / Learn-PowerShell
     https://learn-powershell.net/2012/10/14/powershell-and-wpf-writing-data-to-a-ui-from-a-different-runspace/
 
+    : Everything you wanted to know about hashtables
+    Kevin Marquette / PowerShellExplained
+    https://powershellexplained.com/2016-11-06-powershell-hashtable-everything-you-wanted-to-know-about/
+
     : Code Signing Certificate
     DigiCert
     https://www.digicert.com/
@@ -262,7 +266,15 @@ Function Write-Log
 
 Function Get-IEProxy
 {
-  Write-Log -component $function -Message 'Checking for Proxy' -severity 2
+$function = 'Get-IEProxy'
+  Write-Log -component $function -Message 'Checking for IE First Run' -severity 1
+  if ((Get-Item -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings').Property -NotContains 'ProxyEnable')
+  {
+    $null = New-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings' -Name ProxyEnable -Value 0
+  }
+  
+
+  Write-Log -component $function -Message 'Checking for Proxy' -severity 1
   If ( (Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings').ProxyEnable -ne 0)
   {
     $proxies = (Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings').proxyServer
@@ -309,13 +321,13 @@ Function Get-ScriptUpdate
   }
 
   Write-Log -component $function -Message "Polling https://raw.githubusercontent.com/atreidae/$GithubRepo/$GithubBranch/version" -severity 1
-  $GitHubScriptVersion = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/atreidae/$GithubRepo/$GithubBranch/version" -TimeoutSec 10 -Proxy $ProxyURL #todo change back to master!
+  $GitHubScriptVersion = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/atreidae/$GithubRepo/$GithubBranch/version" -TimeoutSec 10 -Proxy $ProxyURL -UseBasicParsing
   
   If ($GitHubScriptVersion.Content.length -eq 0) 
   {
     #Empty data, throw an error
-    Write-Log -component $function -Message 'Error checking for new version. You can check manually here' -severity 3
-    Write-Log -component $function -Message $BlogPost -severity 1 #Todo Update URL
+    Write-Log -component $function -Message 'Error checking for new version. You can check manually using the url below' -severity 3
+    Write-Log -component $function -Message $BlogPost -severity 3 
     Write-Log -component $function -Message 'Pausing for 5 seconds' -severity 1
     Start-Sleep -Seconds 5
   }
@@ -338,7 +350,7 @@ Function Get-ScriptUpdate
       $Message = 'a major update to this script is available, did you want to download it?'
     }
 
-    if ([single]$splitgitver[1] -gt [single]$splitver[1])
+    if (([single]$splitgitver[1] -gt [single]$splitver[1]) -and ([single]$splitgitver[0] -eq [single]$splitver[0]))
     {
       $Needupdate = $true
       #New Major Build available, #Prompt user to download
@@ -347,7 +359,7 @@ Function Get-ScriptUpdate
       $Message = 'a minor update to this script is available, did you want to download it?'
     }
 
-    if ([single]$splitgitver[2] -gt [single]$splitver[2])
+    if (([single]$splitgitver[2] -gt [single]$splitver[2]) -and ([single]$splitgitver[1] -gt [single]$splitver[1]) -and ([single]$splitgitver[0] -eq [single]$splitver[0]))
     {
       $Needupdate = $true
       #New Major Build available, #Prompt user to download
@@ -462,7 +474,25 @@ Function Upgrade-BsConfigFile
     [Float]$global:Config.ConfigFileVersion = '0.2'
   } 
  
- 
+  #upgrade the config file to V3
+  If ($global:Config.ConfigFileVersion -lt '0.3')
+  {
+    Write-Log -component $function -Message 'Adding Version 0.3 changes' -severity 2
+    #Config File Version 0.2 additions
+    #Populate with Values
+    $null =  $Global:grid_Tenants.Rows.Clear()
+    $null =  $Global:grid_Tenants.Rows.Add('1',$global:Config.Tenant1.DisplayName,$global:Config.Tenant1.SignInAddress,'****',$global:Config.Tenant1.ModernAuth,$global:Config.Tenant1.ConnectToTeams,$global:Config.Tenant1.ConnectToSkype,$global:Config.Tenant1.ConnectToExchange,$global:Config.Tenant1.ConnectToAzureAD,$global:Config.Tenant1.ConnectToCompliance)
+    $null =  $Global:grid_Tenants.Rows.Add('2',$global:Config.Tenant2.DisplayName,$global:Config.Tenant2.SignInAddress,'****',$global:Config.Tenant2.ModernAuth,$global:Config.Tenant2.ConnectToTeams,$global:Config.Tenant2.ConnectToSkype,$global:Config.Tenant2.ConnectToExchange,$global:Config.Tenant2.ConnectToAzureAD,$global:Config.Tenant2.ConnectToCompliance)
+    $null =  $Global:grid_Tenants.Rows.Add('3',$global:Config.Tenant3.DisplayName,$global:Config.Tenant3.SignInAddress,'****',$global:Config.Tenant3.ModernAuth,$global:Config.Tenant3.ConnectToTeams,$global:Config.Tenant3.ConnectToSkype,$global:Config.Tenant3.ConnectToExchange,$global:Config.Tenant3.ConnectToAzureAD,$global:Config.Tenant3.ConnectToCompliance)
+    $null =  $Global:grid_Tenants.Rows.Add('4',$global:Config.Tenant4.DisplayName,$global:Config.Tenant4.SignInAddress,'****',$global:Config.Tenant4.ModernAuth,$global:Config.Tenant4.ConnectToTeams,$global:Config.Tenant4.ConnectToSkype,$global:Config.Tenant4.ConnectToExchange,$global:Config.Tenant4.ConnectToAzureAD,$global:Config.Tenant4.ConnectToCompliance)
+    $null =  $Global:grid_Tenants.Rows.Add('5',$global:Config.Tenant5.DisplayName,$global:Config.Tenant5.SignInAddress,'****',$global:Config.Tenant5.ModernAuth,$global:Config.Tenant5.ConnectToTeams,$global:Config.Tenant5.ConnectToSkype,$global:Config.Tenant5.ConnectToExchange,$global:Config.Tenant5.ConnectToAzureAD,$global:Config.Tenant5.ConnectToCompliance)
+    $null =  $Global:grid_Tenants.Rows.Add('6',$global:Config.Tenant6.DisplayName,$global:Config.Tenant6.SignInAddress,'****',$global:Config.Tenant6.ModernAuth,$global:Config.Tenant6.ConnectToTeams,$global:Config.Tenant6.ConnectToSkype,$global:Config.Tenant6.ConnectToExchange,$global:Config.Tenant6.ConnectToAzureAD,$global:Config.Tenant6.ConnectToCompliance)
+    $null =  $Global:grid_Tenants.Rows.Add('7',$global:Config.Tenant7.DisplayName,$global:Config.Tenant7.SignInAddress,'****',$global:Config.Tenant7.ModernAuth,$global:Config.Tenant7.ConnectToTeams,$global:Config.Tenant7.ConnectToSkype,$global:Config.Tenant7.ConnectToExchange,$global:Config.Tenant7.ConnectToAzureAD,$global:Config.Tenant7.ConnectToCompliance)
+    $null =  $Global:grid_Tenants.Rows.Add('8',$global:Config.Tenant8.DisplayName,$global:Config.Tenant8.SignInAddress,'****',$global:Config.Tenant8.ModernAuth,$global:Config.Tenant8.ConnectToTeams,$global:Config.Tenant8.ConnectToSkype,$global:Config.Tenant8.ConnectToExchange,$global:Config.Tenant8.ConnectToAzureAD,$global:Config.Tenant8.ConnectToCompliance)
+    $null =  $Global:grid_Tenants.Rows.Add('9',$global:Config.Tenant9.DisplayName,$global:Config.Tenant9.SignInAddress,'****',$global:Config.Tenant9.ModernAuth,$global:Config.Tenant9.ConnectToTeams,$global:Config.Tenant9.ConnectToSkype,$global:Config.Tenant9.ConnectToExchange,$global:Config.Tenant9.ConnectToAzureAD,$global:Config.Tenant9.ConnectToCompliance)
+    $null =  $Global:grid_Tenants.Rows.Add('10',$global:Config.Tenant10.DisplayName,$global:Config.Tenant10.SignInAddress,'****',$global:Config.Tenant10.ModernAuth,$global:Config.Tenant10.ConnectToTeams,$global:Config.Tenant10.ConnectToSkype,$global:Config.Tenant10.ConnectToExchange,$global:Config.Tenant10.ConnectToAzureAD,$global:Config.Tenant10.ConnectToCompliance)
+    
+  } 
 
   #Write the XML File
   Try
@@ -732,162 +762,48 @@ Function Write-BsConfigFile
 
 Function Import-BsDefaultConfig 
 {
+
   #Set Variables to Defaults
-  #Remove and re-create the Config Array
+  #Remove and re-create the Config HashTable
   $null = (Remove-Variable -Name Config -Scope Global -ErrorAction SilentlyContinue)
   $global:Config = @{}
-  #Populate with Defaults
+
+  
+  #Old Gui
   $null =  $Global:grid_Tenants.Rows.Clear()
-  
-  $global:Config.Tenant1 = @{}
-  $global:Config.Tenant1.DisplayName = 'Undefined'
-  $global:Config.Tenant1.SignInAddress = 'user1@fabrikam.com'
-  $global:Config.Tenant1.Credential = '****'
-  $global:Config.Tenant1.ModernAuth = $false
-  $global:Config.Tenant1.ConnectToTeams = $false
-  $global:Config.Tenant1.ConnectToSkype = $false
-  $global:Config.Tenant1.ConnectToExchange = $false
-  $global:Config.Tenant1.ConnectToAzureAD = $false
-  $global:Config.Tenant1.ConnectToCompliance = $false
-  $null =  $Global:grid_Tenants.Rows.Add('1','Undefined','user1@fabrikam.com','****',$false,$false,$false,$false,$false,$false)
-  
-  
-  $global:Config.Tenant2 = @{}
-  $global:Config.Tenant2.DisplayName = 'Undefined'
-  $global:Config.Tenant2.SignInAddress = 'user2@fabrikam.com'
-  $global:Config.Tenant2.Credential = '****'
-  $global:Config.Tenant2.ModernAuth = $false
-  $global:Config.Tenant2.ConnectToTeams = $false
-  $global:Config.Tenant2.ConnectToSkype = $false
-  $global:Config.Tenant2.ConnectToExchange = $false
-  $global:Config.Tenant2.ConnectToAzureAD = $false
-  $global:Config.Tenant2.ConnectToCompliance = $false
-  $null =  $Global:grid_Tenants.Rows.Add('2','Undefined','user2@fabrikam.com','****',$false,$false,$false,$false,$false,$false)
-  
-  $global:Config.Tenant3 = @{}
-  $global:Config.Tenant3.DisplayName = 'Undefined'
-  $global:Config.Tenant3.SignInAddress = 'user3@fabrikam.com'
-  $global:Config.Tenant3.Credential = '****'
-  $global:Config.Tenant3.ModernAuth = $false
-  $global:Config.Tenant3.ConnectToTeams = $false
-  $global:Config.Tenant3.ConnectToSkype = $false
-  $global:Config.Tenant3.ConnectToExchange = $false
-  $global:Config.Tenant3.ConnectToAzureAD = $false
-  $global:Config.Tenant3.ConnectToCompliance = $false
-  $null =  $Global:grid_Tenants.Rows.Add('3','Undefined','user3@fabrikam.com','****',$false,$false,$false,$false,$false,$false)
-  
-  $global:Config.Tenant4 = @{}
-  $global:Config.Tenant4.DisplayName = 'Undefined'
-  $global:Config.Tenant4.SignInAddress = 'user4@fabrikam.com'
-  $global:Config.Tenant4.Credential = '****'
-  $global:Config.Tenant4.ModernAuth = $false
-  $global:Config.Tenant4.ConnectToTeams = $false
-  $global:Config.Tenant4.ConnectToSkype = $false
-  $global:Config.Tenant4.ConnectToExchange = $false
-  $global:Config.Tenant4.ConnectToAzureAD = $false
-  $global:Config.Tenant4.ConnectToCompliance = $false
-  $null =  $Global:grid_Tenants.Rows.Add('4','Undefined','user4@fabrikam.com','****',$false,$false,$false,$false,$false,$false)
-  
-  $global:Config.Tenant5 = @{}
-  $global:Config.Tenant5.DisplayName = 'Undefined'
-  $global:Config.Tenant5.SignInAddress = 'user5@fabrikam.com'
-  $global:Config.Tenant5.Credential = '****'
-  $global:Config.Tenant5.ModernAuth = $false
-  $global:Config.Tenant5.ConnectToTeams = $false
-  $global:Config.Tenant5.ConnectToSkype = $false
-  $global:Config.Tenant5.ConnectToExchange = $false
-  $global:Config.Tenant5.ConnectToAzureAD = $false
-  $global:Config.Tenant5.ConnectToCompliance = $false
-  $null =  $Global:grid_Tenants.Rows.Add('5','Undefined','user5@fabrikam.com','****',$false,$false,$false,$false,$false,$false)
-  
-  $global:Config.Tenant6 = @{}
-  $global:Config.Tenant6.DisplayName = 'Undefined'
-  $global:Config.Tenant6.SignInAddress = 'user6@fabrikam.com'
-  $global:Config.Tenant6.Credential = '****'
-  $global:Config.Tenant6.ModernAuth = $false
-  $global:Config.Tenant6.ConnectToTeams = $false
-  $global:Config.Tenant6.ConnectToSkype = $false
-  $global:Config.Tenant6.ConnectToExchange = $false
-  $global:Config.Tenant6.ConnectToAzureAD = $false
-  $global:Config.Tenant6.ConnectToCompliance = $false
-  $null =  $Global:grid_Tenants.Rows.Add('6','Undefined','user6@fabrikam.com','****',$false,$false,$false,$false,$false,$false)
-  
-  $global:Config.Tenant7 = @{}
-  $global:Config.Tenant7.DisplayName = 'Undefined'
-  $global:Config.Tenant7.SignInAddress = 'user@fabrikam.com'
-  $global:Config.Tenant7.Credential = '****'
-  $global:Config.Tenant7.ModernAuth = $false
-  $global:Config.Tenant7.ConnectToTeams = $false
-  $global:Config.Tenant7.ConnectToSkype = $false
-  $global:Config.Tenant7.ConnectToExchange = $false
-  $global:Config.Tenant7.ConnectToAzureAD = $false
-  $global:Config.Tenant7.ConnectToCompliance = $false
-  $null =  $Global:grid_Tenants.Rows.Add('7','Undefined','user7@fabrikam.com','****',$false,$false,$false,$false,$false,$false)
-  
-  $global:Config.Tenant8 = @{}
-  $global:Config.Tenant8.DisplayName = 'Undefined'
-  $global:Config.Tenant8.SignInAddress = 'user8@fabrikam.com'
-  $global:Config.Tenant8.Credential = '****'
-  $global:Config.Tenant8.ModernAuth = $false
-  $global:Config.Tenant8.ConnectToTeams = $false
-  $global:Config.Tenant8.ConnectToSkype = $false
-  $global:Config.Tenant8.ConnectToExchange = $false
-  $global:Config.Tenant8.ConnectToAzureAD = $false
-  $global:Config.Tenant8.ConnectToCompliance = $false
-  $null =  $Global:grid_Tenants.Rows.Add('8','Undefined','user8@fabrikam.com','****',$false,$false,$false,$false,$false,$false)
+
+  #Define the tenants hash table and populate with defaults
+  $global:Config.Tenants = @{}
+
+  #99 tenants baby!
+  for ($i = 1; $i -lt 100; $i++)
+  { 
+   
+    $global:Config.Tenants[$i] = @{}
+    $global:Config.Tenants[$i].DisplayName = 'Undefined'
+    $global:Config.Tenants[$i].SignInAddress = 'user1@fabrikam.com'
+    $global:Config.Tenants[$i].Credential = '****'
+    $global:Config.Tenants[$i].ModernAuth = $false
+    $global:Config.Tenants[$i].ConnectToTeams = $false
+    $global:Config.Tenants[$i].ConnectToSkype = $false
+    $global:Config.Tenants[$i].ConnectToExchange = $false
+    $global:Config.Tenants[$i].ConnectToAzureAD = $false
+    $global:Config.Tenants[$i].ConnectToCompliance = $false
+    $global:Config.Tenants[$i].ConnectToAzureAD = $false
+    $global:Config.Tenants[$i].ConnectToCompliance = $false
     
-  $global:Config.Tenant9 = @{}
-  $global:Config.Tenant9.DisplayName = 'Undefined'
-  $global:Config.Tenant9.SignInAddress = 'user@fabrikam.com'
-  $global:Config.Tenant9.Credential = '****'
-  $global:Config.Tenant9.ModernAuth = $false
-  $global:Config.Tenant9.ConnectToTeams = $false
-  $global:Config.Tenant9.ConnectToSkype = $false
-  $global:Config.Tenant9.ConnectToExchange = $false
-  $global:Config.Tenant9.ConnectToAzureAD = $false
-  $global:Config.Tenant9.ConnectToCompliance = $false
-  $null =  $Global:grid_Tenants.Rows.Add('9','Undefined','user9@fabrikam.com','****',$false,$false,$false,$false,$false,$false)
+    #Old Gui
+    $null =  $Global:grid_Tenants.Rows.Add($i,'Undefined','user@fabrikam.com','****',$false,$false,$false,$false,$false,$false)
   
-  $global:Config.Tenant10 = @{}
-  $global:Config.Tenant10.DisplayName = 'Undefined'
-  $global:Config.Tenant10.SignInAddress = 'user@fabrikam.com'
-  $global:Config.Tenant10.Credential = '****'
-  $global:Config.Tenant10.ModernAuth = $false
-  $global:Config.Tenant10.ConnectToTeams = $false
-  $global:Config.Tenant10.ConnectToSkype = $false
-  $global:Config.Tenant10.ConnectToExchange = $false
-  $global:Config.Tenant10.ConnectToAzureAD = $false
-  $global:Config.Tenant10.ConnectToCompliance = $false
-  $null =  $Global:grid_Tenants.Rows.Add('10','Undefined','user10@fabrikam.com','****',$false,$false,$false,$false,$false,$false)
+  }
   
-  [Float]$global:Config.ConfigFileVersion = '0.2'
+  [Float]$global:Config.ConfigFileVersion = '0.3'
   [string]$global:Config.Description = 'BounShell Configuration file. See UcMadScientist.com/BounShell for more information'
   
   #Config File Version 0.2 additions
   $global:Config.AutoUpdatesEnabled = $true
   $global:Config.ModernAuthClipboardEnabled = $true
   $global:Config.ModernAuthWarningAccepted = $false
-  
-  $global:Config.Tenant1.ConnectToAzureAD = $false
-  $global:Config.Tenant1.ConnectToCompliance = $false
-  $global:Config.Tenant2.ConnectToAzureAD = $false
-  $global:Config.Tenant2.ConnectToCompliance = $false
-  $global:Config.Tenant3.ConnectToAzureAD = $false
-  $global:Config.Tenant3.ConnectToCompliance = $false
-  $global:Config.Tenant4.ConnectToAzureAD = $false
-  $global:Config.Tenant4.ConnectToCompliance = $false
-  $global:Config.Tenant5.ConnectToAzureAD = $false
-  $global:Config.Tenant5.ConnectToCompliance = $false
-  $global:Config.Tenant6.ConnectToAzureAD = $false
-  $global:Config.Tenant6.ConnectToCompliance = $false
-  $global:Config.Tenant7.ConnectToAzureAD = $false
-  $global:Config.Tenant7.ConnectToCompliance = $false
-  $global:Config.Tenant8.ConnectToAzureAD = $false
-  $global:Config.Tenant8.ConnectToCompliance = $false
-  $global:Config.Tenant9.ConnectToAzureAD = $false
-  $global:Config.Tenant9.ConnectToCompliance = $false
-  $global:Config.Tenant10.ConnectToAzureAD = $false
-  $global:Config.Tenant10.ConnectToCompliance = $false
 }
 
 Function Invoke-BsNewTenantTab 
@@ -2386,10 +2302,10 @@ Function Start-BounShell
   if ($SkipUpdateCheck -eq $false)
   {
     Get-ScriptUpdate
-  } #todo enable update checking
+  } 
 
   #Check for Modules
-  #Test-ManagementTools #todo fix
+  
   
   #Now Create the Objects in the ISE
   If($PSISE) 
@@ -3451,74 +3367,74 @@ Export-ModuleMember -Function Update-BsGuiWindow
 
 
 # SIG # Begin signature block
-# MIINFwYJKoZIhvcNAQcCoIINCDCCDQQCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
-# gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU8iX7pOjCHQvrnHHD5ZO8lruX
-# Q3ygggpZMIIFITCCBAmgAwIBAgIQDoW3bt/ALpa0ONbdsxRpGjANBgkqhkiG9w0B
-# AQsFADByMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYD
-# VQQLExB3d3cuZGlnaWNlcnQuY29tMTEwLwYDVQQDEyhEaWdpQ2VydCBTSEEyIEFz
-# c3VyZWQgSUQgQ29kZSBTaWduaW5nIENBMB4XDTE5MDkyNTAwMDAwMFoXDTIyMDky
-# ODEyMDAwMFowXjELMAkGA1UEBhMCQVUxETAPBgNVBAgTCFZpY3RvcmlhMRAwDgYD
-# VQQHEwdCZXJ3aWNrMRQwEgYDVQQKEwtKYW1lcyBBcmJlcjEUMBIGA1UEAxMLSmFt
-# ZXMgQXJiZXIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQD1k72Yov0l
-# oWfUocvwkcKMQ8XpX6rQX6sPS1PkkN3wu2w75MsF4KvpaBCP2+rS+St7q+6Mk3l+
-# l1m0hd0J18Y05jbC1TmYvYLkdpsVhVxhjQtNBYGYFao3rpcQU4apx1F/PaPhCkIe
-# oL2mBU8VFj4aR4ZuplGAY+jlJqDXNlMlEmqkHlDkoJt6AYqJlu8ObaMmNQWChemM
-# HoxLJpGmsU+13PTaZoxLg4qDrGD5AfG9AuRUCrZ+gtMaX1xT8OAia56e3pZeV8oz
-# Pjbyl6mVRO8hwAWgK9eaeQ2pSgxa1KjazrkqyDrd8SvcWCQjj0vVrHeHv+hkaeWR
-# hn2Fk5ViasXxAgMBAAGjggHFMIIBwTAfBgNVHSMEGDAWgBRaxLl7KgqjpepxA8Bg
-# +S32ZXUOWDAdBgNVHQ4EFgQUUqun5eFswlws49GKcNHr5AaDtXowDgYDVR0PAQH/
-# BAQDAgeAMBMGA1UdJQQMMAoGCCsGAQUFBwMDMHcGA1UdHwRwMG4wNaAzoDGGL2h0
-# dHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9zaGEyLWFzc3VyZWQtY3MtZzEuY3JsMDWg
-# M6Axhi9odHRwOi8vY3JsNC5kaWdpY2VydC5jb20vc2hhMi1hc3N1cmVkLWNzLWcx
-# LmNybDBMBgNVHSAERTBDMDcGCWCGSAGG/WwDATAqMCgGCCsGAQUFBwIBFhxodHRw
-# czovL3d3dy5kaWdpY2VydC5jb20vQ1BTMAgGBmeBDAEEATCBhAYIKwYBBQUHAQEE
-# eDB2MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wTgYIKwYB
-# BQUHMAKGQmh0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFNIQTJB
-# c3N1cmVkSURDb2RlU2lnbmluZ0NBLmNydDAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3
-# DQEBCwUAA4IBAQBeD1O9ZawxpsQCZLJMLCBmpK8VQNfuljVT9LCcSKKjSsGDwMtq
-# m8IzqON27XMnbsEVqFvGuk83jpleLFEx6/UivDcOZkisQ7nKM4VsFDEiw7DbfnID
-# 0awTzjjo4pn4Vp1NdOClfNvpfcroZkq8IaBn1TXCyCXir3amMVUM/gR+6mVrAB4y
-# T23T2jWJNPzyFCOPuj8cCNQdBWBM4Lzt11LU59swV4Par2FuQQMia1jNpAbunT/9
-# bXZuAEmVWD1ra6cp6+9APNnZFk4UvIqj3yVrsKrJukn+uNApOgngnkBLaFy3VlFj
-# F1jt5QXptaMVWfBtxweCXvRHN6Aju4bquUD8MIIFMDCCBBigAwIBAgIQBAkYG1/V
-# u2Z1U0O1b5VQCDANBgkqhkiG9w0BAQsFADBlMQswCQYDVQQGEwJVUzEVMBMGA1UE
-# ChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSQwIgYD
-# VQQDExtEaWdpQ2VydCBBc3N1cmVkIElEIFJvb3QgQ0EwHhcNMTMxMDIyMTIwMDAw
-# WhcNMjgxMDIyMTIwMDAwWjByMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNl
-# cnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMTEwLwYDVQQDEyhEaWdp
-# Q2VydCBTSEEyIEFzc3VyZWQgSUQgQ29kZSBTaWduaW5nIENBMIIBIjANBgkqhkiG
-# 9w0BAQEFAAOCAQ8AMIIBCgKCAQEA+NOzHH8OEa9ndwfTCzFJGc/Q+0WZsTrbRPV/
-# 5aid2zLXcep2nQUut4/6kkPApfmJ1DcZ17aq8JyGpdglrA55KDp+6dFn08b7KSfH
-# 03sjlOSRI5aQd4L5oYQjZhJUM1B0sSgmuyRpwsJS8hRniolF1C2ho+mILCCVrhxK
-# hwjfDPXiTWAYvqrEsq5wMWYzcT6scKKrzn/pfMuSoeU7MRzP6vIK5Fe7SrXpdOYr
-# /mzLfnQ5Ng2Q7+S1TqSp6moKq4TzrGdOtcT3jNEgJSPrCGQ+UpbB8g8S9MWOD8Gi
-# 6CxR93O8vYWxYoNzQYIH5DiLanMg0A9kczyen6Yzqf0Z3yWT0QIDAQABo4IBzTCC
-# AckwEgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAYYwEwYDVR0lBAww
-# CgYIKwYBBQUHAwMweQYIKwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8v
-# b2NzcC5kaWdpY2VydC5jb20wQwYIKwYBBQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRp
-# Z2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RDQS5jcnQwgYEGA1UdHwR6
-# MHgwOqA4oDaGNGh0dHA6Ly9jcmw0LmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3Vy
-# ZWRJRFJvb3RDQS5jcmwwOqA4oDaGNGh0dHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9E
-# aWdpQ2VydEFzc3VyZWRJRFJvb3RDQS5jcmwwTwYDVR0gBEgwRjA4BgpghkgBhv1s
-# AAIEMCowKAYIKwYBBQUHAgEWHGh0dHBzOi8vd3d3LmRpZ2ljZXJ0LmNvbS9DUFMw
-# CgYIYIZIAYb9bAMwHQYDVR0OBBYEFFrEuXsqCqOl6nEDwGD5LfZldQ5YMB8GA1Ud
-# IwQYMBaAFEXroq/0ksuCMS1Ri6enIZ3zbcgPMA0GCSqGSIb3DQEBCwUAA4IBAQA+
-# 7A1aJLPzItEVyCx8JSl2qB1dHC06GsTvMGHXfgtg/cM9D8Svi/3vKt8gVTew4fbR
-# knUPUbRupY5a4l4kgU4QpO4/cY5jDhNLrddfRHnzNhQGivecRk5c/5CxGwcOkRX7
-# uq+1UcKNJK4kxscnKqEpKBo6cSgCPC6Ro8AlEeKcFEehemhor5unXCBc2XGxDI+7
-# qPjFEmifz0DLQESlE/DmZAwlCEIysjaKJAL+L3J+HNdJRZboWR3p+nRka7LrZkPa
-# s7CM1ekN3fYBIM6ZMWM9CBoYs4GbT8aTEAb8B4H6i9r5gkn3Ym6hU/oSlBiFLpKR
-# 6mhsRDKyZqHnGKSaZFHvMYICKDCCAiQCAQEwgYYwcjELMAkGA1UEBhMCVVMxFTAT
-# BgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEx
-# MC8GA1UEAxMoRGlnaUNlcnQgU0hBMiBBc3N1cmVkIElEIENvZGUgU2lnbmluZyBD
-# QQIQDoW3bt/ALpa0ONbdsxRpGjAJBgUrDgMCGgUAoHgwGAYKKwYBBAGCNwIBDDEK
-# MAigAoAAoQKAADAZBgkqhkiG9w0BCQMxDAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3
-# AgELMQ4wDAYKKwYBBAGCNwIBFTAjBgkqhkiG9w0BCQQxFgQUEWbtLrZ3F4Qe7rrY
-# lxGRebzpSmYwDQYJKoZIhvcNAQEBBQAEggEAyLS0/jzh/uAQIqYBJJC67+eefySd
-# zI+X9dlmip8Lg5HZbNPwz5fwacOmgkjD1tF3l5LtHqaWCMSkuwlGGWm7cBXAoTjs
-# jqGL00funtH1IySigfz3aUIukstdshQQyTrY4QVZrBWqxzOPVtKUY2dS56odm/rK
-# HQcRY/IrY0HmxVye/OjNSKL8U77sdokQlFMUptgrLcv8DiWFEkSzZHMoyZ536n0a
-# kBpEWRPhaxlpfmo45GG+OslVPF8tchg+ZutdAXKuKY/JmYcWKWCPj6c8Lh7XUAO5
-# z1cBJ9iwoKvn71FIhf3T7yGE9MGR5YjQdSgK9gMNIuXDI0fnIO7KUzr2zQ==
+  # MIINFwYJKoZIhvcNAQcCoIINCDCCDQQCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
+  # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
+  # AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU8iX7pOjCHQvrnHHD5ZO8lruX
+  # Q3ygggpZMIIFITCCBAmgAwIBAgIQDoW3bt/ALpa0ONbdsxRpGjANBgkqhkiG9w0B
+  # AQsFADByMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYD
+  # VQQLExB3d3cuZGlnaWNlcnQuY29tMTEwLwYDVQQDEyhEaWdpQ2VydCBTSEEyIEFz
+  # c3VyZWQgSUQgQ29kZSBTaWduaW5nIENBMB4XDTE5MDkyNTAwMDAwMFoXDTIyMDky
+  # ODEyMDAwMFowXjELMAkGA1UEBhMCQVUxETAPBgNVBAgTCFZpY3RvcmlhMRAwDgYD
+  # VQQHEwdCZXJ3aWNrMRQwEgYDVQQKEwtKYW1lcyBBcmJlcjEUMBIGA1UEAxMLSmFt
+  # ZXMgQXJiZXIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQD1k72Yov0l
+  # oWfUocvwkcKMQ8XpX6rQX6sPS1PkkN3wu2w75MsF4KvpaBCP2+rS+St7q+6Mk3l+
+  # l1m0hd0J18Y05jbC1TmYvYLkdpsVhVxhjQtNBYGYFao3rpcQU4apx1F/PaPhCkIe
+  # oL2mBU8VFj4aR4ZuplGAY+jlJqDXNlMlEmqkHlDkoJt6AYqJlu8ObaMmNQWChemM
+  # HoxLJpGmsU+13PTaZoxLg4qDrGD5AfG9AuRUCrZ+gtMaX1xT8OAia56e3pZeV8oz
+  # Pjbyl6mVRO8hwAWgK9eaeQ2pSgxa1KjazrkqyDrd8SvcWCQjj0vVrHeHv+hkaeWR
+  # hn2Fk5ViasXxAgMBAAGjggHFMIIBwTAfBgNVHSMEGDAWgBRaxLl7KgqjpepxA8Bg
+  # +S32ZXUOWDAdBgNVHQ4EFgQUUqun5eFswlws49GKcNHr5AaDtXowDgYDVR0PAQH/
+  # BAQDAgeAMBMGA1UdJQQMMAoGCCsGAQUFBwMDMHcGA1UdHwRwMG4wNaAzoDGGL2h0
+  # dHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9zaGEyLWFzc3VyZWQtY3MtZzEuY3JsMDWg
+  # M6Axhi9odHRwOi8vY3JsNC5kaWdpY2VydC5jb20vc2hhMi1hc3N1cmVkLWNzLWcx
+  # LmNybDBMBgNVHSAERTBDMDcGCWCGSAGG/WwDATAqMCgGCCsGAQUFBwIBFhxodHRw
+  # czovL3d3dy5kaWdpY2VydC5jb20vQ1BTMAgGBmeBDAEEATCBhAYIKwYBBQUHAQEE
+  # eDB2MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wTgYIKwYB
+  # BQUHMAKGQmh0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFNIQTJB
+  # c3N1cmVkSURDb2RlU2lnbmluZ0NBLmNydDAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3
+  # DQEBCwUAA4IBAQBeD1O9ZawxpsQCZLJMLCBmpK8VQNfuljVT9LCcSKKjSsGDwMtq
+  # m8IzqON27XMnbsEVqFvGuk83jpleLFEx6/UivDcOZkisQ7nKM4VsFDEiw7DbfnID
+  # 0awTzjjo4pn4Vp1NdOClfNvpfcroZkq8IaBn1TXCyCXir3amMVUM/gR+6mVrAB4y
+  # T23T2jWJNPzyFCOPuj8cCNQdBWBM4Lzt11LU59swV4Par2FuQQMia1jNpAbunT/9
+  # bXZuAEmVWD1ra6cp6+9APNnZFk4UvIqj3yVrsKrJukn+uNApOgngnkBLaFy3VlFj
+  # F1jt5QXptaMVWfBtxweCXvRHN6Aju4bquUD8MIIFMDCCBBigAwIBAgIQBAkYG1/V
+  # u2Z1U0O1b5VQCDANBgkqhkiG9w0BAQsFADBlMQswCQYDVQQGEwJVUzEVMBMGA1UE
+  # ChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSQwIgYD
+  # VQQDExtEaWdpQ2VydCBBc3N1cmVkIElEIFJvb3QgQ0EwHhcNMTMxMDIyMTIwMDAw
+  # WhcNMjgxMDIyMTIwMDAwWjByMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNl
+  # cnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMTEwLwYDVQQDEyhEaWdp
+  # Q2VydCBTSEEyIEFzc3VyZWQgSUQgQ29kZSBTaWduaW5nIENBMIIBIjANBgkqhkiG
+  # 9w0BAQEFAAOCAQ8AMIIBCgKCAQEA+NOzHH8OEa9ndwfTCzFJGc/Q+0WZsTrbRPV/
+  # 5aid2zLXcep2nQUut4/6kkPApfmJ1DcZ17aq8JyGpdglrA55KDp+6dFn08b7KSfH
+  # 03sjlOSRI5aQd4L5oYQjZhJUM1B0sSgmuyRpwsJS8hRniolF1C2ho+mILCCVrhxK
+  # hwjfDPXiTWAYvqrEsq5wMWYzcT6scKKrzn/pfMuSoeU7MRzP6vIK5Fe7SrXpdOYr
+  # /mzLfnQ5Ng2Q7+S1TqSp6moKq4TzrGdOtcT3jNEgJSPrCGQ+UpbB8g8S9MWOD8Gi
+  # 6CxR93O8vYWxYoNzQYIH5DiLanMg0A9kczyen6Yzqf0Z3yWT0QIDAQABo4IBzTCC
+  # AckwEgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAYYwEwYDVR0lBAww
+  # CgYIKwYBBQUHAwMweQYIKwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8v
+  # b2NzcC5kaWdpY2VydC5jb20wQwYIKwYBBQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRp
+  # Z2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RDQS5jcnQwgYEGA1UdHwR6
+  # MHgwOqA4oDaGNGh0dHA6Ly9jcmw0LmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3Vy
+  # ZWRJRFJvb3RDQS5jcmwwOqA4oDaGNGh0dHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9E
+  # aWdpQ2VydEFzc3VyZWRJRFJvb3RDQS5jcmwwTwYDVR0gBEgwRjA4BgpghkgBhv1s
+  # AAIEMCowKAYIKwYBBQUHAgEWHGh0dHBzOi8vd3d3LmRpZ2ljZXJ0LmNvbS9DUFMw
+  # CgYIYIZIAYb9bAMwHQYDVR0OBBYEFFrEuXsqCqOl6nEDwGD5LfZldQ5YMB8GA1Ud
+  # IwQYMBaAFEXroq/0ksuCMS1Ri6enIZ3zbcgPMA0GCSqGSIb3DQEBCwUAA4IBAQA+
+  # 7A1aJLPzItEVyCx8JSl2qB1dHC06GsTvMGHXfgtg/cM9D8Svi/3vKt8gVTew4fbR
+  # knUPUbRupY5a4l4kgU4QpO4/cY5jDhNLrddfRHnzNhQGivecRk5c/5CxGwcOkRX7
+  # uq+1UcKNJK4kxscnKqEpKBo6cSgCPC6Ro8AlEeKcFEehemhor5unXCBc2XGxDI+7
+  # qPjFEmifz0DLQESlE/DmZAwlCEIysjaKJAL+L3J+HNdJRZboWR3p+nRka7LrZkPa
+  # s7CM1ekN3fYBIM6ZMWM9CBoYs4GbT8aTEAb8B4H6i9r5gkn3Ym6hU/oSlBiFLpKR
+  # 6mhsRDKyZqHnGKSaZFHvMYICKDCCAiQCAQEwgYYwcjELMAkGA1UEBhMCVVMxFTAT
+  # BgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEx
+  # MC8GA1UEAxMoRGlnaUNlcnQgU0hBMiBBc3N1cmVkIElEIENvZGUgU2lnbmluZyBD
+  # QQIQDoW3bt/ALpa0ONbdsxRpGjAJBgUrDgMCGgUAoHgwGAYKKwYBBAGCNwIBDDEK
+  # MAigAoAAoQKAADAZBgkqhkiG9w0BCQMxDAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3
+  # AgELMQ4wDAYKKwYBBAGCNwIBFTAjBgkqhkiG9w0BCQQxFgQUEWbtLrZ3F4Qe7rrY
+  # lxGRebzpSmYwDQYJKoZIhvcNAQEBBQAEggEAyLS0/jzh/uAQIqYBJJC67+eefySd
+  # zI+X9dlmip8Lg5HZbNPwz5fwacOmgkjD1tF3l5LtHqaWCMSkuwlGGWm7cBXAoTjs
+  # jqGL00funtH1IySigfz3aUIukstdshQQyTrY4QVZrBWqxzOPVtKUY2dS56odm/rK
+  # HQcRY/IrY0HmxVye/OjNSKL8U77sdokQlFMUptgrLcv8DiWFEkSzZHMoyZ536n0a
+  # kBpEWRPhaxlpfmo45GG+OslVPF8tchg+ZutdAXKuKY/JmYcWKWCPj6c8Lh7XUAO5
+  # z1cBJ9iwoKvn71FIhf3T7yGE9MGR5YjQdSgK9gMNIuXDI0fnIO7KUzr2zQ==
 # SIG # End signature block
