@@ -477,22 +477,37 @@ Function Upgrade-BsConfigFile
   #upgrade the config file to V3
   If ($global:Config.ConfigFileVersion -lt '0.3')
   {
-    Write-Log -component $function -Message 'Adding Version 0.3 changes' -severity 2
-    #Config File Version 0.2 additions
+    Write-Log -component $function -Message 'Adding Version 0.3 changes and migrating to hashtables' -severity 2
+    #Config File Version 0.3 additions
     #Populate with Values
-    $null =  $Global:grid_Tenants.Rows.Clear()
-    $null =  $Global:grid_Tenants.Rows.Add('1',$global:Config.Tenant1.DisplayName,$global:Config.Tenant1.SignInAddress,'****',$global:Config.Tenant1.ModernAuth,$global:Config.Tenant1.ConnectToTeams,$global:Config.Tenant1.ConnectToSkype,$global:Config.Tenant1.ConnectToExchange,$global:Config.Tenant1.ConnectToAzureAD,$global:Config.Tenant1.ConnectToCompliance)
-    $null =  $Global:grid_Tenants.Rows.Add('2',$global:Config.Tenant2.DisplayName,$global:Config.Tenant2.SignInAddress,'****',$global:Config.Tenant2.ModernAuth,$global:Config.Tenant2.ConnectToTeams,$global:Config.Tenant2.ConnectToSkype,$global:Config.Tenant2.ConnectToExchange,$global:Config.Tenant2.ConnectToAzureAD,$global:Config.Tenant2.ConnectToCompliance)
-    $null =  $Global:grid_Tenants.Rows.Add('3',$global:Config.Tenant3.DisplayName,$global:Config.Tenant3.SignInAddress,'****',$global:Config.Tenant3.ModernAuth,$global:Config.Tenant3.ConnectToTeams,$global:Config.Tenant3.ConnectToSkype,$global:Config.Tenant3.ConnectToExchange,$global:Config.Tenant3.ConnectToAzureAD,$global:Config.Tenant3.ConnectToCompliance)
-    $null =  $Global:grid_Tenants.Rows.Add('4',$global:Config.Tenant4.DisplayName,$global:Config.Tenant4.SignInAddress,'****',$global:Config.Tenant4.ModernAuth,$global:Config.Tenant4.ConnectToTeams,$global:Config.Tenant4.ConnectToSkype,$global:Config.Tenant4.ConnectToExchange,$global:Config.Tenant4.ConnectToAzureAD,$global:Config.Tenant4.ConnectToCompliance)
-    $null =  $Global:grid_Tenants.Rows.Add('5',$global:Config.Tenant5.DisplayName,$global:Config.Tenant5.SignInAddress,'****',$global:Config.Tenant5.ModernAuth,$global:Config.Tenant5.ConnectToTeams,$global:Config.Tenant5.ConnectToSkype,$global:Config.Tenant5.ConnectToExchange,$global:Config.Tenant5.ConnectToAzureAD,$global:Config.Tenant5.ConnectToCompliance)
-    $null =  $Global:grid_Tenants.Rows.Add('6',$global:Config.Tenant6.DisplayName,$global:Config.Tenant6.SignInAddress,'****',$global:Config.Tenant6.ModernAuth,$global:Config.Tenant6.ConnectToTeams,$global:Config.Tenant6.ConnectToSkype,$global:Config.Tenant6.ConnectToExchange,$global:Config.Tenant6.ConnectToAzureAD,$global:Config.Tenant6.ConnectToCompliance)
-    $null =  $Global:grid_Tenants.Rows.Add('7',$global:Config.Tenant7.DisplayName,$global:Config.Tenant7.SignInAddress,'****',$global:Config.Tenant7.ModernAuth,$global:Config.Tenant7.ConnectToTeams,$global:Config.Tenant7.ConnectToSkype,$global:Config.Tenant7.ConnectToExchange,$global:Config.Tenant7.ConnectToAzureAD,$global:Config.Tenant7.ConnectToCompliance)
-    $null =  $Global:grid_Tenants.Rows.Add('8',$global:Config.Tenant8.DisplayName,$global:Config.Tenant8.SignInAddress,'****',$global:Config.Tenant8.ModernAuth,$global:Config.Tenant8.ConnectToTeams,$global:Config.Tenant8.ConnectToSkype,$global:Config.Tenant8.ConnectToExchange,$global:Config.Tenant8.ConnectToAzureAD,$global:Config.Tenant8.ConnectToCompliance)
-    $null =  $Global:grid_Tenants.Rows.Add('9',$global:Config.Tenant9.DisplayName,$global:Config.Tenant9.SignInAddress,'****',$global:Config.Tenant9.ModernAuth,$global:Config.Tenant9.ConnectToTeams,$global:Config.Tenant9.ConnectToSkype,$global:Config.Tenant9.ConnectToExchange,$global:Config.Tenant9.ConnectToAzureAD,$global:Config.Tenant9.ConnectToCompliance)
-    $null =  $Global:grid_Tenants.Rows.Add('10',$global:Config.Tenant10.DisplayName,$global:Config.Tenant10.SignInAddress,'****',$global:Config.Tenant10.ModernAuth,$global:Config.Tenant10.ConnectToTeams,$global:Config.Tenant10.ConnectToSkype,$global:Config.Tenant10.ConnectToExchange,$global:Config.Tenant10.ConnectToAzureAD,$global:Config.Tenant10.ConnectToCompliance)
+    
+    #declare the new hastable
+    $global:Config.Tenants = @{}
+    
+    #fill it with data
+    for ($i = 1; $i -le 10; $i++)
+    { $tenant = "Tenant$i"
+
+      Write-host $tenant
+      Write-host $global:config.$tenant.displayname
+
+      
+      $global:Config.Tenants[$i] = @{}
+      $global:Config.Tenants[$i].DisplayName = ($global:config.$tenant.displayname)
+      $global:Config.Tenants[$i].SignInAddress = ($global:config.$tenant.SignInAddress)
+      $global:Config.Tenants[$i].Credential = ($global:config.$tenant.Credential)
+      $global:Config.Tenants[$i].ModernAuth = ($global:config.$tenant.ModernAuth)
+      $global:Config.Tenants[$i].ConnectToTeams = ($global:config.$tenant.ConnectToTeams)
+      $global:Config.Tenants[$i].ConnectToSkype = ($global:config.$tenant.ConnectToSkype)
+      $global:Config.Tenants[$i].ConnectToExchange = ($global:config.$tenant.ConnectToExchange)
+      $global:Config.Tenants[$i].ConnectToAzureAD = ($global:config.$tenant.ConnectToAzureAD)
+      $global:Config.Tenants[$i].ConnectToCompliance = ($global:config.$tenant.ConnectToCompliance)
+
+    }
     
   } 
+  
+  
 
   #Write the XML File
   Try
@@ -528,15 +543,15 @@ Function Read-BsConfigFile
   Write-Log -component $function -Message 'Pulling XML data' -severity 1
   $null = (Remove-Variable -Name Config -Scope Global -ErrorAction SilentlyContinue )
   
-  Try
-  {
+  #Try
+  #{
     #Load the Config
     $global:Config = @{}
     $global:Config = (Import-Clixml -Path $global:ConfigFilePath)
     Write-Log -component $function -Message 'Config File Read OK' -severity 2
     
     #Check the config file version
-    If ($global:Config.ConfigFileVersion -lt 0.2)
+    If ($global:Config.ConfigFileVersion -lt 0.3)
     {
       Write-Log -component $function -Message 'Old Config File Detected. Upgrading config file' -severity 3
       Upgrade-BsConfigFile
@@ -572,14 +587,14 @@ Function Read-BsConfigFile
     
     $Global:cbx_AutoUpdates.Checked = $Global:Config.AutoUpdatesEnabled
     $Global:cbx_ClipboardAuth.Checked = $Global:Config.ModernAuthClipboardEnabled
-  }
+ # }
     
-  Catch
-  {
-    #For some reason we ran into an issue updating variables, throw an error and revert to defaults
-    Write-Log -component $function -Message 'Error reading Config or updating GUI, Loading Defaults' -severity 3
-    Import-BsDefaultConfig
-  }
+ # Catch
+ # {
+ #   #For some reason we ran into an issue updating variables, throw an error and revert to defaults
+ #   Write-Log -component $function -Message 'Error reading Config or updating GUI, Loading Defaults' -severity 3
+ #   Import-BsDefaultConfig
+ # }
 }
 
 Function Write-BsConfigFile
@@ -2242,6 +2257,7 @@ Function Hide-BsGuiElements
     if ($global:Config.Tenant1.ConnectToTeams -or $global:Config.Tenant2.ConnectToTeams -or $global:Config.Tenant3.ConnectToTeams -or $global:Config.Tenant4.ConnectToTeams -or $global:Config.Tenant5.ConnectToTeams -or $global:Config.Tenant6.ConnectToTeams -or $global:Config.Tenant7.ConnectToTeams -or $global:Config.Tenant8.ConnectToTeams -or $global:Config.Tenant9.ConnectToTeams -or $global:Config.Tenant10.ConnectToTeams)
     {
       Test-BsInstalledModules -ModuleName $TestedTeamsModule -ModuleVersion $TestedTeamsModuleVer
+      
     }
 
     #Exchange Module Check
@@ -2391,7 +2407,7 @@ Function Test-BsInstalledModules
   param
   (
     [Parameter(Mandatory)] [string]$ModuleName,
-    [Parameter] [string]$ModuleVersion
+    [Parameter()] [string]$ModuleVersion
   )
   [string]$function = 'Test-BsInstalledModules'
   Write-Log -component $function -Message "Called to check $ModuleName" -severity 1
