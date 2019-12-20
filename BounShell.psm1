@@ -2473,7 +2473,7 @@ Function Test-BsInstalledModules
     Write-Log -component $function -Message "$ModuleName Module not installed on local computer" -severity 3
     $NeedsInstall = $true
     $title = "$ModuleName not found"
-    $Message = "$ModuleName is not installed on this computer, it is required to connect to services. Can I install it for you?"
+    $Message = "The $ModuleName PowerShell module is not installed on this computer, it is required to connect to your requested services. Can I install it for you?"
     $yes = New-Object -TypeName System.Management.Automation.Host.ChoiceDescription -ArgumentList '&Yes', `
     'Installs required PowerShell modules'
 
